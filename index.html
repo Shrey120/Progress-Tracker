@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Prep Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0E1218; --surface:#151B24; --surface-2:#1C2430; --surface-3:#232D3B;
+    --line:#2A3644; --line-soft:#212B37;
+    --text:#E7ECF3; --text-dim:#8E9AAC; --text-faint:#5F6B7C;
+    --dsa:#F0883E; --dsa-soft:#3B2716;
+    --prep:#3FB6A8; --prep-soft:#143029;
+    --done:#4BA574; --miss:#C9524E;
+    --easy:#5BBF7F; --med:#E0A040; --hard:#DD6560;
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--ink);color:var(--text);font-family:Inter,system-ui,sans-serif;
+       font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  .num{font-family:Sora,sans-serif;font-variant-numeric:tabular-nums}
+  h1,h2,h3,h4{font-family:Sora,sans-serif;margin:0;font-weight:600}
+  button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
+    outline:2px solid var(--dsa);outline-offset:2px;border-radius:4px}
+  input,textarea,select{font-family:inherit}
+  code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;color:var(--dsa)}
+
+  .top{position:sticky;top:0;z-index:40;background:rgba(14,18,24,.94);
+       backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
+  .top-inner{max-width:1240px;margin:0 auto;padding:13px 20px 0;
+             display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .daybox .big{font-size:22px;font-weight:700;line-height:1.1}
+  .daybox .sub{font-size:11.5px;color:var(--text-dim);margin-top:1px}
+  .rail{flex:1;min-width:170px;display:flex;align-items:center;gap:12px}
+  .rail-track{position:relative;flex:1;height:9px;border-radius:99px;
+              background:var(--surface-2);overflow:hidden}
+  .rail-fill{position:absolute;inset:0 auto 0 0;border-radius:99px;
+             background:linear-gradient(90deg,var(--dsa),#F5A55F);
+             transition:width .45s cubic-bezier(.2,.8,.2,1)}
+  .ring{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;
+        font-size:11.5px;font-weight:600;border:2px solid var(--dsa);color:var(--dsa);background:var(--ink)}
+  .goal{display:flex;align-items:center;gap:10px}
+  .goal-medal{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;
+              border:2px solid #C9942F;background:#2A2113;font-size:18px}
+  .pts{display:flex;align-items:center;gap:7px;background:var(--surface-2);
+       border:1px solid var(--line);padding:5px 11px;border-radius:99px;font-weight:600;font-size:13px}
+  .pts .coin{width:15px;height:15px;border-radius:50%;background:linear-gradient(140deg,#F5C242,#C9942F)}
+  .diffbar{display:flex;gap:16px;max-width:1240px;margin:0 auto;padding:9px 20px 0;flex-wrap:wrap}
+  .diffstat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim)}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot.Easy{background:var(--easy)} .dot.Medium{background:var(--med)} .dot.Hard{background:var(--hard)}
+
+  .tabs{max-width:1240px;margin:0 auto;padding:6px 20px 0;display:flex;gap:4px;align-items:center}
+  .tab{padding:11px 18px;font-size:13.5px;font-weight:500;color:var(--text-dim);
+       border-bottom:2px solid transparent;margin-bottom:-1px}
+  .tab:hover{color:var(--text)}
+  .tab.on{color:var(--dsa);border-bottom-color:var(--dsa)}
+  .tab-right{margin-left:auto;display:flex;gap:6px;padding-bottom:6px}
+  .mini{font-size:12px;color:var(--text-dim);border:1px solid var(--line);
+        padding:5px 11px;border-radius:7px}
+  .mini:hover{background:var(--surface-2);color:var(--text)}
+
+  .wrap{max-width:1240px;margin:0 auto;padding:22px 20px 80px}
+
+  .today{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+         padding:14px 16px;margin-bottom:20px}
+  .today-label{font-size:11.5px;color:var(--text-faint);margin-bottom:3px}
+  .today-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .chip{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);
+        background:var(--surface-2);color:var(--text-dim)}
+  .chip.dsa{border-color:#5A3A1C;color:#E5A268;background:var(--dsa-soft)}
+  .chip.prep{border-color:#1F4C45;color:#63C9BC;background:var(--prep-soft)}
+
+  .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .fbtn{font-size:12.5px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);
+        color:var(--text-dim)}
+  .fbtn.on{background:var(--surface-3);color:var(--text);border-color:var(--text-faint)}
+  .search{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;
+          padding:6px 11px;color:var(--text);font-size:13px;min-width:190px}
+  .search::placeholder{color:var(--text-faint)}
+
+  .mod{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
+       margin-bottom:9px;overflow:hidden}
+  .mod:hover,.mod.open{border-color:var(--line)}
+  .mod-head{display:flex;align-items:center;gap:12px;padding:13px 16px}
+  .ringlet{width:17px;height:17px;border-radius:50%;flex:none;border:2px solid var(--line);
+           display:grid;place-items:center;font-size:9px;color:var(--ink)}
+  .ringlet.part{border-color:var(--dsa)}
+  .ringlet.full{background:var(--done);border-color:var(--done)}
+  .mod-name{flex:1;font-size:14.5px;font-weight:500;font-family:Sora,sans-serif;text-align:left}
+  .mod-count{color:var(--text-faint);font-weight:400;font-size:13px;margin-left:6px}
+  .track-tag{font-size:10.5px;padding:2px 7px;border-radius:4px;margin-left:9px}
+  .track-tag.dsa{background:var(--dsa-soft);color:#E5A268}
+  .track-tag.prep{background:var(--prep-soft);color:#63C9BC}
+  .mod-dates{display:flex;align-items:center;gap:9px;color:var(--text-dim);
+             font-size:12.5px;white-space:nowrap}
+  .step{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);
+        display:grid;place-items:center;color:var(--text-dim);font-size:14px;line-height:1}
+  .step:hover{background:var(--surface-3);color:var(--text)}
+  .caret{color:var(--text-faint);transition:transform .2s;font-size:11px}
+  .caret.up{transform:rotate(180deg)}
+  .mod-body{border-top:1px solid var(--line-soft);padding:5px 0}
+  .item{display:flex;align-items:center;gap:11px;padding:8px 16px 8px 36px}
+  .item:hover{background:var(--surface-2)}
+  .box{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--line);flex:none;
+       display:grid;place-items:center;font-size:11px;color:var(--ink)}
+  .box.done{background:var(--done);border-color:var(--done)}
+  .box.prog{border-color:var(--dsa)}
+  .box.prog::after{content:'';width:7px;height:7px;border-radius:2px;background:var(--dsa)}
+  .item-title{flex:1;font-size:13.5px}
+  .item.is-done .item-title{color:var(--text-faint);text-decoration:line-through}
+  .diff{font-size:10.5px;padding:2px 8px;border-radius:4px;flex:none;font-weight:500}
+  .diff.Easy{background:#183025;color:var(--easy)}
+  .diff.Medium{background:#33280F;color:var(--med)}
+  .diff.Hard{background:#331A1A;color:var(--hard)}
+  .icon{font-size:13px;color:var(--text-faint);flex:none;width:20px}
+  .icon:hover{color:var(--text)}
+  .icon.on{color:var(--med)}
+  .addrow{display:flex;gap:8px;padding:9px 16px 12px 36px}
+  .addrow input{flex:1;background:var(--surface-2);border:1px solid var(--line);
+                border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px}
+  .addrow select{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;
+                 padding:6px 8px;color:var(--text);font-size:13px}
+
+  .kan{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+  .col{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius)}
+  .col-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;
+            font-family:Sora,sans-serif;font-weight:600;font-size:13.5px;border-radius:9px 9px 0 0}
+  .col-head .n{background:rgba(0,0,0,.28);border-radius:99px;padding:1px 9px;
+               font-size:12px;font-weight:500}
+  .col.backlog .col-head{background:#3A2A1C;color:#E0B183}
+  .col.progress .col-head{background:#1B3A5C;color:#95C6F0}
+  .col.done .col-head{background:#1D3F2E;color:#84D2A6}
+  .col-body{padding:11px;max-height:68vh;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+  .card{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:9px;padding:12px 13px}
+  .card:hover{border-color:var(--line)}
+  .card-mod{font-size:11px;color:var(--text-faint)}
+  .card-title{font-family:Sora,sans-serif;font-weight:600;font-size:13.5px;margin:3px 0 6px}
+  .card-sub{font-size:12px;color:var(--text-dim);padding-bottom:9px;
+            border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:8px}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:9px;gap:8px}
+  .card-due{font-size:11.5px;color:var(--text-faint)}
+  .pill{font-size:11.5px;font-weight:500;padding:3px 11px;border-radius:99px;border:1px solid transparent}
+  .pill.backlog{background:#3A2A1C;color:#E0B183;border-color:#523B26}
+  .pill.progress{background:#1B3A5C;color:#95C6F0;border-color:#2C5580}
+  .pill.done{background:#1D3F2E;color:#84D2A6;border-color:#2E6045}
+  .empty{padding:44px 20px;text-align:center;color:var(--text-faint);font-size:13px}
+  .more{text-align:center;color:var(--text-faint);font-size:12px;padding:8px;width:100%}
+  .more:hover{color:var(--text)}
+
+  .cal-bar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+  .cal-bar h2{font-size:17px}
+  .legend{margin-left:auto;display:flex;gap:14px;font-size:12px;color:var(--text-dim)}
+  .nav{width:29px;height:29px;border-radius:7px;border:1px solid var(--line);
+       display:grid;place-items:center;color:var(--text-dim)}
+  .nav:hover{background:var(--surface-2);color:var(--text)}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line-soft);
+        border-radius:var(--radius);overflow:hidden}
+  .dow{padding:9px 10px;font-size:11.5px;color:var(--text-faint);background:var(--surface);
+       border-bottom:1px solid var(--line-soft)}
+  .cell{min-height:104px;padding:8px;border-right:1px solid var(--line-soft);
+        border-bottom:1px solid var(--line-soft);background:var(--surface)}
+  .cell.blank{background:var(--ink)}
+  .cell.today-cell{background:var(--surface-2)}
+  .cell-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}
+  .daynum{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;
+          font-size:12px;font-weight:600;font-family:Sora,sans-serif;color:var(--text-dim)}
+  .daynum.done{background:var(--done);color:#0B1F14}
+  .daynum.miss{background:var(--miss);color:#22090A}
+  .daynum.now{border:1.5px solid var(--dsa);color:var(--dsa)}
+  .dayidx{font-size:10.5px;color:var(--text-faint)}
+  .tag{font-size:10.5px;padding:2.5px 7px;border-radius:4px;margin-bottom:3px;
+       white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tag.dsa{background:var(--dsa-soft);color:#E5A268}
+  .tag.prep{background:var(--prep-soft);color:#63C9BC}
+  .cnt{font-size:10.5px;color:var(--done);margin-top:2px}
+
+  .scrim{position:fixed;inset:0;background:rgba(6,9,13,.74);z-index:90;
+         display:grid;place-items:center;padding:20px;overflow-y:auto}
+  .modal{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
+         padding:26px;width:100%;max-width:400px;text-align:center}
+  .modal.wide{max-width:660px;text-align:left}
+  .modal h3{font-size:19px;margin-bottom:7px}
+  .modal p{color:var(--text-dim);margin:0 0 16px;font-size:13.5px}
+  .modal input[type=number],.modal textarea,.modal select{
+    width:100%;padding:11px 13px;border-radius:8px;background:#141C27;
+    border:1px solid #33465C;color:var(--text);font-size:14px;margin-bottom:14px}
+  .modal textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
+                  min-height:210px;resize:vertical;line-height:1.65}
+  .modal input::placeholder,.modal textarea::placeholder{color:var(--text-faint)}
+  .modal-btns{display:flex;gap:11px}
+  .btn{flex:1;padding:11px;border-radius:8px;font-weight:600;font-size:14px}
+  .btn.ghost{border:1px solid var(--line);color:var(--dsa)}
+  .btn.ghost:hover{background:var(--surface-3)}
+  .btn.solid{background:var(--dsa);color:#20140A}
+  .btn.solid:hover{background:#F5A55F}
+  .fmt{background:#101821;border:1px solid var(--line-soft);border-radius:8px;
+       padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;
+       color:var(--text-dim);margin-bottom:14px;white-space:pre;overflow-x:auto;line-height:1.7}
+  .row2{display:flex;gap:11px;margin-bottom:14px;flex-wrap:wrap}
+  .row2 label{flex:1;min-width:180px;font-size:12.5px;color:var(--text-dim)}
+  .row2 select{margin-bottom:0;margin-top:5px}
+
+  .footer-note{margin-top:26px;padding-top:16px;border-top:1px solid var(--line-soft);
+               color:var(--text-faint);font-size:12px;display:flex;gap:16px;flex-wrap:wrap}
+  .linkish{color:var(--text-dim);text-decoration:underline;text-underline-offset:2px}
+  .linkish:hover{color:var(--text)}
+
+  @media (max-width:900px){ .kan{grid-template-columns:1fr} .cell{min-height:78px} }
+  @media (max-width:560px){
+    .cell{min-height:60px;padding:5px} .tag,.cnt{display:none}
+    .goal{display:none} .mod-dates .num{font-size:11px}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel" data-presets="react">
+const {useState,useEffect,useMemo,useCallback,useRef} = React;
+
+/* ---------- storage ---------- */
+const KEY='prep-tracker-v2';
+const store={
+  async get(){
+    if(window.storage){ try{const r=await window.storage.get(KEY);return r?JSON.parse(r.value):null}catch(e){} }
+    try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):null}catch(e){return null}
+  },
+  async set(d){
+    const s=JSON.stringify(d);
+    if(window.storage){ try{await window.storage.set(KEY,s);return}catch(e){} }
+    try{localStorage.setItem(KEY,s)}catch(e){}
+  }
+};
+
+/* ---------- dates ---------- */
+const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
+const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
+const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
+const between=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fShort=s=>{const d=parse(s);return String(d.getDate()).padStart(2,'0')+' '+MON[d.getMonth()]};
+const fLong=s=>{const d=parse(s);return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()};
+const today=()=>iso(new Date());
+const uid=()=>Math.random().toString(36).slice(2,10);
+
+/* ---------- starter plan ---------- */
+const SEED=[
+ {track:'dsa',name:'Learn the basics',days:8,items:[
+  ['Language setup & I/O','Easy'],['Patterns','Easy'],['Basic maths','Easy'],
+  ['Recursion basics','Easy'],['Hashing basics','Easy'],['Time & space complexity','Easy']]},
+ {track:'dsa',name:'Sorting techniques',days:4,items:[
+  ['Selection sort','Easy'],['Bubble sort','Easy'],['Insertion sort','Easy'],
+  ['Merge sort','Medium'],['Quick sort','Medium']]},
+ {track:'dsa',name:'Arrays',days:12,items:[
+  ['Easy set','Easy'],['Medium set','Medium'],['Kadane & variants','Medium'],
+  ['Two-sum family','Medium'],['Matrix problems','Medium'],['Merge intervals','Medium'],
+  ['Hard set','Hard']]},
+ {track:'dsa',name:'Binary search',days:8,items:[
+  ['On 1D arrays','Easy'],['Answer-space search','Medium'],['On 2D matrices','Medium'],
+  ['Rotated arrays','Medium'],['Hard set','Hard']]},
+ {track:'dsa',name:'Strings',days:5,items:[
+  ['Easy set','Easy'],['Medium set','Medium'],['Anagram & frequency','Medium']]},
+ {track:'dsa',name:'Linked list',days:8,items:[
+  ['Singly LL basics','Easy'],['Doubly LL','Easy'],['Reversal patterns','Medium'],
+  ['Cycle detection','Medium'],['Hard set','Hard']]},
+ {track:'dsa',name:'Recursion & backtracking',days:9,items:[
+  ['Recursion patterns','Easy'],['Subsequences','Medium'],['Subsets & permutations','Medium'],
+  ['N-Queens family','Hard'],['Sudoku / grid backtracking','Hard']]},
+ {track:'dsa',name:'Bit manipulation',days:3,items:[
+  ['Bit basics','Easy'],['XOR patterns','Medium'],['Interview problems','Medium']]},
+ {track:'dsa',name:'Stack & queue',days:7,items:[
+  ['Implementation','Easy'],['Monotonic stack','Medium'],['Next greater family','Medium'],
+  ['Histogram problems','Hard']]},
+ {track:'dsa',name:'Sliding window & two pointer',days:6,items:[
+  ['Fixed window','Easy'],['Variable window','Medium'],['Two pointer set','Medium'],['Hard set','Hard']]},
+ {track:'dsa',name:'Heaps',days:5,items:[
+  ['Heap basics','Easy'],['Top-K patterns','Medium'],['Median from stream','Hard']]},
+ {track:'dsa',name:'Greedy algorithms',days:5,items:[
+  ['Easy set','Easy'],['Interval scheduling','Medium'],['Hard set','Hard']]},
+ {track:'dsa',name:'Binary trees',days:10,items:[
+  ['Traversals','Easy'],['Views & boundary','Medium'],['LCA family','Medium'],
+  ['Path problems','Medium'],['Construction','Hard']]},
+ {track:'dsa',name:'Binary search trees',days:6,items:[
+  ['BST basics','Easy'],['Insert / delete','Medium'],['Validate & inorder','Medium'],['Hard set','Hard']]},
+ {track:'dsa',name:'Graphs',days:14,items:[
+  ['BFS / DFS','Easy'],['Cycle detection','Medium'],['Topological sort','Medium'],
+  ['Dijkstra','Medium'],['Bellman-Ford & Floyd','Hard'],['MST — Prim & Kruskal','Hard'],
+  ['Disjoint set union','Hard']]},
+ {track:'dsa',name:'Dynamic programming',days:16,items:[
+  ['1D DP','Easy'],['2D / grid DP','Medium'],['DP on subsequences','Medium'],
+  ['Knapsack family','Medium'],['DP on strings','Hard'],['DP on stocks','Medium'],
+  ['DP on LIS','Hard'],['Partition DP','Hard'],['DP on trees','Hard']]},
+ {track:'dsa',name:'Tries',days:3,items:[
+  ['Trie implementation','Medium'],['Prefix problems','Medium'],['Hard set','Hard']]},
+
+ {track:'prep',name:'JavaScript fundamentals',days:7,items:[
+  ['Closures & scope',null],['this binding — all four rules',null],['Prototype chain',null],
+  ['Event loop: microtask vs macrotask',null],['Promises: all / race / allSettled',null],
+  ['Type coercion & falsy values',null],['Implement debounce & throttle',null],
+  ['Memory leaks in listeners',null]]},
+ {track:'prep',name:'TypeScript',days:8,items:[
+  ['Generics',null],['Utility types',null],['Discriminated unions',null],['Strict mode',null],
+  ['Typing React props & hooks',null],['Convert a project file to strict TS',null]]},
+ {track:'prep',name:'React & Next.js',days:14,items:[
+  ['Reconciliation & keys',null],['What triggers a re-render',null],
+  ['memo / useMemo / useCallback — and when not to',null],['State, props, lifting, prop drilling',null],
+  ['App Router',null],['Server vs Client Components',null],['SSR / SSG / ISR trade-offs',null],
+  ['Caching & revalidation',null],['Build a multi-step form with async validation',null]]},
+ {track:'prep',name:'OOP & design',days:7,items:[
+  ['Four pillars with real examples',null],['Composition over inheritance',null],
+  ['SOLID applied to a design prompt',null],['Anti-patterns: God object, tight coupling',null],
+  ['Prototypal vs classical inheritance in JS',null],['One pattern you have actually shipped',null]]},
+ {track:'prep',name:'Node.js backend',days:9,items:[
+  ['REST API design',null],['Auth: JWT vs session',null],['Middleware patterns',null],
+  ['Error handling',null],['Rate limiting',null],['REST vs GraphQL — argue the trade-off',null],
+  ['Review your own auth & booking code',null]]},
+ {track:'prep',name:'Postgres',days:8,items:[
+  ['Indexing strategy',null],['EXPLAIN ANALYZE',null],['Normalization trade-offs',null],
+  ['Transactions & isolation levels',null],['Query optimization',null],['Spotting N+1',null]]},
+ {track:'prep',name:'Testing',days:6,items:[
+  ['Unit vs integration vs E2E',null],['Jest / Vitest',null],['React Testing Library',null],
+  ['Playwright basics',null],['What to test and what not to',null]]},
+ {track:'prep',name:'Security',days:5,items:[
+  ['XSS',null],['CSRF',null],['SQL injection',null],['JWT storage trade-offs',null],
+  ['CORS',null],['Secrets & dependency risk',null]]},
+ {track:'prep',name:'System design',days:12,items:[
+  ['Requirements → design → deep dive → trade-offs',null],['Caching strategies',null],
+  ['Database scaling',null],['Rate limiting & queues',null],['Write up project one end to end',null],
+  ['Write up project two end to end',null],['Explain out loud, timed',null]]},
+ {track:'prep',name:'AI-assisted code review',days:4,items:[
+  ['Spot unparameterized inputs',null],['Spot missing error handling',null],
+  ['Explain your own repo history unassisted',null],['Prompt-to-verify workflow',null]]},
+ {track:'prep',name:'Resume & portfolio',days:5,items:[
+  ['Rewrite bullets around master-list skills',null],['Quantify impact',null],
+  ['Clean up GitHub READMEs',null],['Make deployed demos presentable',null]]},
+ {track:'prep',name:'Applications & mocks',days:21,items:[
+  ['Toptal / Turing vetting',null],['Wellfound & Arc.dev profiles',null],
+  ['We Work Remotely applications',null],['Timed DSA mock 1',null],['Timed DSA mock 2',null],
+  ['Timed DSA mock 3',null],['System design mock 1',null],['System design mock 2',null],
+  ['Behavioral: failure & prevention story',null]]},
+];
+
+const mkItem=(title,difficulty)=>({id:uid(),title,difficulty:difficulty||null,
+  status:'backlog',doneAt:null,revise:false});
+
+function buildSeed(start){
+  const cur={dsa:start,prep:start};
+  return SEED.map(m=>{
+    const s=cur[m.track];
+    cur[m.track]=addDays(s,m.days);
+    return {id:uid(),track:m.track,name:m.name,start:s,days:m.days,extra:0,
+            items:m.items.map(p=>mkItem(p[0],p[1]))};
+  });
+}
+function reflow(mods,start){
+  const cur={dsa:start,prep:start};
+  return mods.map(m=>{
+    const s=cur[m.track];
+    cur[m.track]=addDays(s,m.days+m.extra);
+    return {...m,start:s};
+  });
+}
+const modEnd=m=>addDays(m.start,m.days+m.extra-1);
+
+/* ---------- import parser ---------- */
+function parseImport(text,track){
+  const mods=[];let cur=null;
+  text.split('\n').forEach(raw=>{
+    const line=raw.trim();
+    if(!line)return;
+    if(line.charAt(0)==='#'){
+      const name=line.replace(/^#+\s*/,'').trim();
+      if(!name)return;
+      cur={id:uid(),track,name,start:null,days:2,extra:0,items:[]};
+      mods.push(cur);
+      return;
+    }
+    if(!cur){cur={id:uid(),track,name:'Untitled topic',start:null,days:2,extra:0,items:[]};mods.push(cur)}
+    const parts=line.split('|').map(s=>s.trim());
+    let diff=null;
+    if(parts.length>1){
+      const d=parts[parts.length-1].toLowerCase();
+      if(d.indexOf('e')===0)diff='Easy';
+      else if(d.indexOf('m')===0)diff='Medium';
+      else if(d.indexOf('h')===0)diff='Hard';
+    }
+    if(parts[0])cur.items.push(mkItem(parts[0],diff));
+  });
+  return mods.filter(m=>m.items.length)
+             .map(m=>({...m,days:Math.max(2,Math.ceil(m.items.length/2))}));
+}
+
+/* ---------- header ---------- */
+function Header({view,setView,stats,onImport,onBackup}){
+  return (
+    <div className="top">
+      <div className="top-inner">
+        <div className="daybox">
+          <div className="big num">Day {stats.dayNum}</div>
+          <div className="sub num">Problem {stats.done}/{stats.total}</div>
+        </div>
+        <div className="rail">
+          <div className="ring num">{stats.pct}%</div>
+          <div className="rail-track"><div className="rail-fill" style={{width:stats.pct+'%'}}/></div>
+        </div>
+        <div className="goal">
+          <div className="goal-medal">🏆</div>
+          <div>
+            <div className="num" style={{fontWeight:700,fontSize:16,fontFamily:'Sora'}}>Day {stats.totalDays}</div>
+            <div className="num" style={{fontSize:11.5,color:'var(--text-dim)'}}>{fLong(stats.endDate)}</div>
+          </div>
+        </div>
+        <div className="pts num"><span className="coin"/>{stats.points}</div>
+      </div>
+      <div className="diffbar">
+        {['Easy','Medium','Hard'].map(d=>(
+          <span key={d} className="diffstat">
+            <span className={'dot '+d}/>{d}
+            <span className="num" style={{color:'var(--text)'}}>{stats.diff[d].done}/{stats.diff[d].total}</span>
+          </span>
+        ))}
+        <span className="diffstat">Streak
+          <span className="num" style={{color:'var(--text)'}}>{stats.streak} days</span></span>
+        <span className="diffstat">Flagged for revision
+          <span className="num" style={{color:'var(--text)'}}>{stats.flagged}</span></span>
+      </div>
+      <div className="tabs">
+        {['Module','Kanban Flow','Calendar'].map(t=>(
+          <button key={t} className={'tab'+(view===t?' on':'')} onClick={()=>setView(t)}>{t}</button>
+        ))}
+        <span className="tab-right">
+          <button className="mini" onClick={onImport}>Import problems</button>
+          <button className="mini" onClick={onBackup}>Backup</button>
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- today ---------- */
+function Today({modules}){
+  const t=today();
+  const active=modules.filter(m=>m.start<=t&&t<=modEnd(m));
+  const next=active.reduce((acc,m)=>acc.concat(
+    m.items.filter(i=>i.status!=='done').slice(0,3).map(i=>({...i,track:m.track}))),[]).slice(0,7);
+  return (
+    <div className="today">
+      <div className="today-label">Today, {fLong(t)}</div>
+      {active.length===0
+        ? <div style={{color:'var(--text-dim)'}}>Nothing scheduled. Open a topic below and pull work forward.</div>
+        : <>
+            <div style={{fontFamily:'Sora',fontWeight:600,fontSize:15}}>
+              {active.map(m=>m.name).join('   ·   ')}
+            </div>
+            <div className="today-items">
+              {next.length===0
+                ? <span className="chip">All caught up here</span>
+                : next.map(i=><span key={i.id} className={'chip '+i.track}>{i.title}</span>)}
+            </div>
+          </>}
+    </div>
+  );
+}
+
+/* ---------- module view ---------- */
+function ModuleView({modules,cycle,toggleRevise,addItem,delItem,changeDays,askDays}){
+  const [open,setOpen]=useState({});
+  const [track,setTrack]=useState('all');
+  const [diff,setDiff]=useState('all');
+  const [onlyFlag,setOnlyFlag]=useState(false);
+  const [q,setQ]=useState('');
+  const [draft,setDraft]=useState({});
+
+  const shown=modules.filter(m=>track==='all'||m.track===track);
+  const searching=q.trim().length>1;
+
+  return (
+    <>
+      <Today modules={modules}/>
+      <div className="filters">
+        {[['all','All'],['dsa','DSA'],['prep','Interview prep']].map(p=>
+          <button key={p[0]} className={'fbtn'+(track===p[0]?' on':'')}
+                  onClick={()=>setTrack(p[0])}>{p[1]}</button>)}
+        <span style={{width:8}}/>
+        {['all','Easy','Medium','Hard'].map(d=>
+          <button key={d} className={'fbtn'+(diff===d?' on':'')} onClick={()=>setDiff(d)}>
+            {d==='all'?'Any difficulty':d}</button>)}
+        <button className={'fbtn'+(onlyFlag?' on':'')} onClick={()=>setOnlyFlag(v=>!v)}>★ Revision</button>
+        <input className="search" placeholder="Find a problem" value={q}
+               onChange={e=>setQ(e.target.value)}/>
+      </div>
+
+      {shown.map(m=>{
+        const done=m.items.filter(i=>i.status==='done').length;
+        const isOpen=!!open[m.id]||searching||onlyFlag;
+        const vis=m.items.filter(i=>
+          (diff==='all'||i.difficulty===diff) &&
+          (!onlyFlag||i.revise) &&
+          (!searching||i.title.toLowerCase().indexOf(q.trim().toLowerCase())>-1));
+        if((searching||onlyFlag)&&vis.length===0)return null;
+        const cls=done===0?'':done===m.items.length?'full':'part';
+        return (
+          <div key={m.id} className={'mod'+(isOpen?' open':'')}>
+            <div className="mod-head">
+              <span className={'ringlet '+cls}>{done===m.items.length&&done>0?'✓':''}</span>
+              <button className="mod-name" onClick={()=>setOpen(o=>({...o,[m.id]:!o[m.id]}))}
+                      aria-expanded={isOpen}>
+                {m.name}<span className="mod-count num"> ({done}/{m.items.length})</span>
+                <span className={'track-tag '+m.track}>{m.track==='dsa'?'DSA':'Prep'}</span>
+              </button>
+              <div className="mod-dates">
+                <button className="step" title="Remove a day" onClick={()=>changeDays(m.id,-1)}>–</button>
+                <span className="num">{fShort(m.start)} – {fShort(modEnd(m))}</span>
+                <button className="step" title="Add days" onClick={()=>askDays(m.id)}>+</button>
+                <button className={'caret'+(isOpen?' up':'')}
+                        onClick={()=>setOpen(o=>({...o,[m.id]:!o[m.id]}))} aria-label="Toggle">▼</button>
+              </div>
+            </div>
+            {isOpen&&(
+              <div className="mod-body">
+                {vis.map(i=>(
+                  <div key={i.id} className={'item'+(i.status==='done'?' is-done':'')}>
+                    <button className={'box '+(i.status==='done'?'done':i.status==='progress'?'prog':'')}
+                            onClick={()=>cycle(m.id,i.id)} aria-label={'Mark '+i.title}>
+                      {i.status==='done'?'✓':''}
+                    </button>
+                    <span className="item-title">{i.title}</span>
+                    {i.difficulty&&<span className={'diff '+i.difficulty}>{i.difficulty}</span>}
+                    <button className={'icon'+(i.revise?' on':'')} title="Flag for revision"
+                            onClick={()=>toggleRevise(m.id,i.id)}>★</button>
+                    <button className="icon" title="Remove this problem"
+                            onClick={()=>delItem(m.id,i.id)}>×</button>
+                  </div>
+                ))}
+                <div className="addrow">
+                  <input placeholder="Add a problem, then press Enter"
+                    value={(draft[m.id]&&draft[m.id].t)||''}
+                    onChange={e=>{const v=e.target.value;
+                      setDraft(d=>({...d,[m.id]:{t:v,d:(d[m.id]&&d[m.id].d)||null}}))}}
+                    onKeyDown={e=>{
+                      if(e.key==='Enter'&&e.target.value.trim()){
+                        const dd=(draft[m.id]&&draft[m.id].d)||null;
+                        addItem(m.id,e.target.value.trim(),dd);
+                        setDraft(d=>({...d,[m.id]:{t:'',d:dd}}));
+                      }}}/>
+                  <select value={(draft[m.id]&&draft[m.id].d)||''}
+                    onChange={e=>{const v=e.target.value||null;
+                      setDraft(d=>({...d,[m.id]:{t:(d[m.id]&&d[m.id].t)||'',d:v}}))}}>
+                    <option value="">No difficulty</option>
+                    <option>Easy</option><option>Medium</option><option>Hard</option>
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+/* ---------- board ---------- */
+function BoardView({modules,setStatus}){
+  const [limit,setLimit]=useState(40);
+  const cols=[['backlog','Backlog'],['progress','In progress'],['done','Completed']];
+  const all=modules.reduce((a,m)=>a.concat(m.items.map(i=>({...i,mod:m}))),[]);
+  const nextOf=s=>s==='backlog'?'progress':s==='progress'?'done':'backlog';
+  return (
+    <div className="kan">
+      {cols.map(c=>{
+        const k=c[0],label=c[1];
+        const list=all.filter(i=>i.status===k);
+        return (
+          <div key={k} className={'col '+k}>
+            <div className="col-head"><span>{label}</span><span className="n num">{list.length}</span></div>
+            <div className="col-body">
+              {list.length===0&&<div className="empty">
+                {k==='backlog'?'Backlog is clear. Everything is moving or finished.'
+                 :k==='progress'?'Nothing in flight. Start something from the backlog.'
+                 :'Nothing finished yet. The first one lands here.'}</div>}
+              {list.slice(0,limit).map(i=>(
+                <div key={i.id} className="card">
+                  <div className="card-mod">{i.mod.name}</div>
+                  <div className="card-title">{i.title}</div>
+                  <div className="card-sub">
+                    <span>{i.mod.track==='dsa'?'DSA':'Interview prep'}</span>
+                    {i.difficulty&&<span className={'diff '+i.difficulty}>{i.difficulty}</span>}
+                    {i.revise&&<span style={{color:'var(--med)'}}>★</span>}
+                  </div>
+                  <div className="card-foot">
+                    <span className="card-due num">Deadline — {fShort(modEnd(i.mod))}</span>
+                    <button className={'pill '+k} onClick={()=>setStatus(i.mod.id,i.id,nextOf(i.status))}>
+                      {k==='backlog'?'Start':k==='progress'?'Finish':'Reopen'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+              {list.length>limit&&
+                <button className="more" onClick={()=>setLimit(l=>l+60)}>
+                  Show more — {list.length-limit} left
+                </button>}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---------- calendar ---------- */
+function CalendarView({modules,startDate}){
+  const n=new Date();
+  const [ym,setYm]=useState({y:n.getFullYear(),m:n.getMonth()});
+  const t=today();
+  const first=new Date(ym.y,ym.m,1);
+  const dim=new Date(ym.y,ym.m+1,0).getDate();
+  const cells=[];
+  for(let i=0;i<first.getDay();i++)cells.push(null);
+  for(let d=1;d<=dim;d++)cells.push(iso(new Date(ym.y,ym.m,d)));
+
+  const doneBy=useMemo(()=>{
+    const map={};
+    modules.forEach(m=>m.items.forEach(i=>{if(i.doneAt)map[i.doneAt]=(map[i.doneAt]||0)+1}));
+    return map;
+  },[modules]);
+
+  const shift=k=>setYm(v=>{const d=new Date(v.y,v.m+k,1);return{y:d.getFullYear(),m:d.getMonth()}});
+  const MONTHS=['January','February','March','April','May','June','July','August',
+                'September','October','November','December'];
+  return (
+    <>
+      <div className="cal-bar">
+        <button className="nav" onClick={()=>shift(-1)} aria-label="Previous month">‹</button>
+        <h2>{MONTHS[ym.m]} {ym.y}</h2>
+        <button className="nav" onClick={()=>shift(1)} aria-label="Next month">›</button>
+        <span className="legend">
+          <span><span className="dot" style={{background:'var(--done)',marginRight:5}}/>Solved something</span>
+          <span><span className="dot" style={{background:'var(--miss)',marginRight:5}}/>Scheduled, nothing done</span>
+        </span>
+      </div>
+      <div className="grid">
+        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=><div key={d} className="dow">{d}</div>)}
+        {cells.map((date,idx)=>{
+          if(!date)return <div key={'b'+idx} className="cell blank"/>;
+          const sched=modules.filter(m=>m.start<=date&&date<=modEnd(m));
+          const c=doneBy[date]||0;
+          const past=date<t, isT=date===t;
+          let cls = c>0?'done' : (past&&sched.length&&date>=startDate)?'miss' : '';
+          if(isT&&!cls)cls='now';
+          const di=between(startDate,date)+1;
+          return (
+            <div key={date} className={'cell'+(isT?' today-cell':'')}>
+              <div className="cell-top">
+                <span className={'daynum '+cls}>{parse(date).getDate()}</span>
+                {di>0&&<span className="dayidx num">Day {di}</span>}
+              </div>
+              {sched.slice(0,2).map(m=>
+                <div key={m.id} className={'tag '+m.track} title={m.name}>{m.name}</div>)}
+              {c>0&&<div className="cnt num">{c} done</div>}
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+/* ---------- modals ---------- */
+function AddDays({onCancel,onAdd}){
+  const [v,setV]=useState('');
+  const go=()=>{const n=parseInt(v,10);if(n>0)onAdd(n)};
+  return (
+    <div className="scrim" onClick={onCancel}>
+      <div className="modal" onClick={e=>e.stopPropagation()}>
+        <h3>Need more time?</h3>
+        <p>Add extra days to this module to pace your learning. Later topics in the same track shift to match.</p>
+        <input autoFocus type="number" min="1" placeholder="Enter number of days" value={v}
+          onChange={e=>setV(e.target.value)}
+          onKeyDown={e=>{if(e.key==='Enter')go();if(e.key==='Escape')onCancel()}}/>
+        <div className="modal-btns">
+          <button className="btn ghost" onClick={onCancel}>Cancel</button>
+          <button className="btn solid" onClick={go}>Add days</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ImportModal({onCancel,onDone}){
+  const [text,setText]=useState('');
+  const [track,setTrack]=useState('dsa');
+  const [mode,setMode]=useState('append');
+  const preview=useMemo(()=>parseImport(text,track),[text,track]);
+  const count=preview.reduce((a,m)=>a+m.items.length,0);
+  const sample='# Arrays\n'+
+    'Largest element in array | Easy\n'+
+    'Second largest element | Easy\n'+
+    'Longest subarray with sum K | Medium\n'+
+    'Maximum product subarray | Hard\n\n'+
+    '# Binary Search\n'+
+    'Search in rotated sorted array | Medium';
+  return (
+    <div className="scrim" onClick={onCancel}>
+      <div className="modal wide" onClick={e=>e.stopPropagation()}>
+        <h3>Import problems</h3>
+        <p>Paste your topics and problems. A line starting with <code>#</code> is a topic,
+           every other line is a problem, and anything after a <code>|</code> is the difficulty.
+           Difficulty is optional.</p>
+        <div className="fmt">{sample}</div>
+        <div className="row2">
+          <label>Track
+            <select value={track} onChange={e=>setTrack(e.target.value)}>
+              <option value="dsa">DSA</option>
+              <option value="prep">Interview prep</option>
+            </select>
+          </label>
+          <label>Mode
+            <select value={mode} onChange={e=>setMode(e.target.value)}>
+              <option value="append">Merge into existing topics</option>
+              <option value="replace">Replace everything in this track</option>
+            </select>
+          </label>
+        </div>
+        <textarea autoFocus placeholder={sample} value={text} onChange={e=>setText(e.target.value)}/>
+        <p style={{marginTop:-4}}>
+          {count===0?'Nothing parsed yet.'
+            :'Ready to import '+preview.length+' topic'+(preview.length>1?'s':'')+
+             ' and '+count+' problems.'}
+        </p>
+        <div className="modal-btns">
+          <button className="btn ghost" onClick={onCancel}>Cancel</button>
+          <button className="btn solid" disabled={!count}
+                  style={{opacity:count?1:.45,cursor:count?'pointer':'not-allowed'}}
+                  onClick={()=>{if(count)onDone(preview,track,mode)}}>
+            Import{count?' '+count:''}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BackupModal({state,onCancel,onRestore}){
+  const [text,setText]=useState('');
+  const ref=useRef(null);
+  const json=JSON.stringify(state);
+  return (
+    <div className="scrim" onClick={onCancel}>
+      <div className="modal wide" onClick={e=>e.stopPropagation()}>
+        <h3>Backup and restore</h3>
+        <p>Progress is saved in this browser only. Download or copy this to move it to another
+           device, then paste it into the lower box there.</p>
+        <textarea ref={ref} readOnly value={json} style={{minHeight:110}}
+                  onFocus={e=>e.target.select()}/>
+        <div className="modal-btns" style={{marginBottom:20}}>
+          <button className="btn ghost" onClick={()=>{
+            if(ref.current){ref.current.select();try{document.execCommand('copy')}catch(e){}}
+          }}>Copy to clipboard</button>
+          <button className="btn ghost" onClick={()=>{
+            const b=new Blob([json],{type:'application/json'});
+            const a=document.createElement('a');
+            a.href=URL.createObjectURL(b);
+            a.download='prep-tracker-'+today()+'.json';
+            a.click();
+          }}>Download file</button>
+        </div>
+        <textarea placeholder="Paste a backup here to restore it" value={text}
+                  onChange={e=>setText(e.target.value)} style={{minHeight:100}}/>
+        <div className="modal-btns">
+          <button className="btn ghost" onClick={onCancel}>Close</button>
+          <button className="btn solid" onClick={()=>{
+            let d=null;
+            try{d=JSON.parse(text)}catch(e){}
+            if(!d||!d.modules||!d.startDate){
+              alert('That is not a valid backup. Paste the whole JSON from the box above.');
+              return;
+            }
+            onRestore(d);
+          }}>Restore</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ---------- app ---------- */
+function App(){
+  const [ready,setReady]=useState(false);
+  const [startDate,setStart]=useState(today());
+  const [modules,setModules]=useState([]);
+  const [view,setView]=useState('Module');
+  const [askId,setAskId]=useState(null);
+  const [showImport,setShowImport]=useState(false);
+  const [showBackup,setShowBackup]=useState(false);
+
+  useEffect(()=>{(async()=>{
+    const s=await store.get();
+    if(s&&s.modules&&s.modules.length){setStart(s.startDate);setModules(s.modules)}
+    else{const d=today();setStart(d);setModules(buildSeed(d))}
+    setReady(true);
+  })()},[]);
+  useEffect(()=>{if(ready)store.set({startDate,modules})},[ready,startDate,modules]);
+
+  const patch=useCallback((modId,fn)=>
+    setModules(ms=>ms.map(m=>m.id!==modId?m:fn(m))),[]);
+
+  const setStatus=useCallback((modId,itemId,status)=>patch(modId,m=>({...m,
+    items:m.items.map(i=>i.id!==itemId?i:{...i,status,doneAt:status==='done'?today():null})})),[patch]);
+
+  const cycle=useCallback((modId,itemId)=>patch(modId,m=>({...m,
+    items:m.items.map(i=>{
+      if(i.id!==itemId)return i;
+      const n=i.status==='backlog'?'progress':i.status==='progress'?'done':'backlog';
+      return {...i,status:n,doneAt:n==='done'?today():null};
+    })})),[patch]);
+
+  const toggleRevise=useCallback((modId,itemId)=>patch(modId,m=>({...m,
+    items:m.items.map(i=>i.id!==itemId?i:{...i,revise:!i.revise})})),[patch]);
+
+  const addItem=useCallback((modId,title,diff)=>patch(modId,m=>({...m,
+    items:m.items.concat([mkItem(title,diff)])})),[patch]);
+
+  const delItem=useCallback((modId,itemId)=>patch(modId,m=>({...m,
+    items:m.items.filter(i=>i.id!==itemId)})),[patch]);
+
+  const changeDays=useCallback((modId,delta)=>setModules(ms=>reflow(
+    ms.map(m=>m.id!==modId?m:{...m,extra:Math.max(1-m.days,m.extra+delta)}),startDate)),[startDate]);
+
+  const doImport=(parsed,track,mode)=>{
+    setModules(ms=>{
+      const base = mode==='replace' ? ms.filter(m=>m.track!==track) : ms.slice();
+      const merged=base.map(m=>({...m,items:m.items.slice()}));
+      parsed.forEach(p=>{
+        const hit = mode==='append'
+          ? merged.find(m=>m.track===track&&m.name.toLowerCase()===p.name.toLowerCase())
+          : null;
+        if(hit){
+          const have={};
+          hit.items.forEach(i=>{have[i.title.toLowerCase()]=1});
+          hit.items=hit.items.concat(p.items.filter(i=>!have[i.title.toLowerCase()]));
+          hit.days=Math.max(hit.days,Math.ceil(hit.items.length/2));
+        } else {
+          merged.push(p);
+        }
+      });
+      return reflow(merged,startDate);
+    });
+    setShowImport(false);
+  };
+
+  const stats=useMemo(()=>{
+    const items=modules.reduce((a,m)=>a.concat(m.items),[]);
+    const done=items.filter(i=>i.status==='done').length;
+    const total=items.length;
+    const diff={Easy:{done:0,total:0},Medium:{done:0,total:0},Hard:{done:0,total:0}};
+    items.forEach(i=>{
+      if(i.difficulty&&diff[i.difficulty]){
+        diff[i.difficulty].total++;
+        if(i.status==='done')diff[i.difficulty].done++;
+      }});
+    const dates={};
+    items.forEach(i=>{if(i.doneAt)dates[i.doneAt]=1});
+    let streak=0,cur=today();
+    if(!dates[cur])cur=addDays(cur,-1);
+    while(dates[cur]){streak++;cur=addDays(cur,-1)}
+    const ends=modules.map(modEnd).sort();
+    const endDate=ends.length?ends[ends.length-1]:startDate;
+    return {done,total,pct:total?Math.round(done/total*100):0,points:done*20,diff,streak,
+      flagged:items.filter(i=>i.revise).length,
+      dayNum:Math.max(1,between(startDate,today())+1),
+      totalDays:Math.max(1,between(startDate,endDate)+1),endDate};
+  },[modules,startDate]);
+
+  if(!ready)return <div className="wrap" style={{color:'var(--text-dim)'}}>Loading your plan…</div>;
+
+  return (
+    <>
+      <Header view={view} setView={setView} stats={stats}
+              onImport={()=>setShowImport(true)} onBackup={()=>setShowBackup(true)}/>
+      <div className="wrap">
+        {view==='Module'&&<ModuleView modules={modules} cycle={cycle} toggleRevise={toggleRevise}
+          addItem={addItem} delItem={delItem} changeDays={changeDays} askDays={setAskId}/>}
+        {view==='Kanban Flow'&&<BoardView modules={modules} setStatus={setStatus}/>}
+        {view==='Calendar'&&<CalendarView modules={modules} startDate={startDate}/>}
+        <div className="footer-note">
+          <span>Plan started {fLong(startDate)}</span>
+          <span>{modules.length} topics · {stats.total} problems</span>
+          <button className="linkish" onClick={()=>{
+            const d=prompt('Start date (YYYY-MM-DD)',startDate);
+            if(d&&/^\d{4}-\d{2}-\d{2}$/.test(d)){setStart(d);setModules(ms=>reflow(ms,d))}
+          }}>Change start date</button>
+          <button className="linkish" onClick={()=>{
+            if(confirm('Erase all topics and progress, and rebuild the starter plan from today?')){
+              const d=today();setStart(d);setModules(buildSeed(d));
+            }}}>Reset everything</button>
+        </div>
+      </div>
+      {askId&&<AddDays onCancel={()=>setAskId(null)}
+                       onAdd={n=>{changeDays(askId,n);setAskId(null)}}/>}
+      {showImport&&<ImportModal onCancel={()=>setShowImport(false)} onDone={doImport}/>}
+      {showBackup&&<BackupModal state={{startDate,modules}} onCancel={()=>setShowBackup(false)}
+                     onRestore={d=>{setStart(d.startDate);setModules(d.modules);setShowBackup(false)}}/>}
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
