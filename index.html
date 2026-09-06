@@ -15,7 +15,7 @@
     --dsa:#F0883E; --dsa-soft:#3B2716;
     --prep:#3FB6A8; --prep-soft:#143029;
     --done:#4BA574; --miss:#C9524E;
-    --easy:#5BBF7F; --med:#E0A040; --hard:#DD6560;
+    --easy:#5BBF7F; --med:#E0A040; --hard:#DD6560; --plain:#6B7C93;
     --radius:10px;
   }
   *{box-sizing:border-box}
@@ -47,15 +47,11 @@
   .goal{display:flex;align-items:center;gap:10px}
   .goal-medal{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;
               border:2px solid #C9942F;background:#2A2113;font-size:18px}
-  .pts{display:flex;align-items:center;gap:7px;background:var(--surface-2);
-       border:1px solid var(--line);padding:5px 11px;border-radius:99px;font-weight:600;font-size:13px}
-  .pts .coin{width:15px;height:15px;border-radius:50%;background:linear-gradient(140deg,#F5C242,#C9942F)}
-  .diffbar{display:flex;gap:16px;max-width:1240px;margin:0 auto;padding:9px 20px 0;flex-wrap:wrap}
-  .diffstat{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim)}
-  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-  .dot.Easy{background:var(--easy)} .dot.Medium{background:var(--med)} .dot.Hard{background:var(--hard)}
+  .streak{display:flex;align-items:center;gap:7px;background:var(--surface-2);
+          border:1px solid var(--line);padding:6px 13px;border-radius:99px;font-size:12.5px;
+          color:var(--text-dim)}
 
-  .tabs{max-width:1240px;margin:0 auto;padding:6px 20px 0;display:flex;gap:4px;align-items:center}
+  .tabs{max-width:1240px;margin:0 auto;padding:10px 20px 0;display:flex;gap:4px;align-items:center}
   .tab{padding:11px 18px;font-size:13.5px;font-weight:500;color:var(--text-dim);
        border-bottom:2px solid transparent;margin-bottom:-1px}
   .tab:hover{color:var(--text)}
@@ -68,64 +64,129 @@
   .wrap{max-width:1240px;margin:0 auto;padding:22px 20px 80px}
 
   .today{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-         padding:14px 16px;margin-bottom:20px}
+         padding:14px 16px;margin-bottom:18px}
   .today-label{font-size:11.5px;color:var(--text-faint);margin-bottom:3px}
+  .today-topics{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+  .today-topic-btn{font-family:Sora,sans-serif;font-weight:600;font-size:15px;color:var(--text);
+    text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--text-faint)}
+  .today-topic-btn:hover{text-decoration-color:var(--dsa);color:var(--dsa)}
+  .today-sep{color:var(--text-faint)}
   .today-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
   .chip{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);
         background:var(--surface-2);color:var(--text-dim)}
   .chip.dsa{border-color:#5A3A1C;color:#E5A268;background:var(--dsa-soft)}
   .chip.prep{border-color:#1F4C45;color:#63C9BC;background:var(--prep-soft)}
+  .chip:hover{border-color:var(--dsa);color:var(--text)}
 
-  .filters{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
   .fbtn{font-size:12.5px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);
         color:var(--text-dim)}
   .fbtn.on{background:var(--surface-3);color:var(--text);border-color:var(--text-faint)}
   .search{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;
-          padding:6px 11px;color:var(--text);font-size:13px;min-width:190px}
+          padding:6px 11px;color:var(--text);font-size:13px;min-width:200px;margin-left:auto}
   .search::placeholder{color:var(--text-faint)}
 
-  .mod{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius);
-       margin-bottom:9px;overflow:hidden}
+  /* section (level 1) */
+  .sec{margin-bottom:14px;border:1px solid var(--line-soft);border-radius:var(--radius);
+       overflow:hidden;background:var(--surface);scroll-margin-top:150px}
+  .sec.open{border-color:var(--line)}
+  .sec-head{display:flex;align-items:center;gap:13px;padding:15px 17px;width:100%;text-align:left}
+  .sec-head:hover{background:var(--surface-2)}
+  .sec-bar{width:4px;align-self:stretch;border-radius:99px;flex:none;min-height:26px}
+  .sec-bar.dsa{background:var(--dsa)} .sec-bar.prep{background:var(--prep)}
+  .sec-name{flex:1;font-family:Sora,sans-serif;font-weight:600;font-size:15.5px}
+  .sec-meta{display:flex;align-items:center;gap:13px;color:var(--text-dim);font-size:12.5px;
+            white-space:nowrap}
+  .sec-track{width:110px;height:6px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+  .sec-body{border-top:1px solid var(--line-soft);padding:8px 10px 10px}
+
+  /* topic (level 2) */
+  .mod{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:8px;
+       margin-bottom:7px;overflow:hidden;scroll-margin-top:150px;
+       transition:box-shadow .3s ease,border-color .3s ease}
   .mod:hover,.mod.open{border-color:var(--line)}
-  .mod-head{display:flex;align-items:center;gap:12px;padding:13px 16px}
-  .ringlet{width:17px;height:17px;border-radius:50%;flex:none;border:2px solid var(--line);
+  .mod.flash{border-color:var(--dsa);box-shadow:0 0 0 3px rgba(240,136,62,.3)}
+  .mod-head{display:flex;align-items:center;gap:11px;padding:11px 14px}
+  .ringlet{width:16px;height:16px;border-radius:50%;flex:none;border:2px solid var(--line);
            display:grid;place-items:center;font-size:9px;color:var(--ink)}
   .ringlet.part{border-color:var(--dsa)}
   .ringlet.full{background:var(--done);border-color:var(--done)}
-  .mod-name{flex:1;font-size:14.5px;font-weight:500;font-family:Sora,sans-serif;text-align:left}
-  .mod-count{color:var(--text-faint);font-weight:400;font-size:13px;margin-left:6px}
-  .track-tag{font-size:10.5px;padding:2px 7px;border-radius:4px;margin-left:9px}
-  .track-tag.dsa{background:var(--dsa-soft);color:#E5A268}
-  .track-tag.prep{background:var(--prep-soft);color:#63C9BC}
-  .mod-dates{display:flex;align-items:center;gap:9px;color:var(--text-dim);
-             font-size:12.5px;white-space:nowrap}
-  .step{width:22px;height:22px;border-radius:50%;border:1px solid var(--line);
-        display:grid;place-items:center;color:var(--text-dim);font-size:14px;line-height:1}
+  .mod-name{flex:1;font-size:13.5px;font-weight:500;text-align:left}
+  .mod-count{color:var(--text-faint);font-weight:400;font-size:12.5px;margin-left:6px}
+  .mod-dates{display:flex;align-items:center;gap:8px;color:var(--text-dim);
+             font-size:12px;white-space:nowrap}
+  .step{width:21px;height:21px;border-radius:50%;border:1px solid var(--line);
+        display:grid;place-items:center;color:var(--text-dim);font-size:13px;line-height:1}
   .step:hover{background:var(--surface-3);color:var(--text)}
-  .caret{color:var(--text-faint);transition:transform .2s;font-size:11px}
+  .caret{color:var(--text-faint);transition:transform .2s;font-size:10px}
   .caret.up{transform:rotate(180deg)}
-  .mod-body{border-top:1px solid var(--line-soft);padding:5px 0}
-  .item{display:flex;align-items:center;gap:11px;padding:8px 16px 8px 36px}
-  .item:hover{background:var(--surface-2)}
-  .box{width:17px;height:17px;border-radius:5px;border:1.5px solid var(--line);flex:none;
-       display:grid;place-items:center;font-size:11px;color:var(--ink)}
+  .mod-body{border-top:1px solid var(--line-soft);padding:4px 0}
+
+  /* problem (level 3) */
+  .item{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 34px;
+        scroll-margin-top:150px;border-radius:6px;
+        transition:box-shadow .3s ease,background .3s ease}
+  .item:hover{background:var(--surface-3)}
+  .item.flash{box-shadow:0 0 0 2px var(--dsa) inset;background:var(--surface-3)}
+  .box{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line);flex:none;
+       display:grid;place-items:center;font-size:10px;color:var(--ink)}
   .box.done{background:var(--done);border-color:var(--done)}
   .box.prog{border-color:var(--dsa)}
-  .box.prog::after{content:'';width:7px;height:7px;border-radius:2px;background:var(--dsa)}
-  .item-title{flex:1;font-size:13.5px}
+  .box.prog::after{content:'';width:6px;height:6px;border-radius:2px;background:var(--dsa)}
+  .item-title{flex:1;font-size:13px}
   .item.is-done .item-title{color:var(--text-faint);text-decoration:line-through}
+  .item-due{font-size:10.5px;color:var(--text-faint);flex:none}
   .diff{font-size:10.5px;padding:2px 8px;border-radius:4px;flex:none;font-weight:500}
   .diff.Easy{background:#183025;color:var(--easy)}
   .diff.Medium{background:#33280F;color:var(--med)}
   .diff.Hard{background:#331A1A;color:var(--hard)}
-  .icon{font-size:13px;color:var(--text-faint);flex:none;width:20px}
-  .icon:hover{color:var(--text)}
-  .icon.on{color:var(--med)}
-  .addrow{display:flex;gap:8px;padding:9px 16px 12px 36px}
-  .addrow input{flex:1;background:var(--surface-2);border:1px solid var(--line);
+  .icon{font-size:15px;color:var(--text-faint);flex:none;width:20px;line-height:1}
+  .icon:hover{color:var(--miss)}
+  .addrow{display:flex;gap:8px;padding:8px 14px 11px 34px}
+  .addrow input{flex:1;background:var(--surface-3);border:1px solid var(--line);
                 border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px}
-  .addrow select{background:var(--surface-2);border:1px solid var(--line);border-radius:6px;
+  .addrow select{background:var(--surface-3);border:1px solid var(--line);border-radius:6px;
                  padding:6px 8px;color:var(--text);font-size:13px}
+
+  /* progress */
+  .prog-top{display:grid;grid-template-columns:auto 1fr;gap:28px;
+            background:var(--surface);border:1px solid var(--line);
+            border-radius:var(--radius);padding:24px 26px;margin-bottom:18px;align-items:center}
+  .donut{position:relative;width:190px;height:190px;flex:none}
+  .donut svg{transform:rotate(-90deg)}
+  .donut-mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .donut-mid .n{font-family:Sora,sans-serif;font-size:34px;font-weight:700;line-height:1.05}
+  .donut-mid .of{font-size:12.5px;color:var(--text-faint)}
+  .donut-mid .lab{font-size:11px;color:var(--text-faint);margin-top:5px}
+  .bars{display:flex;flex-direction:column;gap:15px;min-width:0}
+  .bar-row{display:flex;flex-direction:column;gap:6px}
+  .bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px}
+  .bar-name{color:var(--text-dim);display:flex;align-items:center;gap:7px}
+  .bar-track{height:7px;border-radius:99px;background:var(--surface-3);overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+             gap:11px;margin-bottom:18px}
+  .stat{background:var(--surface);border:1px solid var(--line-soft);
+        border-radius:var(--radius);padding:15px 17px}
+  .stat .v{font-family:Sora,sans-serif;font-size:23px;font-weight:700;line-height:1.15}
+  .stat .k{font-size:12px;color:var(--text-faint);margin-top:3px}
+
+  .topic-list{background:var(--surface);border:1px solid var(--line-soft);
+              border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
+  .topic-head{padding:13px 18px;border-bottom:1px solid var(--line-soft);
+              font-family:Sora,sans-serif;font-weight:600;font-size:14px;
+              display:flex;align-items:center;gap:11px}
+  .topic-row{display:flex;align-items:center;gap:14px;padding:10px 18px;
+             border-bottom:1px solid var(--line-soft)}
+  .topic-row:last-child{border-bottom:none}
+  .topic-row:hover{background:var(--surface-2)}
+  .topic-name{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;
+              white-space:nowrap;color:var(--text-dim)}
+  .topic-bar{width:150px;height:6px;border-radius:99px;background:var(--surface-3);
+             overflow:hidden;flex:none}
+  .topic-n{width:58px;text-align:right;font-size:12.5px;color:var(--text-dim);flex:none}
 
   .kan{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
   .col{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius)}
@@ -133,6 +194,8 @@
             font-family:Sora,sans-serif;font-weight:600;font-size:13.5px;border-radius:9px 9px 0 0}
   .col-head .n{background:rgba(0,0,0,.28);border-radius:99px;padding:1px 9px;
                font-size:12px;font-weight:500}
+  .col-sub{padding:10px 15px 11px;font-size:11.5px;color:var(--text-faint);
+           border-bottom:1px solid var(--line-soft)}
   .col.backlog .col-head{background:#3A2A1C;color:#E0B183}
   .col.progress .col-head{background:#1B3A5C;color:#95C6F0}
   .col.done .col-head{background:#1D3F2E;color:#84D2A6}
@@ -163,7 +226,8 @@
         border-radius:var(--radius);overflow:hidden}
   .dow{padding:9px 10px;font-size:11.5px;color:var(--text-faint);background:var(--surface);
        border-bottom:1px solid var(--line-soft)}
-  .cell{min-height:104px;padding:8px;border-right:1px solid var(--line-soft);
+  .cell{min-height:104px;min-width:0;overflow:hidden;padding:8px;
+        border-right:1px solid var(--line-soft);
         border-bottom:1px solid var(--line-soft);background:var(--surface)}
   .cell.blank{background:var(--ink)}
   .cell.today-cell{background:var(--surface-2)}
@@ -174,7 +238,8 @@
   .daynum.miss{background:var(--miss);color:#22090A}
   .daynum.now{border:1.5px solid var(--dsa);color:var(--dsa)}
   .dayidx{font-size:10.5px;color:var(--text-faint)}
-  .tag{font-size:10.5px;padding:2.5px 7px;border-radius:4px;margin-bottom:3px;
+  .tag{display:block;width:100%;max-width:100%;box-sizing:border-box;
+       font-size:10.5px;padding:2.5px 7px;border-radius:4px;margin-bottom:3px;
        white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .tag.dsa{background:var(--dsa-soft);color:#E5A268}
   .tag.prep{background:var(--prep-soft);color:#63C9BC}
@@ -184,14 +249,14 @@
          display:grid;place-items:center;padding:20px;overflow-y:auto}
   .modal{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
          padding:26px;width:100%;max-width:400px;text-align:center}
-  .modal.wide{max-width:660px;text-align:left}
+  .modal.wide{max-width:680px;text-align:left}
   .modal h3{font-size:19px;margin-bottom:7px}
   .modal p{color:var(--text-dim);margin:0 0 16px;font-size:13.5px}
   .modal input[type=number],.modal textarea,.modal select{
     width:100%;padding:11px 13px;border-radius:8px;background:#141C27;
     border:1px solid #33465C;color:var(--text);font-size:14px;margin-bottom:14px}
   .modal textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
-                  min-height:210px;resize:vertical;line-height:1.65}
+                  min-height:200px;resize:vertical;line-height:1.65}
   .modal input::placeholder,.modal textarea::placeholder{color:var(--text-faint)}
   .modal-btns{display:flex;gap:11px}
   .btn{flex:1;padding:11px;border-radius:8px;font-weight:600;font-size:14px}
@@ -211,10 +276,15 @@
   .linkish{color:var(--text-dim);text-decoration:underline;text-underline-offset:2px}
   .linkish:hover{color:var(--text)}
 
-  @media (max-width:900px){ .kan{grid-template-columns:1fr} .cell{min-height:78px} }
+  @media (max-width:900px){
+    .kan{grid-template-columns:1fr} .cell{min-height:78px}
+    .prog-top{grid-template-columns:1fr;justify-items:center;gap:22px} .bars{width:100%}
+    .sec-track{display:none}
+  }
   @media (max-width:560px){
     .cell{min-height:60px;padding:5px} .tag,.cnt{display:none}
-    .goal{display:none} .mod-dates .num{font-size:11px}
+    .goal{display:none} .mod-dates .num{font-size:11px} .topic-bar{width:80px}
+    .item-due{display:none}
   }
   @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
 </style>
@@ -222,700 +292,1503 @@
 <body>
 <div id="root"></div>
 
-<script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-<script type="text/babel" data-presets="react">
-const {useState,useEffect,useMemo,useCallback,useRef} = React;
+<script>
+if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+  document.getElementById('root').innerHTML =
+    '<div style="max-width:640px;margin:80px auto;padding:24px;border:1px solid #2A3644;' +
+    'border-radius:10px;background:#151B24;font-family:Inter,system-ui,sans-serif">' +
+    '<h2 style="font-family:Sora,sans-serif;margin:0 0 10px">React did not load</h2>' +
+    '<p style="color:#8E9AAC;line-height:1.6">This page pulls React from unpkg.com. ' +
+    'Check that you are online and that no ad blocker or network filter is blocking ' +
+    'unpkg.com, then reload.</p></div>';
+}
+</script>
+
+<script>
+try {
+const {
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+  useRef
+} = React;
 
 /* ---------- storage ---------- */
-const KEY='prep-tracker-v2';
-const store={
-  async get(){
-    if(window.storage){ try{const r=await window.storage.get(KEY);return r?JSON.parse(r.value):null}catch(e){} }
-    try{const v=localStorage.getItem(KEY);return v?JSON.parse(v):null}catch(e){return null}
+const KEY = 'prep-tracker-v3';
+const store = {
+  async get() {
+    if (window.storage) {
+      try {
+        const r = await window.storage.get(KEY);
+        return r ? JSON.parse(r.value) : null;
+      } catch (e) {}
+    }
+    try {
+      const v = localStorage.getItem(KEY);
+      return v ? JSON.parse(v) : null;
+    } catch (e) {
+      return null;
+    }
   },
-  async set(d){
-    const s=JSON.stringify(d);
-    if(window.storage){ try{await window.storage.set(KEY,s);return}catch(e){} }
-    try{localStorage.setItem(KEY,s)}catch(e){}
+  async set(d) {
+    const s = JSON.stringify(d);
+    if (window.storage) {
+      try {
+        await window.storage.set(KEY, s);
+        return;
+      } catch (e) {}
+    }
+    try {
+      localStorage.setItem(KEY, s);
+    } catch (e) {}
   }
 };
 
 /* ---------- dates ---------- */
-const iso=d=>{const z=new Date(d.getTime()-d.getTimezoneOffset()*6e4);return z.toISOString().slice(0,10)};
-const parse=s=>{const[y,m,d]=s.split('-').map(Number);return new Date(y,m-1,d)};
-const addDays=(s,n)=>{const d=parse(s);d.setDate(d.getDate()+n);return iso(d)};
-const between=(a,b)=>Math.round((parse(b)-parse(a))/864e5);
-const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const fShort=s=>{const d=parse(s);return String(d.getDate()).padStart(2,'0')+' '+MON[d.getMonth()]};
-const fLong=s=>{const d=parse(s);return d.getDate()+' '+MON[d.getMonth()]+' '+d.getFullYear()};
-const today=()=>iso(new Date());
-const uid=()=>Math.random().toString(36).slice(2,10);
-
-/* ---------- starter plan ---------- */
-const SEED=[
- {track:'dsa',name:'Learn the basics',days:8,items:[
-  ['Language setup & I/O','Easy'],['Patterns','Easy'],['Basic maths','Easy'],
-  ['Recursion basics','Easy'],['Hashing basics','Easy'],['Time & space complexity','Easy']]},
- {track:'dsa',name:'Sorting techniques',days:4,items:[
-  ['Selection sort','Easy'],['Bubble sort','Easy'],['Insertion sort','Easy'],
-  ['Merge sort','Medium'],['Quick sort','Medium']]},
- {track:'dsa',name:'Arrays',days:12,items:[
-  ['Easy set','Easy'],['Medium set','Medium'],['Kadane & variants','Medium'],
-  ['Two-sum family','Medium'],['Matrix problems','Medium'],['Merge intervals','Medium'],
-  ['Hard set','Hard']]},
- {track:'dsa',name:'Binary search',days:8,items:[
-  ['On 1D arrays','Easy'],['Answer-space search','Medium'],['On 2D matrices','Medium'],
-  ['Rotated arrays','Medium'],['Hard set','Hard']]},
- {track:'dsa',name:'Strings',days:5,items:[
-  ['Easy set','Easy'],['Medium set','Medium'],['Anagram & frequency','Medium']]},
- {track:'dsa',name:'Linked list',days:8,items:[
-  ['Singly LL basics','Easy'],['Doubly LL','Easy'],['Reversal patterns','Medium'],
-  ['Cycle detection','Medium'],['Hard set','Hard']]},
- {track:'dsa',name:'Recursion & backtracking',days:9,items:[
-  ['Recursion patterns','Easy'],['Subsequences','Medium'],['Subsets & permutations','Medium'],
-  ['N-Queens family','Hard'],['Sudoku / grid backtracking','Hard']]},
- {track:'dsa',name:'Bit manipulation',days:3,items:[
-  ['Bit basics','Easy'],['XOR patterns','Medium'],['Interview problems','Medium']]},
- {track:'dsa',name:'Stack & queue',days:7,items:[
-  ['Implementation','Easy'],['Monotonic stack','Medium'],['Next greater family','Medium'],
-  ['Histogram problems','Hard']]},
- {track:'dsa',name:'Sliding window & two pointer',days:6,items:[
-  ['Fixed window','Easy'],['Variable window','Medium'],['Two pointer set','Medium'],['Hard set','Hard']]},
- {track:'dsa',name:'Heaps',days:5,items:[
-  ['Heap basics','Easy'],['Top-K patterns','Medium'],['Median from stream','Hard']]},
- {track:'dsa',name:'Greedy algorithms',days:5,items:[
-  ['Easy set','Easy'],['Interval scheduling','Medium'],['Hard set','Hard']]},
- {track:'dsa',name:'Binary trees',days:10,items:[
-  ['Traversals','Easy'],['Views & boundary','Medium'],['LCA family','Medium'],
-  ['Path problems','Medium'],['Construction','Hard']]},
- {track:'dsa',name:'Binary search trees',days:6,items:[
-  ['BST basics','Easy'],['Insert / delete','Medium'],['Validate & inorder','Medium'],['Hard set','Hard']]},
- {track:'dsa',name:'Graphs',days:14,items:[
-  ['BFS / DFS','Easy'],['Cycle detection','Medium'],['Topological sort','Medium'],
-  ['Dijkstra','Medium'],['Bellman-Ford & Floyd','Hard'],['MST — Prim & Kruskal','Hard'],
-  ['Disjoint set union','Hard']]},
- {track:'dsa',name:'Dynamic programming',days:16,items:[
-  ['1D DP','Easy'],['2D / grid DP','Medium'],['DP on subsequences','Medium'],
-  ['Knapsack family','Medium'],['DP on strings','Hard'],['DP on stocks','Medium'],
-  ['DP on LIS','Hard'],['Partition DP','Hard'],['DP on trees','Hard']]},
- {track:'dsa',name:'Tries',days:3,items:[
-  ['Trie implementation','Medium'],['Prefix problems','Medium'],['Hard set','Hard']]},
-
- {track:'prep',name:'JavaScript fundamentals',days:7,items:[
-  ['Closures & scope',null],['this binding — all four rules',null],['Prototype chain',null],
-  ['Event loop: microtask vs macrotask',null],['Promises: all / race / allSettled',null],
-  ['Type coercion & falsy values',null],['Implement debounce & throttle',null],
-  ['Memory leaks in listeners',null]]},
- {track:'prep',name:'TypeScript',days:8,items:[
-  ['Generics',null],['Utility types',null],['Discriminated unions',null],['Strict mode',null],
-  ['Typing React props & hooks',null],['Convert a project file to strict TS',null]]},
- {track:'prep',name:'React & Next.js',days:14,items:[
-  ['Reconciliation & keys',null],['What triggers a re-render',null],
-  ['memo / useMemo / useCallback — and when not to',null],['State, props, lifting, prop drilling',null],
-  ['App Router',null],['Server vs Client Components',null],['SSR / SSG / ISR trade-offs',null],
-  ['Caching & revalidation',null],['Build a multi-step form with async validation',null]]},
- {track:'prep',name:'OOP & design',days:7,items:[
-  ['Four pillars with real examples',null],['Composition over inheritance',null],
-  ['SOLID applied to a design prompt',null],['Anti-patterns: God object, tight coupling',null],
-  ['Prototypal vs classical inheritance in JS',null],['One pattern you have actually shipped',null]]},
- {track:'prep',name:'Node.js backend',days:9,items:[
-  ['REST API design',null],['Auth: JWT vs session',null],['Middleware patterns',null],
-  ['Error handling',null],['Rate limiting',null],['REST vs GraphQL — argue the trade-off',null],
-  ['Review your own auth & booking code',null]]},
- {track:'prep',name:'Postgres',days:8,items:[
-  ['Indexing strategy',null],['EXPLAIN ANALYZE',null],['Normalization trade-offs',null],
-  ['Transactions & isolation levels',null],['Query optimization',null],['Spotting N+1',null]]},
- {track:'prep',name:'Testing',days:6,items:[
-  ['Unit vs integration vs E2E',null],['Jest / Vitest',null],['React Testing Library',null],
-  ['Playwright basics',null],['What to test and what not to',null]]},
- {track:'prep',name:'Security',days:5,items:[
-  ['XSS',null],['CSRF',null],['SQL injection',null],['JWT storage trade-offs',null],
-  ['CORS',null],['Secrets & dependency risk',null]]},
- {track:'prep',name:'System design',days:12,items:[
-  ['Requirements → design → deep dive → trade-offs',null],['Caching strategies',null],
-  ['Database scaling',null],['Rate limiting & queues',null],['Write up project one end to end',null],
-  ['Write up project two end to end',null],['Explain out loud, timed',null]]},
- {track:'prep',name:'AI-assisted code review',days:4,items:[
-  ['Spot unparameterized inputs',null],['Spot missing error handling',null],
-  ['Explain your own repo history unassisted',null],['Prompt-to-verify workflow',null]]},
- {track:'prep',name:'Resume & portfolio',days:5,items:[
-  ['Rewrite bullets around master-list skills',null],['Quantify impact',null],
-  ['Clean up GitHub READMEs',null],['Make deployed demos presentable',null]]},
- {track:'prep',name:'Applications & mocks',days:21,items:[
-  ['Toptal / Turing vetting',null],['Wellfound & Arc.dev profiles',null],
-  ['We Work Remotely applications',null],['Timed DSA mock 1',null],['Timed DSA mock 2',null],
-  ['Timed DSA mock 3',null],['System design mock 1',null],['System design mock 2',null],
-  ['Behavioral: failure & prevention story',null]]},
+const iso = d => {
+  const z = new Date(d.getTime() - d.getTimezoneOffset() * 6e4);
+  return z.toISOString().slice(0, 10);
+};
+const parse = s => {
+  const p = s.split('-').map(Number);
+  return new Date(p[0], p[1] - 1, p[2]);
+};
+const addDays = (s, n) => {
+  const d = parse(s);
+  d.setDate(d.getDate() + n);
+  return iso(d);
+};
+const between = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const fShort = s => {
+  const d = parse(s);
+  return String(d.getDate()).padStart(2, '0') + ' ' + MON[d.getMonth()];
+};
+const fLong = s => {
+  const d = parse(s);
+  return d.getDate() + ' ' + MON[d.getMonth()] + ' ' + d.getFullYear();
+};
+const today = () => iso(new Date());
+const uid = () => Math.random().toString(36).slice(2, 10);
+const A2Z=[
+ {t:'dsa',s:'Learn the basics',n:'Things to Know in C++/Java/Python or any language',d:3,i:[['Input Output','Easy'],['Cpp Basics','Easy'],['If ElseIf','Easy'],['Switch Case','Easy'],['What are arrays, strings?','Easy'],['For loops','Easy'],['While loops','Easy'],['Functions (Pass by Reference and Value)','Easy'],['Theory with examples','Easy']]},
+ {t:'dsa',s:'Learn the basics',n:'Build-up Logical Thinking',d:1,i:[['Easy and Medium','Easy']]},
+ {t:'dsa',s:'Learn the basics',n:'Patterns',d:7,i:[['Pattern 1','Easy'],['Pattern 2','Easy'],['Pattern 3','Easy'],['Pattern 4','Easy'],['Pattern 5','Easy'],['Pattern 6','Easy'],['Pattern 7','Easy'],['Pattern 8','Easy'],['Pattern 9','Easy'],['Pattern 10','Easy'],['Pattern 11','Easy'],['Pattern 12','Easy'],['Pattern 13','Easy'],['Pattern 14','Easy'],['Pattern 15','Easy'],['Pattern 16','Easy'],['Pattern 17','Easy'],['Pattern 18','Easy'],['Pattern 19','Easy'],['Pattern 20','Medium'],['Pattern 21','Medium'],['Pattern 22','Medium']]},
+ {t:'dsa',s:'Learn the basics',n:'Learn STL/Java-Collections or similar thing in your language',d:1,i:[['STL','Easy'],['Java Collections','Easy']]},
+ {t:'dsa',s:'Learn the basics',n:'Know Basic Maths',d:2,i:[['Count all Digits of a Number','Easy'],['Reverse a number','Easy'],['Palindrome Number','Easy'],['GCD of Two Numbers','Easy'],['Check if the Number is Armstrong','Easy'],['Print all Divisors','Easy'],['Check for Prime Number','Easy']]},
+ {t:'dsa',s:'Learn the basics',n:'Learn Basic Recursion',d:3,i:[['Understand recursion by print something N times','Easy'],['Print name N times using recursion','Easy'],['Print 1 to N using Recursion','Easy'],['Print N to 1 using Recursion','Easy'],['Sum of First N Numbers','Easy'],['Factorial of a given number','Easy'],['Reverse an array','Easy'],['Check if String is Palindrome or Not','Easy'],['Fibonacci Number','Easy']]},
+ {t:'dsa',s:'Learn the basics',n:'Learn Basic Hashing',d:1,i:[['Basic Hashing','Easy'],['Counting Frequencies of Array Elements','Easy'],['Highest Occurring Element in an Array','Easy']]},
+ {t:'dsa',s:'Learn Important Sorting Techniques',n:'Sorting-I',d:1,i:[['Selection Sort','Easy'],['Bubble Sort','Easy'],['Insertion Sorting','Easy']]},
+ {t:'dsa',s:'Learn Important Sorting Techniques',n:'Sorting-II',d:2,i:[['Merge Sorting','Medium'],['Recursive Bubble Sort','Easy'],['Recursive Insertion Sort','Easy'],['Quick Sorting','Easy']]},
+ {t:'dsa',s:'Solve Problems on Arrays [Easy -> Medium -> Hard]',n:'Solve Problems on Arrays [Easy -> Medium -> Hard]',d:18,i:[['Largest Element','Easy'],['Second Largest Element','Easy'],['Check if the Array is Sorted II','Easy'],['Remove duplicates from Sorted array','Easy'],['Left Rotate Array by One','Easy'],['Left Rotate Array by K Places','Easy'],['Move Zeros to End','Easy'],['Linear Search','Easy'],['Union of two sorted arrays','Easy'],['Find missing number','Easy'],['Maximum Consecutive Ones','Easy'],['Find the number that appears once, and other numbers twice.','Medium'],['Longest subarray with given sum K(positives)','Medium'],['Longest subarray with sum K','Medium'],['Two Sum','Easy'],['Sort an array of 0\'s 1\'s and 2\'s','Medium'],['Majority Element-I','Easy'],['Kadane\'s Algorithm','Medium'],['Print subarray with maximum subarray sum (extended version of above problem)','Medium'],['Stock Buy and Sell','Medium'],['Rearrange array elements by sign','Medium'],['Next Permutation','Medium'],['Leaders in an Array','Medium'],['Longest Consecutive Sequence in an Array','Medium'],['Set Matrix Zeroes','Medium'],['Rotate matrix by 90 degrees','Medium'],['Print the matrix in spiral manner','Medium'],['Count subarrays with given sum','Medium'],['Pascal\'s Triangle I','Easy'],['Majority Element-II','Hard'],['3 Sum','Medium'],['4 Sum','Medium'],['Largest Subarray with Sum 0','Medium'],['Count subarrays with given xor K','Hard'],['Merge Overlapping Subintervals','Medium'],['Merge two sorted arrays without extra space','Medium'],['Find the repeating and missing number','Hard'],['Count Inversions','Hard'],['Reverse Pairs','Hard'],['Maximum Product Subarray in an Array','Hard']]},
+ {t:'dsa',s:'Binary Search [1D, 2D Arrays, Search Space]',n:'BS on 1D Arrays',d:5,i:[['Search X in sorted array','Easy'],['Lower Bound','Easy'],['Upper Bound','Easy'],['Search insert position','Easy'],['Floor and Ceil in Sorted Array','Easy'],['First and last occurrence','Easy'],['Count Occurrences in a Sorted Array','Easy'],['Search in rotated sorted array-I','Medium'],['Search in rotated sorted array-II','Medium'],['Find minimum in Rotated Sorted Array','Easy'],['Find out how many times the array is rotated','Easy'],['Single element in a Sorted Array','Medium'],['Find peak element','Medium']]},
+ {t:'dsa',s:'Binary Search [1D, 2D Arrays, Search Space]',n:'BS on Answers',d:9,i:[['Find square root of a number','Medium'],['Find Nth root of a number','Medium'],['Koko eating bananas','Medium'],['Minimum days to make M bouquets','Medium'],['Find the smallest divisor','Medium'],['Capacity to Ship Packages Within D Days','Medium'],['Kth Missing Positive Number','Medium'],['Aggressive Cows','Hard'],['Book Allocation Problem','Hard'],['Split array - largest sum','Hard'],['Painter\'s Partition','Medium'],['Minimize Max Distance to Gas Station','Hard'],['Median of 2 sorted arrays','Hard'],['Kth element of 2 sorted arrays','Medium']]},
+ {t:'dsa',s:'Binary Search [1D, 2D Arrays, Search Space]',n:'BS on 2D Arrays',d:3,i:[['Find row with maximum 1\'s','Easy'],['Search in a 2D matrix','Hard'],['Search in 2D matrix - II','Hard'],['Find Peak Element - II','Medium'],['Matrix Median','Hard']]},
+ {t:'dsa',s:'Strings [Basic and Medium]',n:'Basic and Easy String Problems',d:3,i:[['Remove Outermost Parentheses','Medium'],['Reverse words in a given string / Palindrome Check','Medium'],['Largest Odd Number in a String','Easy'],['Longest Common Prefix','Easy'],['Isomorphic String','Easy'],['Rotate String','Easy'],['Check if two strings are anagram of each other','Easy']]},
+ {t:'dsa',s:'Strings [Basic and Medium]',n:'Medium String Problems',d:4,i:[['Sort Characters by Frequency','Easy'],['Maximum Nesting Depth of the Parentheses','Medium'],['Roman to Integer','Medium'],['String to Integer (atoi)','Medium'],['Count Number of Substrings','Easy'],['Longest Palindromic Substring','Medium'],['Sum of Beauty of All Substrings','Medium'],['Reverse every word in a string','Medium']]},
+ {t:'dsa',s:'Learn LinkedList',n:'Learn 1D LinkedList',d:2,i:[['Introduction to Singly LinkedList','Easy'],['Insertion at the head of Linked List','Easy'],['Deletion of the head of LL','Easy'],['Find the length of the Linked List','Easy'],['Search in Linked List','Medium']]},
+ {t:'dsa',s:'Learn LinkedList',n:'Learn Doubly LinkedList',d:2,i:[['Introduction to Doubly LL','Easy'],['Insert node before head in Doubly Linked List','Easy'],['Delete head of Doubly Linked List','Easy'],['Reverse a Doubly Linked List','Medium']]},
+ {t:'dsa',s:'Learn LinkedList',n:'Medium Problems of LL',d:8,i:[['Middle of a LinkedList [TortoiseHare Method]','Easy'],['Reverse a LinkedList [Iterative]','Medium'],['Reverse a LL','Medium'],['Detect a loop in LL','Medium'],['Find the starting point in LL','Medium'],['Length of loop in LL','Medium'],['Check if LL is palindrome or not','Medium'],['Segregate odd and even nodes in Linked List','Medium'],['Remove Nth node from the back of the LL','Medium'],['Delete the middle node in LL','Medium'],['Sort LL','Hard'],['Sort a Linked List of 0\'s 1\'s and 2\'s','Medium'],['Find the intersection point of Y LL','Medium'],['Add one to a number represented by LL','Medium'],['Add two numbers in Linked List','Medium']]},
+ {t:'dsa',s:'Learn LinkedList',n:'Medium Problems of DLL',d:2,i:[['Delete all occurrences of a key in DLL','Hard'],['Find Pairs with Given Sum in Doubly Linked List','Medium'],['Remove duplicates from sorted DLL','Hard']]},
+ {t:'dsa',s:'Learn LinkedList',n:'Hard Problems of LL',d:3,i:[['Reverse LL in group of given size K','Hard'],['Rotate a LL','Hard'],['Flattening of LL','Hard'],['Clone a LL with random and next pointer','Hard']]},
+ {t:'dsa',s:'Recursion [PatternWise]',n:'Get a Strong Hold',d:3,i:[['Recursive Implementation of atoi()','Medium'],['Pow(x, n)','Easy'],['Count Good Numbers','Medium'],['Sort a stack using recursion','Medium'],['Reverse a Stack','Medium']]},
+ {t:'dsa',s:'Recursion [PatternWise]',n:'Subsequences Pattern',d:6,i:[['Generate Binary Strings Without Consecutive 1s','Medium'],['Generate Parentheses','Medium'],['Power Set','Medium'],['Learn All Patterns of Subsequences (Theory)','Easy'],['Count all subsequences with sum K','Easy'],['Check if there exists a subsequence with sum K','Easy'],['Combination Sum','Medium'],['Combination Sum II','Medium'],['Subsets I','Medium'],['Subsets II','Medium'],['Combination Sum III','Medium'],['Letter Combinations of a Phone Number','Hard']]},
+ {t:'dsa',s:'Recursion [PatternWise]',n:'Trying out all Combos / Hard',d:6,i:[['Palindrome partitioning','Hard'],['Word Search','Hard'],['N Queen','Hard'],['Rat in a Maze','Hard'],['Word Break','Medium'],['M Coloring Problem','Hard'],['Sudoku Solver','Hard'],['Expression Add Operators','Hard']]},
+ {t:'dsa',s:'Bit Manipulation [Concepts & Problems]',n:'Learn Bit Manipulation',d:3,i:[['Introduction to Bits and Tricks','Easy'],['Check if the i-th bit is Set or Not','Easy'],['Check if a Number is Odd or Not','Easy'],['Check if a Number is Power of 2 or Not','Easy'],['Count the Number of Set Bits','Easy'],['Set/Unset the rightmost unset bit','Easy'],['Swap Two Numbers','Easy'],['Divide two numbers without multiplication and division','Medium']]},
+ {t:'dsa',s:'Bit Manipulation [Concepts & Problems]',n:'Interview Problems',d:3,i:[['Minimum Bit Flips to Convert Number','Medium'],['Single Number - I','Medium'],['Power Set Bit Manipulation','Medium'],['XOR of numbers in a given range','Medium'],['Single Number - III','Medium']]},
+ {t:'dsa',s:'Bit Manipulation [Concepts & Problems]',n:'Advanced Maths',d:3,i:[['Print Prime Factors of a Number','Hard'],['Divisors of a Number','Easy'],['Count primes in range L to R','Hard'],['Prime factorisation of a Number','Hard'],['Pow(x,n)','Medium']]},
+ {t:'dsa',s:'Stack and Queues',n:'Learning',d:3,i:[['Implement Stack using Arrays','Easy'],['Implement Queue using Arrays','Easy'],['Implement Stack using Queue','Easy'],['Implement Queue using Stack','Easy'],['Implement stack using Linkedlist','Easy'],['Implement queue using Linkedlist','Easy'],['Balanced Paranthesis','Easy'],['Implement Min Stack','Hard']]},
+ {t:'dsa',s:'Stack and Queues',n:'Prefix, Infix, PostFix Conversion Problems',d:3,i:[['Infix to Postfix Conversion','Medium'],['Prefix to Infix Conversion','Medium'],['Prefix to Postfix Conversion','Medium'],['Postfix to Prefix Conversion','Medium'],['Postfix to Infix Conversion','Easy'],['Infix to Prefix Conversion','Medium']]},
+ {t:'dsa',s:'Stack and Queues',n:'Monotonic Stack/Queue Problems [VVV. Imp]',d:6,i:[['Next Greater Element','Medium'],['Next Greater Element - 2','Medium'],['Next Smaller Element','Medium'],['Number of Greater Elements to the Right','Easy'],['Trapping Rainwater','Hard'],['Sum of Subarray Minimums','Medium'],['Asteroid Collision','Medium'],['Sum of Subarray Ranges','Medium'],['Remove K Digits','Medium'],['Largest rectangle in a histogram','Hard'],['Maximum Rectangles','Hard']]},
+ {t:'dsa',s:'Stack and Queues',n:'Implementation Problems',d:4,i:[['Sliding Window Maximum','Hard'],['Stock span problem','Hard'],['Celebrity Problem','Hard'],['LRU Cache','Medium'],['LFU Cache','Hard']]},
+ {t:'dsa',s:'Sliding Window & Two Pointer',n:'Medium Problems',d:5,i:[['Longest Substring Without Repeating Characters','Medium'],['Max Consecutive Ones III','Medium'],['Fruit Into Baskets','Medium'],['Longest Repeating Character Replacement','Hard'],['Binary Subarrays With Sum','Hard'],['Count number of Nice subarrays','Hard'],['Number of Substrings Containing All Three Characters','Hard'],['Maximum Points You Can Obtain from Cards','Medium']]},
+ {t:'dsa',s:'Sliding Window & Two Pointer',n:'Hard Problems',d:3,i:[['Longest Substring With At Most K Distinct Characters','Hard'],['Subarrays with K Different Integers','Medium'],['Minimum Window Substring','Hard'],['Minimum Window Subsequence','Hard']]},
+ {t:'dsa',s:'Heaps [Learning, Medium, Hard Problems]',n:'Learning',d:2,i:[['Heaps (Theory Video)','Easy'],['Implement Min Heap','Medium'],['Check if an array represents a min heap','Medium'],['Convert Min Heap to Max Heap','Medium']]},
+ {t:'dsa',s:'Heaps [Learning, Medium, Hard Problems]',n:'Medium Problems',d:4,i:[['K-th Largest element in an array','Medium'],['Kth smallest element in an array [use priority queue]','Medium'],['Sort K sorted array','Easy'],['Merge K sorted Lists','Hard'],['Replace Elements by Their Rank','Easy'],['Task Scheduler','Medium'],['Hand of Straights','Medium']]},
+ {t:'dsa',s:'Heaps [Learning, Medium, Hard Problems]',n:'Hard Problems',d:4,i:[['Design Twitter','Medium'],['Minimum Cost to Connect Sticks','Medium'],['Kth largest element in a stream of running integers','Hard'],['Maximum Sum Combination','Hard'],['Find Median from Data Stream','Hard'],['Top K Frequent Elements','Medium']]},
+ {t:'dsa',s:'Greedy Algorithms',n:'Easy Problems',d:2,i:[['Assign Cookies','Easy'],['Fractional Knapsack','Medium'],['Lemonade Change','Easy'],['Valid Paranthesis Checker','Hard']]},
+ {t:'dsa',s:'Greedy Algorithms',n:'Medium/Hard',d:6,i:[['N meetings in one room','Medium'],['Jump Game - I','Easy'],['Jump Game II','Medium'],['Minimum number of platforms required for a railway','Medium'],['Job sequencing Problem','Medium'],['Candy','Hard'],['Shortest Job First','Medium'],['Program for Least Recently Used (LRU) Page Replacement Algorithm','Medium'],['Insert Interval','Medium'],['Merge Intervals','Medium'],['Non-overlapping Intervals','Medium']]},
+ {t:'dsa',s:'Binary Trees',n:'Traversals',d:3,i:[['Introduction to Trees','Easy'],['Binary Tree Representation in Java','Easy'],['Pre, Post, Inorder in one traversal','Easy'],['Preorder Traversal','Easy'],['Inorder Traversal of Binary Tree','Easy'],['Postorder Traversal','Easy'],['Level Order Traversal','Easy'],['Iterative Preorder Traversal of Binary Tree','Easy'],['Iterative Inorder Traversal of Binary Tree','Easy'],['Post-order Traversal of Binary Tree using 2 stack','Easy'],['Post-order Traversal of Binary Tree using 1 stack','Easy'],['Preorder, Inorder, and Postorder Traversal in one Traversal','Easy']]},
+ {t:'dsa',s:'Binary Trees',n:'Medium Problems',d:6,i:[['Maximum Depth in BT','Medium'],['Check for balanced binary tree','Medium'],['Diameter of Binary Tree','Easy'],['Maximum path sum','Medium'],['Check if two trees are identical or not','Medium'],['Zig Zag or Spiral Traversal','Medium'],['Boundary Traversal','Medium'],['Vertical Order Traversal','Medium'],['Top View of BT','Medium'],['Bottom view of BT','Medium'],['Right/Left View of Binary Tree','Medium'],['Symmetric Binary Tree','Medium']]},
+ {t:'dsa',s:'Binary Trees',n:'Hard Problems',d:9,i:[['Print root to leaf path in BT','Medium'],['LCA in BT','Hard'],['Maximum Width of BT','Medium'],['Children Sum Property in Binary Tree','Medium'],['Print all nodes at a distance of K in BT','Hard'],['Minimum time taken to burn the BT from a given Node','Hard'],['Count total nodes in a complete BT','Easy'],['Requirements needed to construct a unique BT','Medium'],['Construct a BT from Preorder and Inorder','Hard'],['Construct the Binary Tree from Postorder and Inorder Traversal','Hard'],['Serialize and De-serialize BT','Hard'],['Morris Preorder Traversal of a Binary Tree','Hard'],['Morris Inorder Traversal of a Binary Tree','Hard'],['Flatten Binary Tree to Linked List','Medium']]},
+ {t:'dsa',s:'Binary Search Trees',n:'Concepts',d:1,i:[['Introduction to BST','Easy'],['Search in a Binary Search Tree','Easy'],['Find Min/Max in BST','Easy']]},
+ {t:'dsa',s:'Binary Search Trees',n:'Practice Problems',d:7,i:[['Floor and Ceil in a BST','Easy'],['Floor in a Binary Search Tree','Easy'],['Insert a given node in BST','Medium'],['Delete a node in BST','Medium'],['Kth Smallest and Largest element in BST','Medium'],['Check if a tree is a BST or not','Medium'],['LCA in BST','Medium'],['Construct a BST from a preorder traversal','Medium'],['Inorder Successor/Predecessor in BST','Medium'],['Merge 2 BST\'s','Hard'],['Two Sum In BST | Check if there exists a pair with Sum K','Hard'],['Correct BST with two nodes swapped','Hard'],['Largest BST in Binary Tree','Hard']]},
+ {t:'dsa',s:'Graphs [Concepts & Problems]',n:'Learning',d:3,i:[['Introduction to Graph','Easy'],['Graph Representation | C++','Easy'],['Graph Representation | Java','Easy'],['Connected Components','Medium'],['Traversal Techniques','Medium'],['DFS','Medium']]},
+ {t:'dsa',s:'Graphs [Concepts & Problems]',n:'Problems on BFS/DFS',d:9,i:[['Number of provinces','Medium'],['Connected Components Problem in Matrix','Medium'],['Rotten Oranges','Medium'],['Flood fill algorithm','Medium'],['Cycle Detection in Undirected Graph (bfs)','Hard'],['Detect a cycle in an undirected graph','Hard'],['Distance of nearest cell having one','Medium'],['Surrounded Regions','Medium'],['Number of enclaves','Medium'],['Word ladder I','Hard'],['Word ladder II','Hard'],['Number of islands','Medium'],['Bipartite Graph (DFS)','Hard'],['Cycle Detection in Directed Graph (DFS)','Hard']]},
+ {t:'dsa',s:'Graphs [Concepts & Problems]',n:'Topo Sort and Problems',d:5,i:[['Topo Sort','Hard'],['Topological sort or Kahn\'s algorithm','Hard'],['Detect a cycle in a directed graph','Hard'],['Course Schedule I','Hard'],['Course Schedule II','Medium'],['Find eventual safe states','Hard'],['Alien Dictionary','Hard']]},
+ {t:'dsa',s:'Graphs [Concepts & Problems]',n:'Shortest Path Algorithms and Problems',d:10,i:[['Shortest path in undirected graph with unit weights','Hard'],['Shortest path in DAG','Hard'],['Djisktra\'s Algorithm','Hard'],['Why priority Queue is used in Djisktra\'s Algorithm','Hard'],['Shortest Distance in a Binary Maze','Hard'],['Path with minimum effort','Hard'],['Cheapest flight within K stops','Hard'],['Network Delay Time','Medium'],['Number of ways to arrive at destination','Hard'],['Minimum multiplications to reach end','Hard'],['Bellman Ford Algorithm','Hard'],['Floyd warshall algorithm','Hard'],['Find the city with the smallest number of neighbors','Hard']]},
+ {t:'dsa',s:'Graphs [Concepts & Problems]',n:'MinimumSpanningTree/Disjoint Set and Problems',d:7,i:[['MST theory','Easy'],['Prim\'s Algorithm','Hard'],['Disjoint Set','Hard'],['Find the MST weight','Hard'],['Number of operations to make network connected','Hard'],['Most stones removed with same row or column','Medium'],['Accounts merge','Hard'],['Number of islands II','Hard'],['Making a large island','Hard'],['Swim in Rising Water','Medium']]},
+ {t:'dsa',s:'Graphs [Concepts & Problems]',n:'Other Algorithms',d:3,i:[['Bridges in graph','Hard'],['Articulation point in graph','Hard'],['Kosaraju\'s algorithm','Hard']]},
+ {t:'dsa',s:'Dynamic Programming',n:'Introduction to DP',d:1,i:[['Introduction to DP','Easy']]},
+ {t:'dsa',s:'Dynamic Programming',n:'1D DP',d:3,i:[['Climbing stairs','Medium'],['Frog Jump','Medium'],['Frog jump with K distances','Medium'],['Maximum sum of non adjacent elements','Medium'],['House robber','Medium']]},
+ {t:'dsa',s:'Dynamic Programming',n:'2D/3D DP and DP on Grids',d:3,i:[['Ninja\'s training','Medium'],['Grid Unique Paths : DP on Grids (DP8)','Medium'],['Unique paths II','Medium'],['Minimum Falling Path Sum','Medium'],['Triangle','Medium'],['Ninja and his Friends','Medium']]},
+ {t:'dsa',s:'Dynamic Programming',n:'DP on Subsequences',d:8,i:[['Subset sum equal to target (DP- 14)','Hard'],['Partition equal subset sum','Hard'],['Partition a set into two subsets with minimum absolute sum difference','Hard'],['Count subsets with sum K','Hard'],['Count partitions with given difference','Hard'],['Assign Cookies','Easy'],['Minimum Coins (DP - 20)','Hard'],['Target sum','Hard'],['Coin Change 2 (DP - 22)','Hard'],['Unbounded knapsack','Hard'],['Rod Cutting Problem | (DP - 24)','Hard']]},
+ {t:'dsa',s:'Dynamic Programming',n:'DP on Strings',d:8,i:[['Longest common subsequence','Hard'],['Print Longest Common Subsequence | (DP - 26)','Hard'],['Longest common substring','Hard'],['Longest palindromic subsequence','Hard'],['Minimum insertions to make string palindrome | DP-29','Hard'],['Minimum insertions or deletions to convert string A to B','Hard'],['Shortest common supersequence','Hard'],['Distinct subsequences','Hard'],['Edit distance','Hard'],['Wildcard matching','Hard']]},
+ {t:'dsa',s:'Dynamic Programming',n:'DP on Stocks',d:3,i:[['Best time to buy and sell stock','Medium'],['Best time to buy and sell stock II','Medium'],['Best time to buy and sell stock III','Medium'],['Best time to buy and sell stock IV','Medium'],['Best Time to Buy and Sell Stock with Cooldown','Medium'],['Best time to buy and sell stock with transaction fees','Medium']]},
+ {t:'dsa',s:'Dynamic Programming',n:'DP on LIS',d:4,i:[['Longest Increasing Subsequence','Medium'],['Print Longest Increasing Subsequence','Medium'],['Longest Increasing Subsequence | (DP-43)','Medium'],['Largest Divisible Subset','Medium'],['Longest String Chain','Medium'],['Longest Bitonic Subsequence','Medium'],['Number of Longest Increasing Subsequences','Medium']]},
+ {t:'dsa',s:'Dynamic Programming',n:'MCM DP | Partition DP',d:5,i:[['Matrix chain multiplication','Hard'],['Matrix Chain Multiplication | Bottom-Up | (DP-49)','Hard'],['Minimum cost to cut the stick','Hard'],['Burst balloons','Hard'],['Different Ways to Evaluate a Boolean Expression','Medium'],['Palindrome partitioning II','Hard'],['Partition Array for Maximum Sum','Medium']]},
+ {t:'dsa',s:'Dynamic Programming',n:'DP on Squares',d:1,i:[['Maximum Rectangle Area with all 1\'s | (DP-55)','Hard'],['Count Square Submatrices with All Ones | (DP-56)','Easy']]},
+ {t:'dsa',s:'Tries',n:'Theory',d:1,i:[['Trie Implementation and Operations','Hard']]},
+ {t:'dsa',s:'Tries',n:'Problems',d:4,i:[['Trie Implementation and Advanced Operations','Hard'],['Longest Word with All Prefixes','Medium'],['Number of distinct substrings in a string','Medium'],['Bit PreRequisites for TRIE Problems','Easy'],['Maximum XOR of two numbers in an array','Hard'],['Maximum Xor with an element from an array','Hard']]},
+ {t:'dsa',s:'Strings [Hard]',n:'Hard Problems',d:6,i:[['Minimum number of bracket reversals to make an expression balanced','Hard'],['Count and say','Hard'],['Hashing In Strings | Theory','Easy'],['Rabin Karp Algorithm','Hard'],['Z function','Hard'],['KMP Algorithm or LPS array','Hard'],['Shortest Palindrome','Hard'],['Longest happy prefix','Hard'],['Count Palindromic Subsequences','Medium']]}
 ];
-
-const mkItem=(title,difficulty)=>({id:uid(),title,difficulty:difficulty||null,
-  status:'backlog',doneAt:null,revise:false});
-
-function buildSeed(start){
-  const cur={dsa:start,prep:start};
-  return SEED.map(m=>{
-    const s=cur[m.track];
-    cur[m.track]=addDays(s,m.days);
-    return {id:uid(),track:m.track,name:m.name,start:s,days:m.days,extra:0,
-            items:m.items.map(p=>mkItem(p[0],p[1]))};
+const PREP=[
+ {t:'prep',s:'High leverage',n:'JavaScript core',d:9,i:[['★★★ Closures','Medium'],['★★★ Event loop, microtasks & macrotasks','Hard'],['★★★ Promises, async/await, error propagation','Medium'],['★★★ Promise.all / allSettled / race','Easy'],['★★★ this binding — all four rules','Medium'],['★★★ Implement debounce and throttle','Medium'],['★★★ map / filter / reduce','Easy'],['★★★ Deep vs shallow copy','Medium'],['★★★ ES modules vs CommonJS','Easy'],['★★ Prototypes & the prototype chain','Hard'],['★★ Hoisting & TDZ','Easy'],['★★ Scope chains','Easy'],['★★ Polyfills: bind, call, apply, Promise','Hard'],['★★ Memory leaks','Hard'],['★ Generators & iterators','Hard'],['★ Currying & partial application','Medium'],['★ Optional chaining & nullish coalescing','Easy'],['★ Garbage collection','Medium']]},
+ {t:'prep',s:'High leverage',n:'TypeScript',d:5,i:[['★★★ Generics & constraints','Medium'],['★★★ Discriminated unions','Medium'],['★★★ Type narrowing & type guards','Medium'],['★★★ Utility types: Partial, Pick, Omit, Record, ReturnType','Medium'],['★★★ unknown vs any vs never','Easy'],['★★★ Strict mode flags','Easy'],['★★ Structural typing','Medium'],['★★ satisfies','Easy'],['★★ Type-safe API contracts and codegen','Medium'],['★ Conditional & mapped types','Hard']]},
+ {t:'prep',s:'High leverage',n:'React',d:13,i:[['★★★ Hooks rules & closures-in-hooks','Hard'],['★★★ useEffect dependencies & cleanup','Hard'],['★★★ useMemo, useCallback, React.memo — and when they do not help','Hard'],['★★★ Reconciliation & the diffing algorithm','Hard'],['★★★ Keys','Easy'],['★★★ Context & re-render behavior','Medium'],['★★★ Controlled vs uncontrolled components','Easy'],['★★★ State colocation & lifting','Medium'],['★★★ Custom hooks','Medium'],['★★★ Server state vs client state with TanStack Query','Hard'],['★★★ Component composition patterns','Medium'],['★★ useRef','Easy'],['★★ useReducer','Medium'],['★★ Error boundaries','Medium'],['★★ Suspense & lazy loading','Medium'],['★★ React 19: use, Actions, useOptimistic','Hard'],['★★ State management choice & justification','Medium'],['★★ List virtualization','Medium'],['★★ useLayoutEffect vs useEffect','Medium'],['★ Fiber architecture','Hard'],['★ Concurrent rendering, useTransition, useDeferredValue','Hard'],['★ Portals','Easy'],['★ Render props & HOCs','Medium']]},
+ {t:'prep',s:'High leverage',n:'Next.js and rendering',d:8,i:[['★★★ SSR, SSG, ISR, CSR — trade-offs and when to pick which','Hard'],['★★★ Server Components vs Client Components','Hard'],['★★★ App Router','Medium'],['★★★ The caching layers: request, data, full-route, router','Hard'],['★★★ Revalidation strategies','Medium'],['★★★ Hydration & hydration mismatches','Hard'],['★★★ Server actions','Medium'],['★★ Streaming & Suspense boundaries','Hard'],['★★ Route handlers','Easy'],['★★ Middleware','Medium'],['★★ Dynamic vs static rendering','Medium'],['★★ Metadata & SEO API','Easy'],['★ Partial prerendering','Medium'],['★ Edge vs Node runtime','Medium'],['★ Image & font optimization','Easy']]},
+ {t:'prep',s:'High leverage',n:'SQL and Postgres',d:14,i:[['★★★ Joins','Medium'],['★★★ Indexes & B-trees','Hard'],['★★★ Composite index column order','Hard'],['★★★ EXPLAIN & query plans','Hard'],['★★★ N+1 queries','Medium'],['★★★ Transactions & ACID','Medium'],['★★★ Normalization vs denormalization','Medium'],['★★★ Schema migrations on live tables','Hard'],['★★★ Zero-downtime column changes & backfills','Hard'],['★★★ Connection pooling','Medium'],['★★ Isolation levels','Hard'],['★★ Locking & deadlocks','Hard'],['★★ Window functions','Medium'],['★★ CTEs','Medium'],['★★ Aggregations & GROUP BY','Easy'],['★★ Materialized views','Medium'],['★★ Read replicas & replication lag','Medium'],['★★ JSONB','Medium'],['★★ Soft deletes','Easy'],['★ MVCC','Hard'],['★ Partitioning','Medium'],['★ Sharding','Hard'],['★ Triggers','Medium']]},
+ {t:'prep',s:'High leverage',n:'API design',d:8,i:[['★★★ REST resource modeling','Medium'],['★★★ Verb semantics: PUT vs PATCH vs POST','Easy'],['★★★ Status code discipline','Easy'],['★★★ Pagination: offset vs cursor','Medium'],['★★★ Versioning strategies','Medium'],['★★★ GraphQL schema design','Medium'],['★★★ Resolvers','Medium'],['★★★ N+1 & DataLoader','Hard'],['★★★ GraphQL vs REST trade-offs','Medium'],['★★ Filtering & sorting','Easy'],['★★ Hasura permissions & row-level rules','Medium'],['★★ Idempotency','Medium'],['★★ Webhooks','Medium'],['★★ OpenAPI & contract-first','Medium'],['★ API gateways','Medium'],['★ Subscriptions','Medium']]},
+ {t:'prep',s:'High leverage',n:'Auth and web security',d:8,i:[['★★★ JWT structure, signing, expiry, refresh flows','Hard'],['★★★ Session vs token auth','Medium'],['★★★ XSS: stored, reflected, DOM','Medium'],['★★★ CSRF & tokens','Medium'],['★★★ CORS & preflight','Medium'],['★★★ Secure cookie flags: HttpOnly, SameSite, Secure','Easy'],['★★★ Password hashing: bcrypt, argon2','Easy'],['★★★ SQL injection','Easy'],['★★ OAuth 2.0 & OIDC','Hard'],['★★ Rate limiting','Medium'],['★★ Secrets management','Easy'],['★★ CSP','Medium'],['★★ OWASP Top 10','Medium'],['★★ Authorization models: RBAC, row-level','Medium'],['★ SSO','Medium'],['★ Clickjacking','Easy'],['★ Dependency & supply-chain risk','Easy']]},
+ {t:'prep',s:'High leverage',n:'Testing',d:6,i:[['★★★ Unit vs integration vs E2E','Easy'],['★★★ Jest / Vitest','Easy'],['★★★ React Testing Library','Medium'],['★★★ Mocking & spies','Medium'],['★★★ What is actually worth testing','Medium'],['★★ Playwright / Cypress','Medium'],['★★ MSW','Medium'],['★★ Testing pyramid and trophy','Easy'],['★★ Flaky tests','Medium'],['★★ Coverage and its limits','Easy'],['★ TDD','Medium'],['★ Snapshot testing','Easy'],['★ Contract testing','Medium'],['★ Load testing basics','Medium']]},
+ {t:'prep',s:'High leverage',n:'Behavioural and remote',d:6,i:[['★★★ STAR method','Easy'],['★★★ A production incident you caused or fixed','Medium'],['★★★ A hard bug you debugged','Medium'],['★★★ A technical trade-off you made','Medium'],['★★★ Disagreeing with a manager or teammate','Medium'],['★★★ Async communication practice','Medium'],['★★★ Timezone overlap & handoff answer','Easy'],['★★★ Written communication in PRs and docs','Hard'],['★★ Receiving critical feedback','Easy'],['★★ Missed deadline','Easy'],['★★ Why you are leaving','Easy'],['★★ Mentoring','Easy'],['★ Conflict escalation stories','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'Node and backend',d:9,i:[['★★★ Node event loop phases','Hard'],['★★★ Middleware & request lifecycle','Medium'],['★★★ Error-handling strategy','Medium'],['★★★ Async error propagation','Medium'],['★★★ Connection pooling','Medium'],['★★★ Environment config','Easy'],['★★ Streams & backpressure','Hard'],['★★ Background jobs & queues with BullMQ','Medium'],['★★ Cron & scheduled jobs','Easy'],['★★ Retries & exponential backoff','Medium'],['★★ Structured logging','Easy'],['★★ Graceful shutdown','Medium'],['★★ File uploads & multipart','Easy'],['★ Cluster & worker threads','Hard'],['★ Circuit breakers','Medium'],['★ libuv','Hard'],['★ Buffers','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'System design',d:17,i:[['★★★ Requirements gathering & scoping','Medium'],['★★★ Stateless services','Easy'],['★★★ Horizontal scaling','Medium'],['★★★ Load balancing','Medium'],['★★★ Caching layers','Hard'],['★★★ DB indexing & query design','Hard'],['★★★ Message queues & async processing','Hard'],['★★★ Rate limiting algorithms: token bucket, leaky bucket, sliding window','Hard'],['★★★ Idempotency keys','Medium'],['★★★ Design a URL shortener','Medium'],['★★★ Design a rate limiter','Hard'],['★★★ Design a notification service','Hard'],['★★★ Design file upload','Medium'],['★★★ Design a chat app','Hard'],['★★ Back-of-envelope estimation','Medium'],['★★ Monolith vs microservices','Medium'],['★★ Pub/sub & event-driven architecture','Hard'],['★★ Consistency models: strong, eventual','Hard'],['★★ Blob storage & presigned URLs','Medium'],['★★ Multi-tenancy','Hard'],['★★ Feature flags','Easy'],['★★ Observability: logs, metrics, traces','Medium'],['★★ Single points of failure','Medium'],['★ CAP theorem','Medium'],['★ Consistent hashing','Hard'],['★ Unique ID generation','Medium'],['★ Fan-out on read vs write','Hard'],['★ Service discovery','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'Caching',d:6,i:[['★★★ HTTP caching headers: Cache-Control, ETag','Medium'],['★★★ Cache-aside pattern','Medium'],['★★★ Cache invalidation','Hard'],['★★★ TTL','Easy'],['★★ Redis data structures','Medium'],['★★ Eviction policies','Medium'],['★★ Session stores','Easy'],['★★ CDN behavior','Medium'],['★ Cache stampede','Hard'],['★ Distributed locks','Hard'],['★ Write-through & write-behind','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'Performance',d:7,i:[['★★★ Core Web Vitals: LCP, INP, CLS','Medium'],['★★★ Code splitting','Medium'],['★★★ Lazy loading','Easy'],['★★★ Bundle analysis','Medium'],['★★★ React Profiler & finding wasted renders','Hard'],['★★★ DB query optimization','Hard'],['★★ Image formats & responsive images','Easy'],['★★ Preload, prefetch, preconnect','Easy'],['★★ TTFB','Easy'],['★★ Tree shaking','Medium'],['★★ Long tasks & main-thread blocking','Medium'],['★★ Lighthouse','Easy'],['★★ API response shaping','Medium'],['★ Font loading strategies','Easy'],['★ Compression: gzip, brotli','Easy'],['★ Edge caching','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'Browser and networking',d:7,i:[['★★★ HTTP methods & status codes','Easy'],['★★★ Caching headers','Medium'],['★★★ CORS','Medium'],['★★★ Event bubbling, capturing, delegation','Medium'],['★★★ Cookies vs localStorage vs sessionStorage','Easy'],['★★ Critical rendering path','Hard'],['★★ Reflow vs repaint','Medium'],['★★ WebSockets','Medium'],['★★ Server-Sent Events','Medium'],['★★ HTTP/2 vs HTTP/3','Medium'],['★★ CDNs','Easy'],['★ DNS resolution','Easy'],['★ TCP vs UDP','Easy'],['★ Long polling','Easy'],['★ requestAnimationFrame','Easy'],['★ Web Workers','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'HTML and CSS',d:6,i:[['★★★ Flexbox','Easy'],['★★★ Grid','Medium'],['★★★ Box model','Easy'],['★★★ Specificity & the cascade','Medium'],['★★★ Responsive design & media queries','Easy'],['★★★ Semantic HTML','Easy'],['★★★ Tailwind utility model','Easy'],['★★ Positioning & stacking contexts','Medium'],['★★ z-index behavior','Medium'],['★★ CSS variables','Easy'],['★★ Transitions & animations','Easy'],['★ Container queries','Medium'],['★ :has()','Easy'],['★ Block formatting context','Medium'],['★ Critical CSS','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'Docker, CI/CD and cloud',d:5,i:[['★★★ Docker images, layers, multi-stage builds','Medium'],['★★★ Docker Compose','Easy'],['★★★ CI/CD pipeline stages','Medium'],['★★★ GitHub Actions','Medium'],['★★ Rollback strategy','Medium'],['★★ Environment parity','Easy'],['★★ Cloud basics: managed DB, object storage, IAM, serverless, registry','Medium'],['★★ Monitoring & alerting','Medium'],['★ Kubernetes: pods, deployments, services, ingress, ConfigMaps, secrets','Hard'],['★ Blue-green & canary deployments','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'Git and workflow',d:4,i:[['★★★ Merge vs rebase','Medium'],['★★★ Conflict resolution','Medium'],['★★★ Branching strategy','Easy'],['★★★ PR review practice','Easy'],['★★ Interactive rebase & squashing','Medium'],['★★ Cherry-pick','Easy'],['★★ Semantic commits','Easy'],['★ git bisect','Medium'],['★ Tags & releases','Easy'],['★ Monorepo vs polyrepo','Easy']]},
+ {t:'prep',s:'Mid leverage',n:'Design and engineering practice',d:8,i:[['★★★ SOLID applied: single responsibility','Medium'],['★★★ SOLID applied: dependency inversion','Hard'],['★★★ Separation of concerns','Medium'],['★★★ Error handling strategy','Medium'],['★★★ Refactoring & code smells','Medium'],['★★★ Technical debt trade-offs','Medium'],['★★★ Code review standards','Easy'],['★★ Factory pattern','Easy'],['★★ Observer pattern','Medium'],['★★ Strategy pattern','Medium'],['★★ Adapter pattern','Medium'],['★★ Dependency injection','Medium'],['★★ Layering','Medium'],['★★ Documentation','Easy'],['★ Singleton','Easy'],['★ Facade','Easy'],['★ Clean architecture as a formal thing','Medium']]},
+ {t:'prep',s:'Mid leverage',n:'AI application layer',d:7,i:[['★★ LLM API integration','Medium'],['★★ Streaming responses','Medium'],['★★ Structured output & tool/function calling','Medium'],['★★ RAG architecture','Hard'],['★★ Embeddings & chunking','Hard'],['★★ Vector search & retrieval','Medium'],['★★ Context windows & token limits','Easy'],['★★ Cost & latency trade-offs','Medium'],['★ Agents & orchestration','Hard'],['★ Evals','Medium'],['★ Guardrails & hallucination mitigation','Medium'],['★ MCP','Medium'],['★ AI-assisted coding workflow & reviewing AI output','Easy']]},
+ {t:'prep',s:'Lower leverage',n:'CS fundamentals',d:4,i:[['★★ Processes vs threads','Easy'],['★★ Concurrency vs parallelism','Easy'],['★★ Race conditions','Medium'],['★★ UTC, timezones & epoch handling','Medium'],['★★ UTF-8 & encoding','Easy'],['★ Deadlocks','Medium'],['★ Context switching','Medium'],['★ Memory management','Hard'],['★ Proxies vs reverse proxies','Easy'],['★ OSI model','Easy']]},
+ {t:'prep',s:'Lower leverage',n:'NoSQL',d:3,i:[['★★ Document modeling','Medium'],['★★ Embedding vs referencing','Medium'],['★★ When NOT to use NoSQL','Easy'],['★ Aggregation pipeline','Medium'],['★ Elasticsearch basics','Medium'],['★ Vector databases','Medium']]},
+ {t:'prep',s:'Lower leverage',n:'Frontend system design',d:7,i:[['★★ Component API design','Medium'],['★★ Data fetching & caching layer','Hard'],['★★ State architecture at scale','Hard'],['★★ Design autocomplete / typeahead','Medium'],['★★ Design an infinite feed','Medium'],['★★ Design a data table','Hard'],['★★ Design a chat UI','Medium'],['★ Design systems & tokens','Medium'],['★ Optimistic updates','Medium'],['★ Code splitting budgets','Easy'],['★ i18n & l10n','Medium'],['★ Error & loading state strategy','Medium'],['★ Design a file uploader','Medium']]},
+ {t:'prep',s:'Lower leverage',n:'Accessibility',d:3,i:[['★★ Semantic markup','Easy'],['★★ Keyboard navigation & focus management','Medium'],['★★ Form labeling','Easy'],['★★ Color contrast','Easy'],['★ ARIA roles & attributes','Medium'],['★ Screen reader behavior','Medium'],['★ WCAG levels','Easy'],['★ Reduced motion','Easy']]}
+];
+const mkItem = (title, difficulty) => ({
+  id: uid(),
+  title,
+  difficulty: difficulty || null,
+  status: 'backlog',
+  doneAt: null
+});
+function buildSeed(start) {
+  const cur = {
+    dsa: start,
+    prep: start
+  };
+  return A2Z.concat(PREP).map(m => {
+    const s = cur[m.t];
+    cur[m.t] = addDays(s, m.d);
+    return {
+      id: uid(),
+      track: m.t,
+      section: m.s,
+      name: m.n,
+      start: s,
+      days: m.d,
+      extra: 0,
+      items: m.i.map(p => mkItem(p[0], p[1]))
+    };
   });
 }
-function reflow(mods,start){
-  const cur={dsa:start,prep:start};
-  return mods.map(m=>{
-    const s=cur[m.track];
-    cur[m.track]=addDays(s,m.days+m.extra);
-    return {...m,start:s};
+function reflow(mods, start) {
+  const cur = {
+    dsa: start,
+    prep: start
+  };
+  return mods.map(m => {
+    const s = cur[m.track];
+    cur[m.track] = addDays(s, m.days + m.extra);
+    return {
+      ...m,
+      start: s
+    };
   });
 }
-const modEnd=m=>addDays(m.start,m.days+m.extra-1);
+const modEnd = m => addDays(m.start, m.days + m.extra - 1);
 
-/* ---------- import parser ---------- */
-function parseImport(text,track){
-  const mods=[];let cur=null;
-  text.split('\n').forEach(raw=>{
-    const line=raw.trim();
-    if(!line)return;
-    if(line.charAt(0)==='#'){
-      const name=line.replace(/^#+\s*/,'').trim();
-      if(!name)return;
-      cur={id:uid(),track,name,start:null,days:2,extra:0,items:[]};
+/* Every problem gets its own day within its topic's window, spread as evenly
+   as the item count allows — item i lands on start + floor(i*span/total).
+   A 9-problem topic over 5 days gives 2,2,2,2,1: two problems a day, one
+   day carrying the odd one out. Recomputed live off mod.items/.days/.extra,
+   so editing a topic's length or item list reflows it immediately. */
+const WEIGHT = { Easy: 1, Medium: 2, Hard: 3 };
+const itemWeight = i => WEIGHT[i.difficulty] || 2;
+function itemDueDate(mod, itemId) {
+  const idx = mod.items.findIndex(x => x.id === itemId);
+  const span = Math.max(1, mod.days + mod.extra);
+  if (idx < 0 || mod.items.length === 0) return mod.start;
+  let total = 0;
+  for (let k = 0; k < mod.items.length; k++) total += itemWeight(mod.items[k]);
+  if (total <= 0) return mod.start;
+  let before = 0;
+  for (let k = 0; k < idx; k++) before += itemWeight(mod.items[k]);
+  const offset = Math.min(span - 1, Math.floor(before * span / total));
+  return addDays(mod.start, offset);
+}
+
+/* group modules into sections, preserving order */
+function groupSections(mods) {
+  const out = [],
+    seen = {};
+  mods.forEach(m => {
+    const key = m.track + '::' + (m.section || 'Other');
+    if (seen[key] === undefined) {
+      seen[key] = out.length;
+      out.push({
+        key,
+        track: m.track,
+        name: m.section || 'Other',
+        mods: []
+      });
+    }
+    out[seen[key]].mods.push(m);
+  });
+  return out;
+}
+const sectionKey = m => m.track + '::' + (m.section || 'Other');
+const tally = mods => {
+  let d = 0,
+    t = 0;
+  mods.forEach(m => m.items.forEach(i => {
+    t++;
+    if (i.status === 'done') d++;
+  }));
+  return {
+    done: d,
+    total: t
+  };
+};
+
+/* ---------- import parser: ## section, # topic, problem | difficulty ---------- */
+function parseImport(text, track) {
+  const mods = [];
+  let cur = null,
+    sec = 'Imported';
+  text.split('\n').forEach(raw => {
+    const line = raw.trim();
+    if (!line) return;
+    if (line.slice(0, 2) === '##') {
+      const n = line.replace(/^#+\s*/, '').trim();
+      if (n) {
+        sec = n;
+        cur = null;
+      }
+      return;
+    }
+    if (line.charAt(0) === '#') {
+      const n = line.replace(/^#+\s*/, '').trim();
+      if (!n) return;
+      cur = {
+        id: uid(),
+        track,
+        section: sec,
+        name: n,
+        start: null,
+        days: 2,
+        extra: 0,
+        items: []
+      };
       mods.push(cur);
       return;
     }
-    if(!cur){cur={id:uid(),track,name:'Untitled topic',start:null,days:2,extra:0,items:[]};mods.push(cur)}
-    const parts=line.split('|').map(s=>s.trim());
-    let diff=null;
-    if(parts.length>1){
-      const d=parts[parts.length-1].toLowerCase();
-      if(d.indexOf('e')===0)diff='Easy';
-      else if(d.indexOf('m')===0)diff='Medium';
-      else if(d.indexOf('h')===0)diff='Hard';
+    if (!cur) {
+      cur = {
+        id: uid(),
+        track,
+        section: sec,
+        name: 'Untitled topic',
+        start: null,
+        days: 2,
+        extra: 0,
+        items: []
+      };
+      mods.push(cur);
     }
-    if(parts[0])cur.items.push(mkItem(parts[0],diff));
+    const parts = line.split('|').map(s => s.trim());
+    let diff = null,
+      title = line;
+    if (parts.length > 1) {
+      const d = parts[parts.length - 1].toLowerCase();
+      if (d === 'easy') diff = 'Easy';else if (d === 'medium') diff = 'Medium';else if (d === 'hard') diff = 'Hard';
+      title = diff ? parts.slice(0, -1).join(' | ').trim() : line;
+    }
+    if (title) cur.items.push(mkItem(title, diff));
   });
-  return mods.filter(m=>m.items.length)
-             .map(m=>({...m,days:Math.max(2,Math.ceil(m.items.length/2))}));
+  return mods.filter(m => m.items.length).map(m => ({
+    ...m,
+    days: Math.max(2, Math.ceil(m.items.length / 2))
+  }));
 }
 
 /* ---------- header ---------- */
-function Header({view,setView,stats,onImport,onBackup}){
-  return (
-    <div className="top">
-      <div className="top-inner">
-        <div className="daybox">
-          <div className="big num">Day {stats.dayNum}</div>
-          <div className="sub num">Problem {stats.done}/{stats.total}</div>
-        </div>
-        <div className="rail">
-          <div className="ring num">{stats.pct}%</div>
-          <div className="rail-track"><div className="rail-fill" style={{width:stats.pct+'%'}}/></div>
-        </div>
-        <div className="goal">
-          <div className="goal-medal">🏆</div>
-          <div>
-            <div className="num" style={{fontWeight:700,fontSize:16,fontFamily:'Sora'}}>Day {stats.totalDays}</div>
-            <div className="num" style={{fontSize:11.5,color:'var(--text-dim)'}}>{fLong(stats.endDate)}</div>
-          </div>
-        </div>
-        <div className="pts num"><span className="coin"/>{stats.points}</div>
-      </div>
-      <div className="diffbar">
-        {['Easy','Medium','Hard'].map(d=>(
-          <span key={d} className="diffstat">
-            <span className={'dot '+d}/>{d}
-            <span className="num" style={{color:'var(--text)'}}>{stats.diff[d].done}/{stats.diff[d].total}</span>
-          </span>
-        ))}
-        <span className="diffstat">Streak
-          <span className="num" style={{color:'var(--text)'}}>{stats.streak} days</span></span>
-        <span className="diffstat">Flagged for revision
-          <span className="num" style={{color:'var(--text)'}}>{stats.flagged}</span></span>
-      </div>
-      <div className="tabs">
-        {['Module','Kanban Flow','Calendar'].map(t=>(
-          <button key={t} className={'tab'+(view===t?' on':'')} onClick={()=>setView(t)}>{t}</button>
-        ))}
-        <span className="tab-right">
-          <button className="mini" onClick={onImport}>Import problems</button>
-          <button className="mini" onClick={onBackup}>Backup</button>
-        </span>
-      </div>
-    </div>
-  );
+function Header({
+  view,
+  setView,
+  stats,
+  onImport,
+  onBackup
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "top"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "top-inner"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "daybox"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "big num"
+  }, "Day ", stats.dayNum), /*#__PURE__*/React.createElement("div", {
+    className: "sub num"
+  }, "Solved ", stats.done, "/", stats.total)), /*#__PURE__*/React.createElement("div", {
+    className: "rail"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "ring num"
+  }, stats.pct, "%"), /*#__PURE__*/React.createElement("div", {
+    className: "rail-track"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "rail-fill",
+    style: {
+      width: stats.pct + '%'
+    }
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "goal"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "goal-medal"
+  }, "🏆"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "num",
+    style: {
+      fontWeight: 700,
+      fontSize: 16,
+      fontFamily: 'Sora'
+    }
+  }, "Day ", stats.totalDays), /*#__PURE__*/React.createElement("div", {
+    className: "num",
+    style: {
+      fontSize: 11.5,
+      color: 'var(--text-dim)'
+    }
+  }, fLong(stats.endDate)))), /*#__PURE__*/React.createElement("div", {
+    className: "streak"
+  }, /*#__PURE__*/React.createElement("span", null, "Streak"), /*#__PURE__*/React.createElement("span", {
+    className: "num",
+    style: {
+      color: 'var(--text)',
+      fontWeight: 600
+    }
+  }, stats.streak, "d"))), /*#__PURE__*/React.createElement("div", {
+    className: "tabs"
+  }, ['Module', 'Kanban Flow', 'Calendar', 'Progress'].map(t => /*#__PURE__*/React.createElement("button", {
+    key: t,
+    className: 'tab' + (view === t ? ' on' : ''),
+    onClick: () => setView(t)
+  }, t)), /*#__PURE__*/React.createElement("span", {
+    className: "tab-right"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "mini",
+    onClick: onImport
+  }, "Import problems"), /*#__PURE__*/React.createElement("button", {
+    className: "mini",
+    onClick: onBackup
+  }, "Backup"))));
 }
 
-/* ---------- today ---------- */
-function Today({modules}){
-  const t=today();
-  const active=modules.filter(m=>m.start<=t&&t<=modEnd(m));
-  const next=active.reduce((acc,m)=>acc.concat(
-    m.items.filter(i=>i.status!=='done').slice(0,3).map(i=>({...i,track:m.track}))),[]).slice(0,7);
-  return (
-    <div className="today">
-      <div className="today-label">Today, {fLong(t)}</div>
-      {active.length===0
-        ? <div style={{color:'var(--text-dim)'}}>Nothing scheduled. Open a topic below and pull work forward.</div>
-        : <>
-            <div style={{fontFamily:'Sora',fontWeight:600,fontSize:15}}>
-              {active.map(m=>m.name).join('   ·   ')}
-            </div>
-            <div className="today-items">
-              {next.length===0
-                ? <span className="chip">All caught up here</span>
-                : next.map(i=><span key={i.id} className={'chip '+i.track}>{i.title}</span>)}
-            </div>
-          </>}
-    </div>
-  );
+/* ---------- today ----------
+   Shows exactly what's due today, per problem — not "everything in an
+   active topic." Click a topic name or a chip to jump to it below; nothing
+   here changes status automatically, that still happens via the checkbox
+   in the exploded row. */
+function Today({
+  modules,
+  onJump
+}) {
+  const t = today();
+  const due = [];
+  modules.forEach(m => {
+    m.items.forEach(i => {
+      if (i.status === 'done') return;
+      if (itemDueDate(m, i.id) === t) due.push({
+        id: i.id,
+        title: i.title,
+        track: m.track,
+        modId: m.id,
+        modName: m.name
+      });
+    });
+  });
+  const topics = [];
+  const seen = {};
+  due.forEach(i => {
+    if (!seen[i.modId]) {
+      seen[i.modId] = 1;
+      topics.push({
+        id: i.modId,
+        name: i.modName
+      });
+    }
+  });
+  const cap = 24;
+  const shown = due.slice(0, cap);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "today"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "today-label"
+  }, "Today, ", fLong(t)), due.length === 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      color: 'var(--text-dim)'
+    }
+  }, "Nothing due today. Open a topic below if you want to work ahead.") : /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "today-topics"
+  }, topics.map((m, idx) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: m.id
+  }, idx > 0 && /*#__PURE__*/React.createElement("span", {
+    className: "today-sep"
+  }, "·"), /*#__PURE__*/React.createElement("button", {
+    className: "today-topic-btn",
+    onClick: () => onJump(m.id, null)
+  }, m.name)))), /*#__PURE__*/React.createElement("div", {
+    className: "today-items"
+  }, shown.map(i => /*#__PURE__*/React.createElement("button", {
+    key: i.id,
+    className: 'chip ' + i.track,
+    onClick: () => onJump(i.modId, i.id)
+  }, i.title)), due.length > cap && /*#__PURE__*/React.createElement("span", {
+    className: "chip"
+  }, "+", due.length - cap, " more due today"))));
 }
 
-/* ---------- module view ---------- */
-function ModuleView({modules,cycle,toggleRevise,addItem,delItem,changeDays,askDays}){
-  const [open,setOpen]=useState({});
-  const [track,setTrack]=useState('all');
-  const [diff,setDiff]=useState('all');
-  const [onlyFlag,setOnlyFlag]=useState(false);
-  const [q,setQ]=useState('');
-  const [draft,setDraft]=useState({});
-
-  const shown=modules.filter(m=>track==='all'||m.track===track);
-  const searching=q.trim().length>1;
-
-  return (
-    <>
-      <Today modules={modules}/>
-      <div className="filters">
-        {[['all','All'],['dsa','DSA'],['prep','Interview prep']].map(p=>
-          <button key={p[0]} className={'fbtn'+(track===p[0]?' on':'')}
-                  onClick={()=>setTrack(p[0])}>{p[1]}</button>)}
-        <span style={{width:8}}/>
-        {['all','Easy','Medium','Hard'].map(d=>
-          <button key={d} className={'fbtn'+(diff===d?' on':'')} onClick={()=>setDiff(d)}>
-            {d==='all'?'Any difficulty':d}</button>)}
-        <button className={'fbtn'+(onlyFlag?' on':'')} onClick={()=>setOnlyFlag(v=>!v)}>★ Revision</button>
-        <input className="search" placeholder="Find a problem" value={q}
-               onChange={e=>setQ(e.target.value)}/>
-      </div>
-
-      {shown.map(m=>{
-        const done=m.items.filter(i=>i.status==='done').length;
-        const isOpen=!!open[m.id]||searching||onlyFlag;
-        const vis=m.items.filter(i=>
-          (diff==='all'||i.difficulty===diff) &&
-          (!onlyFlag||i.revise) &&
-          (!searching||i.title.toLowerCase().indexOf(q.trim().toLowerCase())>-1));
-        if((searching||onlyFlag)&&vis.length===0)return null;
-        const cls=done===0?'':done===m.items.length?'full':'part';
-        return (
-          <div key={m.id} className={'mod'+(isOpen?' open':'')}>
-            <div className="mod-head">
-              <span className={'ringlet '+cls}>{done===m.items.length&&done>0?'✓':''}</span>
-              <button className="mod-name" onClick={()=>setOpen(o=>({...o,[m.id]:!o[m.id]}))}
-                      aria-expanded={isOpen}>
-                {m.name}<span className="mod-count num"> ({done}/{m.items.length})</span>
-                <span className={'track-tag '+m.track}>{m.track==='dsa'?'DSA':'Prep'}</span>
-              </button>
-              <div className="mod-dates">
-                <button className="step" title="Remove a day" onClick={()=>changeDays(m.id,-1)}>–</button>
-                <span className="num">{fShort(m.start)} – {fShort(modEnd(m))}</span>
-                <button className="step" title="Add days" onClick={()=>askDays(m.id)}>+</button>
-                <button className={'caret'+(isOpen?' up':'')}
-                        onClick={()=>setOpen(o=>({...o,[m.id]:!o[m.id]}))} aria-label="Toggle">▼</button>
-              </div>
-            </div>
-            {isOpen&&(
-              <div className="mod-body">
-                {vis.map(i=>(
-                  <div key={i.id} className={'item'+(i.status==='done'?' is-done':'')}>
-                    <button className={'box '+(i.status==='done'?'done':i.status==='progress'?'prog':'')}
-                            onClick={()=>cycle(m.id,i.id)} aria-label={'Mark '+i.title}>
-                      {i.status==='done'?'✓':''}
-                    </button>
-                    <span className="item-title">{i.title}</span>
-                    {i.difficulty&&<span className={'diff '+i.difficulty}>{i.difficulty}</span>}
-                    <button className={'icon'+(i.revise?' on':'')} title="Flag for revision"
-                            onClick={()=>toggleRevise(m.id,i.id)}>★</button>
-                    <button className="icon" title="Remove this problem"
-                            onClick={()=>delItem(m.id,i.id)}>×</button>
-                  </div>
-                ))}
-                <div className="addrow">
-                  <input placeholder="Add a problem, then press Enter"
-                    value={(draft[m.id]&&draft[m.id].t)||''}
-                    onChange={e=>{const v=e.target.value;
-                      setDraft(d=>({...d,[m.id]:{t:v,d:(d[m.id]&&d[m.id].d)||null}}))}}
-                    onKeyDown={e=>{
-                      if(e.key==='Enter'&&e.target.value.trim()){
-                        const dd=(draft[m.id]&&draft[m.id].d)||null;
-                        addItem(m.id,e.target.value.trim(),dd);
-                        setDraft(d=>({...d,[m.id]:{t:'',d:dd}}));
-                      }}}/>
-                  <select value={(draft[m.id]&&draft[m.id].d)||''}
-                    onChange={e=>{const v=e.target.value||null;
-                      setDraft(d=>({...d,[m.id]:{t:(d[m.id]&&d[m.id].t)||'',d:v}}))}}>
-                    <option value="">No difficulty</option>
-                    <option>Easy</option><option>Medium</option><option>Hard</option>
-                  </select>
-                </div>
-              </div>
-            )}
-          </div>
-        );
-      })}
-    </>
-  );
+/* ---------- topic row (level 2 + 3) ---------- */
+function TopicRow({
+  m,
+  cycle,
+  addItem,
+  delItem,
+  changeDays,
+  askDays,
+  forceOpen,
+  visibleItems,
+  jump
+}) {
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState({
+    t: '',
+    d: null
+  });
+  const isJumpTarget = jump && jump.modId === m.id;
+  const isOpen = forceOpen || open || isJumpTarget;
+  const done = m.items.filter(i => i.status === 'done').length;
+  const cls = done === 0 ? '' : done === m.items.length ? 'full' : 'part';
+  const items = visibleItems || m.items;
+  const rootRef = useRef(null);
+  const t = today();
+  useEffect(() => {
+    if (!isJumpTarget) return;
+    setOpen(true);
+    const targetId = jump.itemId ? 'item-' + jump.itemId : 'topic-' + m.id;
+    const raf = requestAnimationFrame(() => {
+      const el = document.getElementById(targetId) || rootRef.current;
+      if (el) {
+        el.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        el.classList.add('flash');
+        setTimeout(() => el.classList.remove('flash'), 1500);
+      }
+    });
+    return () => cancelAnimationFrame(raf);
+    // eslint-disable-next-line
+  }, [jump]);
+  return /*#__PURE__*/React.createElement("div", {
+    id: 'topic-' + m.id,
+    ref: rootRef,
+    className: 'mod' + (isOpen ? ' open' : '')
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mod-head"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: 'ringlet ' + cls
+  }, done === m.items.length && done > 0 ? '✓' : ''), /*#__PURE__*/React.createElement("button", {
+    className: "mod-name",
+    onClick: () => setOpen(o => !o),
+    "aria-expanded": isOpen
+  }, m.name, /*#__PURE__*/React.createElement("span", {
+    className: "mod-count num"
+  }, " (", done, "/", m.items.length, ")")), /*#__PURE__*/React.createElement("div", {
+    className: "mod-dates"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "step",
+    title: "Remove a day",
+    onClick: () => changeDays(m.id, -1)
+  }, "–"), /*#__PURE__*/React.createElement("span", {
+    className: "num"
+  }, fShort(m.start), " – ", fShort(modEnd(m))), /*#__PURE__*/React.createElement("button", {
+    className: "step",
+    title: "Add days",
+    onClick: () => askDays(m.id)
+  }, "+"), /*#__PURE__*/React.createElement("button", {
+    className: 'caret' + (isOpen ? ' up' : ''),
+    onClick: () => setOpen(o => !o),
+    "aria-label": "Toggle"
+  }, "▼"))), isOpen && /*#__PURE__*/React.createElement("div", {
+    className: "mod-body"
+  }, items.map(i => {
+    const due = itemDueDate(m, i.id);
+    return /*#__PURE__*/React.createElement("div", {
+      key: i.id,
+      id: 'item-' + i.id,
+      className: 'item' + (i.status === 'done' ? ' is-done' : '')
+    }, /*#__PURE__*/React.createElement("button", {
+      className: 'box ' + (i.status === 'done' ? 'done' : i.status === 'progress' ? 'prog' : ''),
+      onClick: () => cycle(m.id, i.id),
+      "aria-label": 'Mark ' + i.title
+    }, i.status === 'done' ? '✓' : ''), /*#__PURE__*/React.createElement("span", {
+      className: "item-title"
+    }, i.title), i.status !== 'done' && /*#__PURE__*/React.createElement("span", {
+      className: "item-due num"
+    }, due < t ? 'was ' + fShort(due) : fShort(due)), i.difficulty && /*#__PURE__*/React.createElement("span", {
+      className: 'diff ' + i.difficulty
+    }, i.difficulty), /*#__PURE__*/React.createElement("button", {
+      className: "icon",
+      title: "Remove this problem",
+      onClick: () => delItem(m.id, i.id)
+    }, "×"));
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "addrow"
+  }, /*#__PURE__*/React.createElement("input", {
+    placeholder: "Add a problem, then press Enter",
+    value: draft.t,
+    onChange: e => setDraft(d => ({
+      ...d,
+      t: e.target.value
+    })),
+    onKeyDown: e => {
+      if (e.key === 'Enter' && e.target.value.trim()) {
+        addItem(m.id, e.target.value.trim(), draft.d);
+        setDraft(d => ({
+          t: '',
+          d: d.d
+        }));
+      }
+    }
+  }), /*#__PURE__*/React.createElement("select", {
+    value: draft.d || '',
+    onChange: e => setDraft(d => ({
+      ...d,
+      d: e.target.value || null
+    }))
+  }, /*#__PURE__*/React.createElement("option", {
+    value: ""
+  }, "No difficulty"), /*#__PURE__*/React.createElement("option", null, "Easy"), /*#__PURE__*/React.createElement("option", null, "Medium"), /*#__PURE__*/React.createElement("option", null, "Hard")))));
 }
 
-/* ---------- board ---------- */
-function BoardView({modules,setStatus}){
-  const [limit,setLimit]=useState(40);
-  const cols=[['backlog','Backlog'],['progress','In progress'],['done','Completed']];
-  const all=modules.reduce((a,m)=>a.concat(m.items.map(i=>({...i,mod:m}))),[]);
-  const nextOf=s=>s==='backlog'?'progress':s==='progress'?'done':'backlog';
-  return (
-    <div className="kan">
-      {cols.map(c=>{
-        const k=c[0],label=c[1];
-        const list=all.filter(i=>i.status===k);
-        return (
-          <div key={k} className={'col '+k}>
-            <div className="col-head"><span>{label}</span><span className="n num">{list.length}</span></div>
-            <div className="col-body">
-              {list.length===0&&<div className="empty">
-                {k==='backlog'?'Backlog is clear. Everything is moving or finished.'
-                 :k==='progress'?'Nothing in flight. Start something from the backlog.'
-                 :'Nothing finished yet. The first one lands here.'}</div>}
-              {list.slice(0,limit).map(i=>(
-                <div key={i.id} className="card">
-                  <div className="card-mod">{i.mod.name}</div>
-                  <div className="card-title">{i.title}</div>
-                  <div className="card-sub">
-                    <span>{i.mod.track==='dsa'?'DSA':'Interview prep'}</span>
-                    {i.difficulty&&<span className={'diff '+i.difficulty}>{i.difficulty}</span>}
-                    {i.revise&&<span style={{color:'var(--med)'}}>★</span>}
-                  </div>
-                  <div className="card-foot">
-                    <span className="card-due num">Deadline — {fShort(modEnd(i.mod))}</span>
-                    <button className={'pill '+k} onClick={()=>setStatus(i.mod.id,i.id,nextOf(i.status))}>
-                      {k==='backlog'?'Start':k==='progress'?'Finish':'Reopen'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-              {list.length>limit&&
-                <button className="more" onClick={()=>setLimit(l=>l+60)}>
-                  Show more — {list.length-limit} left
-                </button>}
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
+/* ---------- module view (level 1) ---------- */
+function ModuleView(props) {
+  const {
+    modules
+  } = props;
+  const [openSec, setOpenSec] = useState({});
+  const [track, setTrack] = useState('all');
+  const [q, setQ] = useState('');
+  const [jump, setJump] = useState(null);
+  const query = q.trim().toLowerCase();
+  const searching = query.length > 1;
+  const jumpTo = useCallback((modId, itemId) => {
+    const mod = modules.find(m => m.id === modId);
+    if (mod) setOpenSec(o => ({
+      ...o,
+      [sectionKey(mod)]: true
+    }));
+    setJump({
+      modId,
+      itemId: itemId || null,
+      ts: Date.now()
+    });
+  }, [modules]);
+  const sections = useMemo(() => groupSections(modules.filter(m => track === 'all' || m.track === track)), [modules, track]);
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Today, {
+    modules: modules,
+    onJump: jumpTo
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "toolbar"
+  }, [['all', 'All'], ['dsa', 'DSA'], ['prep', 'Interview prep']].map(p => /*#__PURE__*/React.createElement("button", {
+    key: p[0],
+    className: 'fbtn' + (track === p[0] ? ' on' : ''),
+    onClick: () => setTrack(p[0])
+  }, p[1])), /*#__PURE__*/React.createElement("input", {
+    className: "search",
+    placeholder: "Find a problem, topic or section",
+    value: q,
+    onChange: e => setQ(e.target.value)
+  })), sections.map(sec => {
+    const secMatch = searching && sec.name.toLowerCase().indexOf(query) > -1;
+    let mods = sec.mods;
+    if (searching && !secMatch) {
+      mods = sec.mods.map(m => {
+        if (m.name.toLowerCase().indexOf(query) > -1) return {
+          m,
+          items: m.items
+        };
+        const hits = m.items.filter(i => i.title.toLowerCase().indexOf(query) > -1);
+        return hits.length ? {
+          m,
+          items: hits
+        } : null;
+      }).filter(Boolean);
+      if (!mods.length) return null;
+    } else {
+      mods = sec.mods.map(m => ({
+        m,
+        items: null
+      }));
+    }
+    const {
+      done,
+      total
+    } = tally(sec.mods);
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const isOpen = searching || !!openSec[sec.key];
+    return /*#__PURE__*/React.createElement("div", {
+      key: sec.key,
+      id: 'section-' + sec.key,
+      className: 'sec' + (isOpen ? ' open' : '')
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "sec-head",
+      onClick: () => setOpenSec(o => ({
+        ...o,
+        [sec.key]: !o[sec.key]
+      })),
+      "aria-expanded": isOpen
+    }, /*#__PURE__*/React.createElement("span", {
+      className: 'sec-bar ' + sec.track
+    }), /*#__PURE__*/React.createElement("span", {
+      className: "sec-name"
+    }, sec.name), /*#__PURE__*/React.createElement("span", {
+      className: "sec-meta"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "sec-track"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "bar-fill",
+      style: {
+        display: 'block',
+        height: '100%',
+        width: pct + '%',
+        background: pct === 100 ? 'var(--done)' : sec.track === 'dsa' ? 'var(--dsa)' : 'var(--prep)'
+      }
+    })), /*#__PURE__*/React.createElement("span", {
+      className: "num"
+    }, done, " / ", total), /*#__PURE__*/React.createElement("span", {
+      className: 'caret' + (isOpen ? ' up' : '')
+    }, "▼"))), isOpen && /*#__PURE__*/React.createElement("div", {
+      className: "sec-body"
+    }, mods.map(x => /*#__PURE__*/React.createElement(TopicRow, {
+      key: x.m.id,
+      m: x.m,
+      forceOpen: searching && !secMatch,
+      visibleItems: x.items,
+      jump: jump,
+      cycle: props.cycle,
+      addItem: props.addItem,
+      delItem: props.delItem,
+      changeDays: props.changeDays,
+      askDays: props.askDays
+    }))));
+  }));
+}
+
+/* ---------- progress ---------- */
+function Donut({
+  segments,
+  done,
+  total
+}) {
+  const R = 78,
+    SW = 16,
+    C = 2 * Math.PI * R;
+  let offset = 0;
+  const arcs = segments.filter(s => s.done > 0).map((s, idx) => {
+    const len = C * (total ? s.done / total : 0);
+    const el = /*#__PURE__*/React.createElement("circle", {
+      key: idx,
+      cx: "95",
+      cy: "95",
+      r: R,
+      fill: "none",
+      stroke: s.color,
+      strokeWidth: SW,
+      strokeDasharray: len + ' ' + (C - len),
+      strokeDashoffset: -offset
+    });
+    offset += len;
+    return el;
+  });
+  return /*#__PURE__*/React.createElement("div", {
+    className: "donut"
+  }, /*#__PURE__*/React.createElement("svg", {
+    width: "190",
+    height: "190",
+    viewBox: "0 0 190 190"
+  }, /*#__PURE__*/React.createElement("circle", {
+    cx: "95",
+    cy: "95",
+    r: R,
+    fill: "none",
+    stroke: "var(--surface-3)",
+    strokeWidth: SW
+  }), arcs), /*#__PURE__*/React.createElement("div", {
+    className: "donut-mid"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
+    className: "n num"
+  }, done), /*#__PURE__*/React.createElement("div", {
+    className: "of num"
+  }, "of ", total), /*#__PURE__*/React.createElement("div", {
+    className: "lab"
+  }, total ? Math.round(done / total * 100) : 0, "% complete"))));
+}
+function Bar({
+  label,
+  color,
+  done,
+  total
+}) {
+  const pct = total ? Math.round(done / total * 100) : 0;
+  return /*#__PURE__*/React.createElement("div", {
+    className: "bar-row"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bar-top"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "bar-name"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "dot",
+    style: {
+      background: color
+    }
+  }), label), /*#__PURE__*/React.createElement("span", {
+    className: "num",
+    style: {
+      color: 'var(--text-dim)'
+    }
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {
+      color: 'var(--text)',
+      fontWeight: 600
+    }
+  }, done), " / ", total)), /*#__PURE__*/React.createElement("div", {
+    className: "bar-track"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bar-fill",
+    style: {
+      width: pct + '%',
+      background: color
+    }
+  })));
+}
+function ProgressView({
+  modules,
+  stats
+}) {
+  const segments = [{
+    label: 'Easy',
+    color: 'var(--easy)',
+    ...stats.diff.Easy
+  }, {
+    label: 'Medium',
+    color: 'var(--med)',
+    ...stats.diff.Medium
+  }, {
+    label: 'Hard',
+    color: 'var(--hard)',
+    ...stats.diff.Hard
+  }, {
+    label: 'No difficulty',
+    color: 'var(--plain)',
+    ...stats.diff.None
+  }].filter(s => s.total > 0);
+  const byTrack = ['dsa', 'prep'].map(tr => {
+    const t = tally(modules.filter(m => m.track === tr));
+    return {
+      label: tr === 'dsa' ? 'DSA' : 'Interview prep',
+      color: tr === 'dsa' ? 'var(--dsa)' : 'var(--prep)',
+      ...t
+    };
+  }).filter(t => t.total > 0);
+  const sections = groupSections(modules);
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "prog-top"
+  }, /*#__PURE__*/React.createElement(Donut, {
+    segments: segments,
+    done: stats.done,
+    total: stats.total
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "bars"
+  }, segments.map(s => /*#__PURE__*/React.createElement(Bar, {
+    key: s.label,
+    ...s
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "stat-grid"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "stat"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "v num"
+  }, stats.done), /*#__PURE__*/React.createElement("div", {
+    className: "k"
+  }, "Solved so far")), /*#__PURE__*/React.createElement("div", {
+    className: "stat"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "v num"
+  }, stats.total - stats.done), /*#__PURE__*/React.createElement("div", {
+    className: "k"
+  }, "Left to go")), /*#__PURE__*/React.createElement("div", {
+    className: "stat"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "v num"
+  }, stats.streak), /*#__PURE__*/React.createElement("div", {
+    className: "k"
+  }, "Day streak")), /*#__PURE__*/React.createElement("div", {
+    className: "stat"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "v num"
+  }, stats.activeDays), /*#__PURE__*/React.createElement("div", {
+    className: "k"
+  }, "Days with activity")), /*#__PURE__*/React.createElement("div", {
+    className: "stat"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "v num"
+  }, stats.perDay), /*#__PURE__*/React.createElement("div", {
+    className: "k"
+  }, "Average per active day")), /*#__PURE__*/React.createElement("div", {
+    className: "stat"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "v num"
+  }, stats.eta), /*#__PURE__*/React.createElement("div", {
+    className: "k"
+  }, "Days left at this pace"))), byTrack.length > 1 && /*#__PURE__*/React.createElement("div", {
+    className: "prog-top",
+    style: {
+      gridTemplateColumns: '1fr',
+      padding: '20px 24px'
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "bars"
+  }, byTrack.map(t => /*#__PURE__*/React.createElement(Bar, {
+    key: t.label,
+    ...t
+  })))), sections.map(sec => {
+    const {
+      done,
+      total
+    } = tally(sec.mods);
+    const pct = total ? Math.round(done / total * 100) : 0;
+    return /*#__PURE__*/React.createElement("div", {
+      key: sec.key,
+      className: "topic-list"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "topic-head"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "dot",
+      style: {
+        background: sec.track === 'dsa' ? 'var(--dsa)' : 'var(--prep)'
+      }
+    }), /*#__PURE__*/React.createElement("span", {
+      style: {
+        flex: 1
+      }
+    }, sec.name), /*#__PURE__*/React.createElement("span", {
+      className: "num",
+      style: {
+        color: 'var(--text-dim)',
+        fontWeight: 400,
+        fontSize: 13
+      }
+    }, done, " / ", total, " · ", pct, "%")), sec.mods.map(m => {
+      const d = m.items.filter(i => i.status === 'done').length;
+      const p = m.items.length ? Math.round(d / m.items.length * 100) : 0;
+      return /*#__PURE__*/React.createElement("div", {
+        key: m.id,
+        className: "topic-row"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "topic-name"
+      }, m.name), /*#__PURE__*/React.createElement("span", {
+        className: "topic-bar"
+      }, /*#__PURE__*/React.createElement("span", {
+        className: "bar-fill",
+        style: {
+          display: 'block',
+          height: '100%',
+          width: p + '%',
+          background: p === 100 ? 'var(--done)' : sec.track === 'dsa' ? 'var(--dsa)' : 'var(--prep)'
+        }
+      })), /*#__PURE__*/React.createElement("span", {
+        className: "topic-n num"
+      }, d, "/", m.items.length));
+    }));
+  }));
+}
+
+/* ---------- board ----------
+   Backlog and Completed stay automatic — overdue is overdue regardless of
+   whether you touched it, and done is done. In progress, though, only
+   holds what you have explicitly started (status 'progress'). A problem
+   due exactly today that you have not touched yet lives in the Today strip
+   above, not here — it only shows up in this board once you check it in
+   the exploded row, or once it passes its due date without being finished,
+   at which point it becomes Backlog instead. */
+function classifyForBoard(item, mod, t) {
+  if (item.status === 'done') return 'done';
+  const due = itemDueDate(mod, item.id);
+  if (due < t) return 'backlog';
+  if (item.status === 'progress') return 'progress';
+  return null;
+}
+function BoardView({
+  modules,
+  setStatus
+}) {
+  const [limit, setLimit] = useState(40);
+  const t = today();
+  const cols = [['backlog', 'Backlog', 'Past its due date and still not finished'], ['progress', 'In progress', 'Only what you have explicitly started'], ['done', 'Completed', '']];
+  const all = modules.reduce((a, m) => {
+    m.items.forEach(i => {
+      const col = classifyForBoard(i, m, t);
+      if (col) a.push({
+        ...i,
+        mod: m,
+        col,
+        due: itemDueDate(m, i.id)
+      });
+    });
+    return a;
+  }, []);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "kan"
+  }, cols.map(c => {
+    const k = c[0],
+      label = c[1],
+      sub = c[2];
+    const list = all.filter(i => i.col === k);
+    return /*#__PURE__*/React.createElement("div", {
+      key: k,
+      className: 'col ' + k
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "col-head"
+    }, /*#__PURE__*/React.createElement("span", null, label), /*#__PURE__*/React.createElement("span", {
+      className: "n num"
+    }, list.length)), sub && /*#__PURE__*/React.createElement("div", {
+      className: "col-sub"
+    }, sub), /*#__PURE__*/React.createElement("div", {
+      className: "col-body"
+    }, list.length === 0 && /*#__PURE__*/React.createElement("div", {
+      className: "empty"
+    }, k === 'backlog' ? 'Nothing overdue right now.' : k === 'progress' ? 'Nothing started yet. Check something off in Today, or open a topic and mark it in progress.' : 'Nothing finished yet. The first one lands here.'), list.slice(0, limit).map(i => /*#__PURE__*/React.createElement("div", {
+      key: i.id,
+      className: "card"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "card-mod"
+    }, i.mod.section, " · ", i.mod.name), /*#__PURE__*/React.createElement("div", {
+      className: "card-title"
+    }, i.title), /*#__PURE__*/React.createElement("div", {
+      className: "card-sub"
+    }, /*#__PURE__*/React.createElement("span", null, i.mod.track === 'dsa' ? 'DSA' : 'Interview prep'), i.difficulty && /*#__PURE__*/React.createElement("span", {
+      className: 'diff ' + i.difficulty
+    }, i.difficulty)), /*#__PURE__*/React.createElement("div", {
+      className: "card-foot"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: "card-due num"
+    }, k === 'backlog' ? 'Was due — ' : 'Due — ', fShort(i.due)), /*#__PURE__*/React.createElement("button", {
+      className: 'pill ' + k,
+      onClick: () => setStatus(i.mod.id, i.id, k === 'done' ? 'backlog' : 'done')
+    }, k === 'done' ? 'Reopen' : 'Mark done')))), list.length > limit && /*#__PURE__*/React.createElement("button", {
+      className: "more",
+      onClick: () => setLimit(l => l + 60)
+    }, "Show more — ", list.length - limit, " left")));
+  }));
 }
 
 /* ---------- calendar ---------- */
-function CalendarView({modules,startDate}){
-  const n=new Date();
-  const [ym,setYm]=useState({y:n.getFullYear(),m:n.getMonth()});
-  const t=today();
-  const first=new Date(ym.y,ym.m,1);
-  const dim=new Date(ym.y,ym.m+1,0).getDate();
-  const cells=[];
-  for(let i=0;i<first.getDay();i++)cells.push(null);
-  for(let d=1;d<=dim;d++)cells.push(iso(new Date(ym.y,ym.m,d)));
-
-  const doneBy=useMemo(()=>{
-    const map={};
-    modules.forEach(m=>m.items.forEach(i=>{if(i.doneAt)map[i.doneAt]=(map[i.doneAt]||0)+1}));
+function CalendarView({
+  modules,
+  startDate
+}) {
+  const n = new Date();
+  const [ym, setYm] = useState({
+    y: n.getFullYear(),
+    m: n.getMonth()
+  });
+  const t = today();
+  const first = new Date(ym.y, ym.m, 1);
+  const dim = new Date(ym.y, ym.m + 1, 0).getDate();
+  const cells = [];
+  for (let i = 0; i < first.getDay(); i++) cells.push(null);
+  for (let d = 1; d <= dim; d++) cells.push(iso(new Date(ym.y, ym.m, d)));
+  const doneBy = useMemo(() => {
+    const map = {};
+    modules.forEach(m => m.items.forEach(i => {
+      if (i.doneAt) map[i.doneAt] = (map[i.doneAt] || 0) + 1;
+    }));
     return map;
-  },[modules]);
-
-  const shift=k=>setYm(v=>{const d=new Date(v.y,v.m+k,1);return{y:d.getFullYear(),m:d.getMonth()}});
-  const MONTHS=['January','February','March','April','May','June','July','August',
-                'September','October','November','December'];
-  return (
-    <>
-      <div className="cal-bar">
-        <button className="nav" onClick={()=>shift(-1)} aria-label="Previous month">‹</button>
-        <h2>{MONTHS[ym.m]} {ym.y}</h2>
-        <button className="nav" onClick={()=>shift(1)} aria-label="Next month">›</button>
-        <span className="legend">
-          <span><span className="dot" style={{background:'var(--done)',marginRight:5}}/>Solved something</span>
-          <span><span className="dot" style={{background:'var(--miss)',marginRight:5}}/>Scheduled, nothing done</span>
-        </span>
-      </div>
-      <div className="grid">
-        {['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=><div key={d} className="dow">{d}</div>)}
-        {cells.map((date,idx)=>{
-          if(!date)return <div key={'b'+idx} className="cell blank"/>;
-          const sched=modules.filter(m=>m.start<=date&&date<=modEnd(m));
-          const c=doneBy[date]||0;
-          const past=date<t, isT=date===t;
-          let cls = c>0?'done' : (past&&sched.length&&date>=startDate)?'miss' : '';
-          if(isT&&!cls)cls='now';
-          const di=between(startDate,date)+1;
-          return (
-            <div key={date} className={'cell'+(isT?' today-cell':'')}>
-              <div className="cell-top">
-                <span className={'daynum '+cls}>{parse(date).getDate()}</span>
-                {di>0&&<span className="dayidx num">Day {di}</span>}
-              </div>
-              {sched.slice(0,2).map(m=>
-                <div key={m.id} className={'tag '+m.track} title={m.name}>{m.name}</div>)}
-              {c>0&&<div className="cnt num">{c} done</div>}
-            </div>
-          );
-        })}
-      </div>
-    </>
-  );
+  }, [modules]);
+  const shift = k => setYm(v => {
+    const d = new Date(v.y, v.m + k, 1);
+    return {
+      y: d.getFullYear(),
+      m: d.getMonth()
+    };
+  });
+  const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    className: "cal-bar"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "nav",
+    onClick: () => shift(-1),
+    "aria-label": "Previous month"
+  }, "‹"), /*#__PURE__*/React.createElement("h2", null, MONTHS[ym.m], " ", ym.y), /*#__PURE__*/React.createElement("button", {
+    className: "nav",
+    onClick: () => shift(1),
+    "aria-label": "Next month"
+  }, "›"), /*#__PURE__*/React.createElement("span", {
+    className: "legend"
+  }, /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+    className: "dot",
+    style: {
+      background: 'var(--done)',
+      marginRight: 5
+    }
+  }), "Solved something"), /*#__PURE__*/React.createElement("span", null, /*#__PURE__*/React.createElement("span", {
+    className: "dot",
+    style: {
+      background: 'var(--miss)',
+      marginRight: 5
+    }
+  }), "Scheduled, nothing done"))), /*#__PURE__*/React.createElement("div", {
+    className: "grid"
+  }, ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(d => /*#__PURE__*/React.createElement("div", {
+    key: d,
+    className: "dow"
+  }, d)), cells.map((date, idx) => {
+    if (!date) return /*#__PURE__*/React.createElement("div", {
+      key: 'b' + idx,
+      className: "cell blank"
+    });
+    const sched = modules.filter(m => m.start <= date && date <= modEnd(m));
+    const c = doneBy[date] || 0;
+    const past = date < t,
+      isT = date === t;
+    let cls = c > 0 ? 'done' : past && sched.length && date >= startDate ? 'miss' : '';
+    if (isT && !cls) cls = 'now';
+    const di = between(startDate, date) + 1;
+    return /*#__PURE__*/React.createElement("div", {
+      key: date,
+      className: 'cell' + (isT ? ' today-cell' : '')
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "cell-top"
+    }, /*#__PURE__*/React.createElement("span", {
+      className: 'daynum ' + cls
+    }, parse(date).getDate()), di > 0 && /*#__PURE__*/React.createElement("span", {
+      className: "dayidx num"
+    }, "Day ", di)), sched.slice(0, 2).map(m => /*#__PURE__*/React.createElement("div", {
+      key: m.id,
+      className: 'tag ' + m.track,
+      title: m.section + ' · ' + m.name
+    }, m.name)), c > 0 && /*#__PURE__*/React.createElement("div", {
+      className: "cnt num"
+    }, c, " done"));
+  })));
 }
 
 /* ---------- modals ---------- */
-function AddDays({onCancel,onAdd}){
-  const [v,setV]=useState('');
-  const go=()=>{const n=parseInt(v,10);if(n>0)onAdd(n)};
-  return (
-    <div className="scrim" onClick={onCancel}>
-      <div className="modal" onClick={e=>e.stopPropagation()}>
-        <h3>Need more time?</h3>
-        <p>Add extra days to this module to pace your learning. Later topics in the same track shift to match.</p>
-        <input autoFocus type="number" min="1" placeholder="Enter number of days" value={v}
-          onChange={e=>setV(e.target.value)}
-          onKeyDown={e=>{if(e.key==='Enter')go();if(e.key==='Escape')onCancel()}}/>
-        <div className="modal-btns">
-          <button className="btn ghost" onClick={onCancel}>Cancel</button>
-          <button className="btn solid" onClick={go}>Add days</button>
-        </div>
-      </div>
-    </div>
-  );
+function AddDays({
+  onCancel,
+  onAdd
+}) {
+  const [v, setV] = useState('');
+  const go = () => {
+    const n = parseInt(v, 10);
+    if (n > 0) onAdd(n);
+  };
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scrim",
+    onClick: onCancel
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("h3", null, "Need more time?"), /*#__PURE__*/React.createElement("p", null, "Add extra days to this topic. Later topics in the same track shift to match, and every problem's due date inside this topic reflows across the new range."), /*#__PURE__*/React.createElement("input", {
+    autoFocus: true,
+    type: "number",
+    min: "1",
+    placeholder: "Enter number of days",
+    value: v,
+    onChange: e => setV(e.target.value),
+    onKeyDown: e => {
+      if (e.key === 'Enter') go();
+      if (e.key === 'Escape') onCancel();
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "modal-btns"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost",
+    onClick: onCancel
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    className: "btn solid",
+    onClick: go
+  }, "Add days"))));
 }
-
-function ImportModal({onCancel,onDone}){
-  const [text,setText]=useState('');
-  const [track,setTrack]=useState('dsa');
-  const [mode,setMode]=useState('append');
-  const preview=useMemo(()=>parseImport(text,track),[text,track]);
-  const count=preview.reduce((a,m)=>a+m.items.length,0);
-  const sample='# Arrays\n'+
-    'Largest element in array | Easy\n'+
-    'Second largest element | Easy\n'+
-    'Longest subarray with sum K | Medium\n'+
-    'Maximum product subarray | Hard\n\n'+
-    '# Binary Search\n'+
-    'Search in rotated sorted array | Medium';
-  return (
-    <div className="scrim" onClick={onCancel}>
-      <div className="modal wide" onClick={e=>e.stopPropagation()}>
-        <h3>Import problems</h3>
-        <p>Paste your topics and problems. A line starting with <code>#</code> is a topic,
-           every other line is a problem, and anything after a <code>|</code> is the difficulty.
-           Difficulty is optional.</p>
-        <div className="fmt">{sample}</div>
-        <div className="row2">
-          <label>Track
-            <select value={track} onChange={e=>setTrack(e.target.value)}>
-              <option value="dsa">DSA</option>
-              <option value="prep">Interview prep</option>
-            </select>
-          </label>
-          <label>Mode
-            <select value={mode} onChange={e=>setMode(e.target.value)}>
-              <option value="append">Merge into existing topics</option>
-              <option value="replace">Replace everything in this track</option>
-            </select>
-          </label>
-        </div>
-        <textarea autoFocus placeholder={sample} value={text} onChange={e=>setText(e.target.value)}/>
-        <p style={{marginTop:-4}}>
-          {count===0?'Nothing parsed yet.'
-            :'Ready to import '+preview.length+' topic'+(preview.length>1?'s':'')+
-             ' and '+count+' problems.'}
-        </p>
-        <div className="modal-btns">
-          <button className="btn ghost" onClick={onCancel}>Cancel</button>
-          <button className="btn solid" disabled={!count}
-                  style={{opacity:count?1:.45,cursor:count?'pointer':'not-allowed'}}
-                  onClick={()=>{if(count)onDone(preview,track,mode)}}>
-            Import{count?' '+count:''}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
+function ImportModal({
+  onCancel,
+  onDone
+}) {
+  const [text, setText] = useState('');
+  const [track, setTrack] = useState('dsa');
+  const [mode, setMode] = useState('append');
+  const preview = useMemo(() => parseImport(text, track), [text, track]);
+  const count = preview.reduce((a, m) => a + m.items.length, 0);
+  const secs = [];
+  preview.forEach(m => {
+    if (secs.indexOf(m.section) < 0) secs.push(m.section);
+  });
+  const sample = '## Dynamic Programming\n' + '# 1D DP\n' + 'Climbing stairs | Medium\n' + 'Frog Jump | Medium\n\n' + '# DP on Strings\n' + 'Edit distance | Hard\n' + 'Wildcard matching | Hard';
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scrim",
+    onClick: onCancel
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal wide",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("h3", null, "Import problems"), /*#__PURE__*/React.createElement("p", null, /*#__PURE__*/React.createElement("code", null, "##"), " starts a section, ", /*#__PURE__*/React.createElement("code", null, "#"), " starts a topic inside it, every other line is a problem. Anything after the last ", /*#__PURE__*/React.createElement("code", null, "|"), " is the difficulty, and that part is optional."), /*#__PURE__*/React.createElement("div", {
+    className: "fmt"
+  }, sample), /*#__PURE__*/React.createElement("div", {
+    className: "row2"
+  }, /*#__PURE__*/React.createElement("label", null, "Track", /*#__PURE__*/React.createElement("select", {
+    value: track,
+    onChange: e => setTrack(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "dsa"
+  }, "DSA"), /*#__PURE__*/React.createElement("option", {
+    value: "prep"
+  }, "Interview prep"))), /*#__PURE__*/React.createElement("label", null, "Mode", /*#__PURE__*/React.createElement("select", {
+    value: mode,
+    onChange: e => setMode(e.target.value)
+  }, /*#__PURE__*/React.createElement("option", {
+    value: "append"
+  }, "Merge into existing topics"), /*#__PURE__*/React.createElement("option", {
+    value: "replace"
+  }, "Replace everything in this track")))), /*#__PURE__*/React.createElement("textarea", {
+    autoFocus: true,
+    placeholder: sample,
+    value: text,
+    onChange: e => setText(e.target.value)
+  }), /*#__PURE__*/React.createElement("p", {
+    style: {
+      marginTop: -4
+    }
+  }, count === 0 ? 'Nothing parsed yet.' : 'Ready to import ' + secs.length + ' section' + (secs.length > 1 ? 's' : '') + ', ' + preview.length + ' topics and ' + count + ' problems.'), /*#__PURE__*/React.createElement("div", {
+    className: "modal-btns"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost",
+    onClick: onCancel
+  }, "Cancel"), /*#__PURE__*/React.createElement("button", {
+    className: "btn solid",
+    disabled: !count,
+    style: {
+      opacity: count ? 1 : .45,
+      cursor: count ? 'pointer' : 'not-allowed'
+    },
+    onClick: () => {
+      if (count) onDone(preview, track, mode);
+    }
+  }, "Import", count ? ' ' + count : ''))));
 }
-
-function BackupModal({state,onCancel,onRestore}){
-  const [text,setText]=useState('');
-  const ref=useRef(null);
-  const json=JSON.stringify(state);
-  return (
-    <div className="scrim" onClick={onCancel}>
-      <div className="modal wide" onClick={e=>e.stopPropagation()}>
-        <h3>Backup and restore</h3>
-        <p>Progress is saved in this browser only. Download or copy this to move it to another
-           device, then paste it into the lower box there.</p>
-        <textarea ref={ref} readOnly value={json} style={{minHeight:110}}
-                  onFocus={e=>e.target.select()}/>
-        <div className="modal-btns" style={{marginBottom:20}}>
-          <button className="btn ghost" onClick={()=>{
-            if(ref.current){ref.current.select();try{document.execCommand('copy')}catch(e){}}
-          }}>Copy to clipboard</button>
-          <button className="btn ghost" onClick={()=>{
-            const b=new Blob([json],{type:'application/json'});
-            const a=document.createElement('a');
-            a.href=URL.createObjectURL(b);
-            a.download='prep-tracker-'+today()+'.json';
-            a.click();
-          }}>Download file</button>
-        </div>
-        <textarea placeholder="Paste a backup here to restore it" value={text}
-                  onChange={e=>setText(e.target.value)} style={{minHeight:100}}/>
-        <div className="modal-btns">
-          <button className="btn ghost" onClick={onCancel}>Close</button>
-          <button className="btn solid" onClick={()=>{
-            let d=null;
-            try{d=JSON.parse(text)}catch(e){}
-            if(!d||!d.modules||!d.startDate){
-              alert('That is not a valid backup. Paste the whole JSON from the box above.');
-              return;
-            }
-            onRestore(d);
-          }}>Restore</button>
-        </div>
-      </div>
-    </div>
-  );
+function BackupModal({
+  state,
+  onCancel,
+  onRestore
+}) {
+  const [text, setText] = useState('');
+  const ref = useRef(null);
+  const json = JSON.stringify(state);
+  return /*#__PURE__*/React.createElement("div", {
+    className: "scrim",
+    onClick: onCancel
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "modal wide",
+    onClick: e => e.stopPropagation()
+  }, /*#__PURE__*/React.createElement("h3", null, "Backup and restore"), /*#__PURE__*/React.createElement("p", null, "Progress is saved in this browser only. Download or copy this to move it to another device, then paste it into the lower box there."), /*#__PURE__*/React.createElement("textarea", {
+    ref: ref,
+    readOnly: true,
+    value: json,
+    style: {
+      minHeight: 100
+    },
+    onFocus: e => e.target.select()
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "modal-btns",
+    style: {
+      marginBottom: 20
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost",
+    onClick: () => {
+      if (ref.current) {
+        ref.current.select();
+        try {
+          document.execCommand('copy');
+        } catch (e) {}
+      }
+    }
+  }, "Copy to clipboard"), /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost",
+    onClick: () => {
+      const b = new Blob([json], {
+        type: 'application/json'
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(b);
+      a.download = 'prep-tracker-' + today() + '.json';
+      a.click();
+    }
+  }, "Download file")), /*#__PURE__*/React.createElement("textarea", {
+    placeholder: "Paste a backup here to restore it",
+    value: text,
+    onChange: e => setText(e.target.value),
+    style: {
+      minHeight: 90
+    }
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "modal-btns"
+  }, /*#__PURE__*/React.createElement("button", {
+    className: "btn ghost",
+    onClick: onCancel
+  }, "Close"), /*#__PURE__*/React.createElement("button", {
+    className: "btn solid",
+    onClick: () => {
+      let d = null;
+      try {
+        d = JSON.parse(text);
+      } catch (e) {}
+      if (!d || !d.modules || !d.startDate) {
+        alert('That is not a valid backup. Paste the whole JSON from the box above.');
+        return;
+      }
+      onRestore(d);
+    }
+  }, "Restore"))));
 }
 
 /* ---------- app ---------- */
-function App(){
-  const [ready,setReady]=useState(false);
-  const [startDate,setStart]=useState(today());
-  const [modules,setModules]=useState([]);
-  const [view,setView]=useState('Module');
-  const [askId,setAskId]=useState(null);
-  const [showImport,setShowImport]=useState(false);
-  const [showBackup,setShowBackup]=useState(false);
-
-  useEffect(()=>{(async()=>{
-    const s=await store.get();
-    if(s&&s.modules&&s.modules.length){setStart(s.startDate);setModules(s.modules)}
-    else{const d=today();setStart(d);setModules(buildSeed(d))}
-    setReady(true);
-  })()},[]);
-  useEffect(()=>{if(ready)store.set({startDate,modules})},[ready,startDate,modules]);
-
-  const patch=useCallback((modId,fn)=>
-    setModules(ms=>ms.map(m=>m.id!==modId?m:fn(m))),[]);
-
-  const setStatus=useCallback((modId,itemId,status)=>patch(modId,m=>({...m,
-    items:m.items.map(i=>i.id!==itemId?i:{...i,status,doneAt:status==='done'?today():null})})),[patch]);
-
-  const cycle=useCallback((modId,itemId)=>patch(modId,m=>({...m,
-    items:m.items.map(i=>{
-      if(i.id!==itemId)return i;
-      const n=i.status==='backlog'?'progress':i.status==='progress'?'done':'backlog';
-      return {...i,status:n,doneAt:n==='done'?today():null};
-    })})),[patch]);
-
-  const toggleRevise=useCallback((modId,itemId)=>patch(modId,m=>({...m,
-    items:m.items.map(i=>i.id!==itemId?i:{...i,revise:!i.revise})})),[patch]);
-
-  const addItem=useCallback((modId,title,diff)=>patch(modId,m=>({...m,
-    items:m.items.concat([mkItem(title,diff)])})),[patch]);
-
-  const delItem=useCallback((modId,itemId)=>patch(modId,m=>({...m,
-    items:m.items.filter(i=>i.id!==itemId)})),[patch]);
-
-  const changeDays=useCallback((modId,delta)=>setModules(ms=>reflow(
-    ms.map(m=>m.id!==modId?m:{...m,extra:Math.max(1-m.days,m.extra+delta)}),startDate)),[startDate]);
-
-  const doImport=(parsed,track,mode)=>{
-    setModules(ms=>{
-      const base = mode==='replace' ? ms.filter(m=>m.track!==track) : ms.slice();
-      const merged=base.map(m=>({...m,items:m.items.slice()}));
-      parsed.forEach(p=>{
-        const hit = mode==='append'
-          ? merged.find(m=>m.track===track&&m.name.toLowerCase()===p.name.toLowerCase())
-          : null;
-        if(hit){
-          const have={};
-          hit.items.forEach(i=>{have[i.title.toLowerCase()]=1});
-          hit.items=hit.items.concat(p.items.filter(i=>!have[i.title.toLowerCase()]));
-          hit.days=Math.max(hit.days,Math.ceil(hit.items.length/2));
-        } else {
-          merged.push(p);
-        }
+function App() {
+  const [ready, setReady] = useState(false);
+  const [startDate, setStart] = useState(today());
+  const [modules, setModules] = useState([]);
+  const [view, setView] = useState('Module');
+  const [askId, setAskId] = useState(null);
+  const [showImport, setShowImport] = useState(false);
+  const [showBackup, setShowBackup] = useState(false);
+  useEffect(() => {
+    (async () => {
+      const s = await store.get();
+      if (s && s.modules && s.modules.length) {
+        setStart(s.startDate);
+        setModules(s.modules);
+      } else {
+        const d = today();
+        setStart(d);
+        setModules(buildSeed(d));
+      }
+      setReady(true);
+    })();
+  }, []);
+  useEffect(() => {
+    if (ready) store.set({
+      startDate,
+      modules
+    });
+  }, [ready, startDate, modules]);
+  const patch = useCallback((modId, fn) => setModules(ms => ms.map(m => m.id !== modId ? m : fn(m))), []);
+  const setStatus = useCallback((modId, itemId, status) => patch(modId, m => ({
+    ...m,
+    items: m.items.map(i => i.id !== itemId ? i : {
+      ...i,
+      status,
+      doneAt: status === 'done' ? today() : null
+    })
+  })), [patch]);
+  const cycle = useCallback((modId, itemId) => patch(modId, m => ({
+    ...m,
+    items: m.items.map(i => {
+      if (i.id !== itemId) return i;
+      const n = i.status === 'backlog' ? 'progress' : i.status === 'progress' ? 'done' : 'backlog';
+      return {
+        ...i,
+        status: n,
+        doneAt: n === 'done' ? today() : null
+      };
+    })
+  })), [patch]);
+  const addItem = useCallback((modId, title, diff) => patch(modId, m => ({
+    ...m,
+    items: m.items.concat([mkItem(title, diff)])
+  })), [patch]);
+  const delItem = useCallback((modId, itemId) => patch(modId, m => ({
+    ...m,
+    items: m.items.filter(i => i.id !== itemId)
+  })), [patch]);
+  const changeDays = useCallback((modId, delta) => setModules(ms => reflow(ms.map(m => m.id !== modId ? m : {
+    ...m,
+    extra: Math.max(1 - m.days, m.extra + delta)
+  }), startDate)), [startDate]);
+  const doImport = (parsed, track, mode) => {
+    setModules(ms => {
+      const base = mode === 'replace' ? ms.filter(m => m.track !== track) : ms.slice();
+      const merged = base.map(m => ({
+        ...m,
+        items: m.items.slice()
+      }));
+      parsed.forEach(p => {
+        const hit = mode === 'append' ? merged.find(m => m.track === track && m.name.toLowerCase() === p.name.toLowerCase() && (m.section || '').toLowerCase() === (p.section || '').toLowerCase()) : null;
+        if (hit) {
+          const have = {};
+          hit.items.forEach(i => {
+            have[i.title.toLowerCase()] = 1;
+          });
+          hit.items = hit.items.concat(p.items.filter(i => !have[i.title.toLowerCase()]));
+          hit.days = Math.max(hit.days, Math.ceil(hit.items.length / 2));
+        } else merged.push(p);
       });
-      return reflow(merged,startDate);
+      return reflow(merged, startDate);
     });
     setShowImport(false);
   };
-
-  const stats=useMemo(()=>{
-    const items=modules.reduce((a,m)=>a.concat(m.items),[]);
-    const done=items.filter(i=>i.status==='done').length;
-    const total=items.length;
-    const diff={Easy:{done:0,total:0},Medium:{done:0,total:0},Hard:{done:0,total:0}};
-    items.forEach(i=>{
-      if(i.difficulty&&diff[i.difficulty]){
-        diff[i.difficulty].total++;
-        if(i.status==='done')diff[i.difficulty].done++;
-      }});
-    const dates={};
-    items.forEach(i=>{if(i.doneAt)dates[i.doneAt]=1});
-    let streak=0,cur=today();
-    if(!dates[cur])cur=addDays(cur,-1);
-    while(dates[cur]){streak++;cur=addDays(cur,-1)}
-    const ends=modules.map(modEnd).sort();
-    const endDate=ends.length?ends[ends.length-1]:startDate;
-    return {done,total,pct:total?Math.round(done/total*100):0,points:done*20,diff,streak,
-      flagged:items.filter(i=>i.revise).length,
-      dayNum:Math.max(1,between(startDate,today())+1),
-      totalDays:Math.max(1,between(startDate,endDate)+1),endDate};
-  },[modules,startDate]);
-
-  if(!ready)return <div className="wrap" style={{color:'var(--text-dim)'}}>Loading your plan…</div>;
-
-  return (
-    <>
-      <Header view={view} setView={setView} stats={stats}
-              onImport={()=>setShowImport(true)} onBackup={()=>setShowBackup(true)}/>
-      <div className="wrap">
-        {view==='Module'&&<ModuleView modules={modules} cycle={cycle} toggleRevise={toggleRevise}
-          addItem={addItem} delItem={delItem} changeDays={changeDays} askDays={setAskId}/>}
-        {view==='Kanban Flow'&&<BoardView modules={modules} setStatus={setStatus}/>}
-        {view==='Calendar'&&<CalendarView modules={modules} startDate={startDate}/>}
-        <div className="footer-note">
-          <span>Plan started {fLong(startDate)}</span>
-          <span>{modules.length} topics · {stats.total} problems</span>
-          <button className="linkish" onClick={()=>{
-            const d=prompt('Start date (YYYY-MM-DD)',startDate);
-            if(d&&/^\d{4}-\d{2}-\d{2}$/.test(d)){setStart(d);setModules(ms=>reflow(ms,d))}
-          }}>Change start date</button>
-          <button className="linkish" onClick={()=>{
-            if(confirm('Erase all topics and progress, and rebuild the starter plan from today?')){
-              const d=today();setStart(d);setModules(buildSeed(d));
-            }}}>Reset everything</button>
-        </div>
-      </div>
-      {askId&&<AddDays onCancel={()=>setAskId(null)}
-                       onAdd={n=>{changeDays(askId,n);setAskId(null)}}/>}
-      {showImport&&<ImportModal onCancel={()=>setShowImport(false)} onDone={doImport}/>}
-      {showBackup&&<BackupModal state={{startDate,modules}} onCancel={()=>setShowBackup(false)}
-                     onRestore={d=>{setStart(d.startDate);setModules(d.modules);setShowBackup(false)}}/>}
-    </>
-  );
+  const stats = useMemo(() => {
+    const items = modules.reduce((a, m) => a.concat(m.items), []);
+    const done = items.filter(i => i.status === 'done').length;
+    const total = items.length;
+    const diff = {
+      Easy: {
+        done: 0,
+        total: 0
+      },
+      Medium: {
+        done: 0,
+        total: 0
+      },
+      Hard: {
+        done: 0,
+        total: 0
+      },
+      None: {
+        done: 0,
+        total: 0
+      }
+    };
+    items.forEach(i => {
+      const k = i.difficulty && diff[i.difficulty] ? i.difficulty : 'None';
+      diff[k].total++;
+      if (i.status === 'done') diff[k].done++;
+    });
+    const dates = {};
+    items.forEach(i => {
+      if (i.doneAt) dates[i.doneAt] = 1;
+    });
+    const activeDays = Object.keys(dates).length;
+    let streak = 0,
+      cur = today();
+    if (!dates[cur]) cur = addDays(cur, -1);
+    while (dates[cur]) {
+      streak++;
+      cur = addDays(cur, -1);
+    }
+    const perDay = activeDays ? Math.round(done / activeDays * 10) / 10 : 0;
+    const eta = perDay > 0 ? Math.ceil((total - done) / perDay) : '—';
+    const ends = modules.map(modEnd).sort();
+    const endDate = ends.length ? ends[ends.length - 1] : startDate;
+    return {
+      done,
+      total,
+      pct: total ? Math.round(done / total * 100) : 0,
+      diff,
+      streak,
+      activeDays,
+      perDay,
+      eta,
+      dayNum: Math.max(1, between(startDate, today()) + 1),
+      totalDays: Math.max(1, between(startDate, endDate) + 1),
+      endDate
+    };
+  }, [modules, startDate]);
+  if (!ready) return /*#__PURE__*/React.createElement("div", {
+    className: "wrap",
+    style: {
+      color: 'var(--text-dim)'
+    }
+  }, "Loading your plan…");
+  const secCount = groupSections(modules).length;
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Header, {
+    view: view,
+    setView: setView,
+    stats: stats,
+    onImport: () => setShowImport(true),
+    onBackup: () => setShowBackup(true)
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "wrap"
+  }, view === 'Module' && /*#__PURE__*/React.createElement(ModuleView, {
+    modules: modules,
+    cycle: cycle,
+    addItem: addItem,
+    delItem: delItem,
+    changeDays: changeDays,
+    askDays: setAskId
+  }), view === 'Kanban Flow' && /*#__PURE__*/React.createElement(BoardView, {
+    modules: modules,
+    setStatus: setStatus
+  }), view === 'Calendar' && /*#__PURE__*/React.createElement(CalendarView, {
+    modules: modules,
+    startDate: startDate
+  }), view === 'Progress' && /*#__PURE__*/React.createElement(ProgressView, {
+    modules: modules,
+    stats: stats
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "footer-note"
+  }, /*#__PURE__*/React.createElement("span", null, "Plan started ", fLong(startDate)), /*#__PURE__*/React.createElement("span", null, secCount, " sections · ", modules.length, " topics · ", stats.total, " problems"), /*#__PURE__*/React.createElement("button", {
+    className: "linkish",
+    onClick: () => {
+      const d = prompt('Start date (YYYY-MM-DD)', startDate);
+      if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+        setStart(d);
+        setModules(ms => reflow(ms, d));
+      }
+    }
+  }, "Change start date"), /*#__PURE__*/React.createElement("button", {
+    className: "linkish",
+    onClick: () => {
+      if (confirm('Erase all progress and rebuild the plan from today?')) {
+        const d = today();
+        setStart(d);
+        setModules(buildSeed(d));
+      }
+    }
+  }, "Reset everything"))), askId && /*#__PURE__*/React.createElement(AddDays, {
+    onCancel: () => setAskId(null),
+    onAdd: n => {
+      changeDays(askId, n);
+      setAskId(null);
+    }
+  }), showImport && /*#__PURE__*/React.createElement(ImportModal, {
+    onCancel: () => setShowImport(false),
+    onDone: doImport
+  }), showBackup && /*#__PURE__*/React.createElement(BackupModal, {
+    state: {
+      startDate,
+      modules
+    },
+    onCancel: () => setShowBackup(false),
+    onRestore: d => {
+      setStart(d.startDate);
+      setModules(d.modules);
+      setShowBackup(false);
+    }
+  }));
 }
-
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(/*#__PURE__*/React.createElement(App, null));
+} catch (err) {
+  document.getElementById('root').innerHTML =
+    '<div style="max-width:640px;margin:80px auto;padding:24px;border:1px solid #C9524E;' +
+    'border-radius:10px;background:#151B24;font-family:Inter,system-ui,sans-serif">' +
+    '<h2 style="font-family:Sora,sans-serif;margin:0 0 10px;color:#DD6560">Failed to start</h2>' +
+    '<pre style="color:#8E9AAC;white-space:pre-wrap;font-size:12.5px">' + String(err) + '</pre></div>';
+}
 </script>
 </body>
 </html>
