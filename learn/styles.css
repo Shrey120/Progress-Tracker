@@ -195,6 +195,16 @@ button { font: inherit; color: inherit; }
 .run-out .ok-label { color: var(--green); font: 600 11.5px var(--sans); display: block; margin-bottom: 4px; }
 .run-out.err { color: var(--red); }
 
+/* sql results */
+.sql-res { margin: 4px 0 12px; overflow-x: auto; }
+.sql-res table { border-collapse: collapse; font: 12.5px var(--mono); white-space: nowrap; }
+.sql-res th, .sql-res td { border: 1px solid var(--line-2); padding: 3px 10px; text-align: left; }
+.sql-res th { background: var(--bg-3); color: var(--blue); font-weight: 600; }
+.sql-res td { color: var(--text); }
+.sql-res .muted { font-size: 11.5px; margin-top: 3px; }
+.err-line { color: var(--red); }
+.run-out:has(.sql-res) { white-space: normal; max-height: 420px; }
+
 /* step-through visualizer */
 .viz { border-top: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); }
 .viz-code { font: 13px/1.7 var(--mono); padding: 10px 0; overflow-x: auto; border-right: 1px solid var(--line); }

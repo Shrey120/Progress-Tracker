@@ -178,6 +178,52 @@ def verify(courses):
     return bad == 0
 
 
+SQL_ERRORS_OK = {"transactions-acid"}  # lessons that show a failing statement on purpose
+
+
+def verify_snippets(courses):
+    """Run every ```jsrun block with node and every ```pyrun block with python; report failures."""
+    import subprocess, tempfile
+    bad = 0; n = 0
+    runner = (
+        "const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;"
+        "const code = require('fs').readFileSync(process.argv[1], 'utf8');"
+        "process.on('unhandledRejection', e => { console.log('UNHANDLED', e && e.message); process.exitCode = 3; });"
+        "new AsyncFunction(code)().then(() => setTimeout(() => {}, 400), e => { console.log('ERROR', e && e.message); process.exitCode = 2; });"
+    )
+    for c in courses:
+        for m in c["modules"]:
+            for l in m["lessons"]:
+                for lang, src in re.findall(r"```(jsrun|pyrun|sqlrun)\n(.*?)\n```", l.get("md", ""), flags=re.S):
+                    n += 1
+                    if lang == "sqlrun":
+                        import sqlite3
+                        db = sqlite3.connect(":memory:")
+                        db.executescript(open(os.path.join(ROOT, "sql-seed.sql")).read())
+                        try:
+                            db.executescript(src)
+                        except Exception as e:
+                            if l["id"] not in SQL_ERRORS_OK:
+                                bad += 1
+                                print(f"SNIPPET sql {c['id']}/{m['id']}/{l['id']}: {e}")
+                        db.close()
+                        continue
+                    with tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False) as f:
+                        f.write(src)
+                    cmd = ["node", "-e", runner, f.name] if lang == "jsrun" else [sys.executable, "-I", f.name]
+                    try:
+                        r = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+                        failed = r.returncode != 0
+                        why = (r.stdout + r.stderr).strip().splitlines()[-1:] if failed else ""
+                    except subprocess.TimeoutExpired:
+                        failed, why = True, ["timeout"]
+                    if failed and not l["id"] in ("reading-errors",):
+                        bad += 1
+                        print(f"SNIPPET {lang} {c['id']}/{m['id']}/{l['id']}: {why}")
+    print(f"{n} runnable snippets checked, {bad} problems")
+    return bad == 0
+
+
 if __name__ == "__main__":
     sys.setrecursionlimit(10000)
     courses = build()
@@ -186,4 +232,6 @@ if __name__ == "__main__":
         done = sum(1 for m in c["modules"] for l in m["lessons"] if l.get("md"))
         print(f"{c['id']}: {done}/{total} lessons written, {len(c['modules'])} topics")
     if "--verify" in sys.argv:
-        sys.exit(0 if verify(courses) else 1)
+        ok = verify(courses)
+        ok = verify_snippets(courses) and ok
+        sys.exit(0 if ok else 1)

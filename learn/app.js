@@ -74,7 +74,7 @@
 
   // ---------------- markdown + code ----------------
   marked.setOptions({ gfm: true, breaks: false });
-  const MODES = { python: 'python', py: 'python', pyrun: 'python', js: 'javascript', javascript: 'javascript', jsrun: 'javascript', ts: 'text/typescript', typescript: 'text/typescript', tsx: 'text/typescript-jsx', jsx: 'text/jsx', sql: 'text/x-sql', json: 'application/json', bash: null, sh: null, text: null, '': 'python' };
+  const MODES = { python: 'python', py: 'python', pyrun: 'python', js: 'javascript', javascript: 'javascript', jsrun: 'javascript', ts: 'text/typescript', typescript: 'text/typescript', tsx: 'text/typescript-jsx', jsx: 'text/jsx', sql: 'text/x-sql', sqlrun: 'text/x-sql', json: 'application/json', bash: null, sh: null, text: null, '': 'python' };
   function highlight(el, lang) {
     const mode = MODES[lang] !== undefined ? MODES[lang] : null;
     const src = el.textContent;
@@ -89,7 +89,7 @@
       const lang = ((el.className || '').match(/language-(\S+)/) || [, ''])[1];
       const src = el.textContent.replace(/\n$/, '');
       highlight(el, lang);
-      if (lang === 'pyrun' || lang === 'jsrun') makeRunnable(el.parentElement, src, lang === 'pyrun' ? 'python' : 'js');
+      if (lang === 'pyrun' || lang === 'jsrun' || lang === 'sqlrun') makeRunnable(el.parentElement, src, { pyrun: 'python', jsrun: 'js', sqlrun: 'sql' }[lang]);
     });
     div.querySelectorAll('a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
     return div;
@@ -130,6 +130,21 @@
       w.postMessage({ code });
     });
   }
+  function runSQL(code) {
+    return new Promise((resolve) => {
+      const w = new Worker('sql-worker.js');
+      const t = setTimeout(() => { w.terminate(); resolve({ results: [], error: 'Stopped after 5 seconds.' }); }, 5000);
+      w.onmessage = (ev) => { clearTimeout(t); w.terminate(); resolve(ev.data); };
+      w.onerror = (e) => { clearTimeout(t); w.terminate(); resolve({ results: [], error: e.message }); e.preventDefault(); };
+      w.postMessage({ code });
+    });
+  }
+  function sqlTable(r) {
+    if (r.error) return `<div class="err-line">✖ ${esc(r.sql.split('\n')[0].slice(0, 70))}<br>&nbsp;&nbsp;${esc(r.error)}</div>`;
+    if (!r.columns) return /^(BEGIN|COMMIT|ROLLBACK|CREATE|DROP|ALTER|SAVEPOINT|RELEASE)/i.test(r.sql) ? `<div class="muted">${esc(r.sql.split('\n')[0].slice(0, 60))} ✓</div>` : `<div class="muted">${esc(r.sql.split('\n')[0].slice(0, 60))} → ${r.changes} row${r.changes === 1 ? '' : 's'} changed</div>`;
+    const cell = (v) => (v === null ? '<i class="muted">NULL</i>' : esc(v));
+    return `<div class="sql-res"><table><thead><tr>${r.columns.map((c) => `<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${r.rows.map((row) => `<tr>${row.map((v) => `<td>${cell(v)}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${r.columns.length}" class="muted">no rows</td></tr>`}</tbody></table><div class="muted">${r.rows.length} row${r.rows.length === 1 ? '' : 's'}</div></div>`;
+  }
   const STACK_MSG = 'Recursion went deeper than Python in the browser allows. Functions wrapped in @cache can nest about 450 calls here (plain functions go much deeper, and LeetCode allows more).';
   const loadMsg = (err) => `Python could not load: ${err.message}. It downloads from cdn.jsdelivr.net the first time, so check your connection or any blocker, then try again.`;
 
@@ -141,7 +156,7 @@
     bar.appendChild(run);
     let stepBtn = null;
     if (lang === 'python') { stepBtn = document.createElement('button'); stepBtn.className = 'btn small yellow'; stepBtn.textContent = 'Step through'; bar.appendChild(stepBtn); }
-    const tag = document.createElement('span'); tag.className = 'lang'; tag.textContent = lang === 'python' ? 'python' : 'javascript'; bar.appendChild(tag);
+    const tag = document.createElement('span'); tag.className = 'lang'; tag.textContent = { python: 'python', js: 'javascript', sql: 'sqlite · shop database' }[lang]; bar.appendChild(tag);
     wrap.appendChild(bar);
     const out = document.createElement('div'); out.className = 'run-out'; out.hidden = true; wrap.appendChild(out);
     let viz = null;
@@ -155,6 +170,10 @@
           out.innerHTML = `<span class="ok-label">${r.error || r.timeout ? 'Output and error' : 'Output'}</span>`;
           out.appendChild(document.createTextNode(text || '(no output)'));
           if (r.error || r.timeout) out.classList.add('err');
+        } else if (lang === 'sql') {
+          const r = await runSQL(src);
+          out.innerHTML = `<span class="ok-label">${r.error ? 'Result and error' : 'Result'}</span>` + r.results.map(sqlTable).join('') + (r.error ? `<div class="err-line">✖ ${esc(r.error)}</div>` : '');
+          if (r.error && !r.results.length) out.classList.add('err');
         } else {
           const r = await runJS(src);
           out.innerHTML = `<span class="ok-label">${r.error || r.timeout ? 'Console and error' : 'Console'}</span>`;
