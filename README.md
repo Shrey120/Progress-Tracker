@@ -115,3 +115,8 @@ JSX is compiled ahead of time to plain `React.createElement` calls, so there is 
 and no build step — the page only pulls React and ReactDOM from unpkg.com. It needs a
 connection on first load and says so plainly if the CDN is blocked, rather than showing a
 blank screen.
+## Learn
+
+`learn/` is a separate lesson site (Python for DSA, then the interview-prep topics) with
+in-browser Python exercises, linked from the tracker's **Learn** button and served at
+`/learn/`. See `learn/README.md`.

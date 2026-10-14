@@ -1,0 +1,1871 @@
+[
+ {
+  "id": "python",
+  "title": "Python for DSA",
+  "blurb": "Everything in Python you need to solve the Striver sheet and LeetCode comfortably: the language, the built-ins that matter, their costs, and the patterns written the Python way.",
+  "modules": []
+ },
+ {
+  "id": "prep",
+  "title": "Interview prep",
+  "blurb": "The 339 non-DSA topics from your tracker, grouped by how much they decide an interview. Lessons are being written in order: high leverage first.",
+  "modules": [
+   {
+    "id": "javascript-core",
+    "title": "JavaScript core",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "closures",
+      "title": "Closures",
+      "stars": 3
+     },
+     {
+      "id": "event-loop-microtasks-macrotasks",
+      "title": "Event loop, microtasks & macrotasks",
+      "stars": 3
+     },
+     {
+      "id": "promises-async-await-error-propagation",
+      "title": "Promises, async/await, error propagation",
+      "stars": 3
+     },
+     {
+      "id": "promise-all-allsettled-race",
+      "title": "Promise.all / allSettled / race",
+      "stars": 3
+     },
+     {
+      "id": "this-binding-all-four-rules",
+      "title": "this binding — all four rules",
+      "stars": 3
+     },
+     {
+      "id": "implement-debounce-and-throttle",
+      "title": "Implement debounce and throttle",
+      "stars": 3
+     },
+     {
+      "id": "map-filter-reduce",
+      "title": "map / filter / reduce",
+      "stars": 3
+     },
+     {
+      "id": "deep-vs-shallow-copy",
+      "title": "Deep vs shallow copy",
+      "stars": 3
+     },
+     {
+      "id": "es-modules-vs-commonjs",
+      "title": "ES modules vs CommonJS",
+      "stars": 3
+     },
+     {
+      "id": "prototypes-the-prototype-chain",
+      "title": "Prototypes & the prototype chain",
+      "stars": 2
+     },
+     {
+      "id": "hoisting-tdz",
+      "title": "Hoisting & TDZ",
+      "stars": 2
+     },
+     {
+      "id": "scope-chains",
+      "title": "Scope chains",
+      "stars": 2
+     },
+     {
+      "id": "polyfills-bind-call-apply-promise",
+      "title": "Polyfills: bind, call, apply, Promise",
+      "stars": 2
+     },
+     {
+      "id": "memory-leaks",
+      "title": "Memory leaks",
+      "stars": 2
+     },
+     {
+      "id": "generators-iterators",
+      "title": "Generators & iterators",
+      "stars": 1
+     },
+     {
+      "id": "currying-partial-application",
+      "title": "Currying & partial application",
+      "stars": 1
+     },
+     {
+      "id": "optional-chaining-nullish-coalescing",
+      "title": "Optional chaining & nullish coalescing",
+      "stars": 1
+     },
+     {
+      "id": "garbage-collection",
+      "title": "Garbage collection",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "typescript",
+    "title": "TypeScript",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "generics-constraints",
+      "title": "Generics & constraints",
+      "stars": 3
+     },
+     {
+      "id": "discriminated-unions",
+      "title": "Discriminated unions",
+      "stars": 3
+     },
+     {
+      "id": "type-narrowing-type-guards",
+      "title": "Type narrowing & type guards",
+      "stars": 3
+     },
+     {
+      "id": "utility-types-partial-pick-omit-record-returntype",
+      "title": "Utility types: Partial, Pick, Omit, Record, ReturnType",
+      "stars": 3
+     },
+     {
+      "id": "unknown-vs-any-vs-never",
+      "title": "unknown vs any vs never",
+      "stars": 3
+     },
+     {
+      "id": "strict-mode-flags",
+      "title": "Strict mode flags",
+      "stars": 3
+     },
+     {
+      "id": "structural-typing",
+      "title": "Structural typing",
+      "stars": 2
+     },
+     {
+      "id": "satisfies",
+      "title": "satisfies",
+      "stars": 2
+     },
+     {
+      "id": "type-safe-api-contracts-and-codegen",
+      "title": "Type-safe API contracts and codegen",
+      "stars": 2
+     },
+     {
+      "id": "conditional-mapped-types",
+      "title": "Conditional & mapped types",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "react",
+    "title": "React",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "hooks-rules-closures-in-hooks",
+      "title": "Hooks rules & closures-in-hooks",
+      "stars": 3
+     },
+     {
+      "id": "useeffect-dependencies-cleanup",
+      "title": "useEffect dependencies & cleanup",
+      "stars": 3
+     },
+     {
+      "id": "usememo-usecallback-react-memo-and-when-they-do-not-help",
+      "title": "useMemo, useCallback, React.memo — and when they do not help",
+      "stars": 3
+     },
+     {
+      "id": "reconciliation-the-diffing-algorithm",
+      "title": "Reconciliation & the diffing algorithm",
+      "stars": 3
+     },
+     {
+      "id": "keys",
+      "title": "Keys",
+      "stars": 3
+     },
+     {
+      "id": "context-re-render-behavior",
+      "title": "Context & re-render behavior",
+      "stars": 3
+     },
+     {
+      "id": "controlled-vs-uncontrolled-components",
+      "title": "Controlled vs uncontrolled components",
+      "stars": 3
+     },
+     {
+      "id": "state-colocation-lifting",
+      "title": "State colocation & lifting",
+      "stars": 3
+     },
+     {
+      "id": "custom-hooks",
+      "title": "Custom hooks",
+      "stars": 3
+     },
+     {
+      "id": "server-state-vs-client-state-with-tanstack-query",
+      "title": "Server state vs client state with TanStack Query",
+      "stars": 3
+     },
+     {
+      "id": "component-composition-patterns",
+      "title": "Component composition patterns",
+      "stars": 3
+     },
+     {
+      "id": "useref",
+      "title": "useRef",
+      "stars": 2
+     },
+     {
+      "id": "usereducer",
+      "title": "useReducer",
+      "stars": 2
+     },
+     {
+      "id": "error-boundaries",
+      "title": "Error boundaries",
+      "stars": 2
+     },
+     {
+      "id": "suspense-lazy-loading",
+      "title": "Suspense & lazy loading",
+      "stars": 2
+     },
+     {
+      "id": "react-19-use-actions-useoptimistic",
+      "title": "React 19: use, Actions, useOptimistic",
+      "stars": 2
+     },
+     {
+      "id": "state-management-choice-justification",
+      "title": "State management choice & justification",
+      "stars": 2
+     },
+     {
+      "id": "list-virtualization",
+      "title": "List virtualization",
+      "stars": 2
+     },
+     {
+      "id": "uselayouteffect-vs-useeffect",
+      "title": "useLayoutEffect vs useEffect",
+      "stars": 2
+     },
+     {
+      "id": "fiber-architecture",
+      "title": "Fiber architecture",
+      "stars": 1
+     },
+     {
+      "id": "concurrent-rendering-usetransition-usedeferredvalue",
+      "title": "Concurrent rendering, useTransition, useDeferredValue",
+      "stars": 1
+     },
+     {
+      "id": "portals",
+      "title": "Portals",
+      "stars": 1
+     },
+     {
+      "id": "render-props-hocs",
+      "title": "Render props & HOCs",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "next-js-and-rendering",
+    "title": "Next.js and rendering",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "ssr-ssg-isr-csr-trade-offs-and-when-to-pick-which",
+      "title": "SSR, SSG, ISR, CSR — trade-offs and when to pick which",
+      "stars": 3
+     },
+     {
+      "id": "server-components-vs-client-components",
+      "title": "Server Components vs Client Components",
+      "stars": 3
+     },
+     {
+      "id": "app-router",
+      "title": "App Router",
+      "stars": 3
+     },
+     {
+      "id": "the-caching-layers-request-data-full-route-router",
+      "title": "The caching layers: request, data, full-route, router",
+      "stars": 3
+     },
+     {
+      "id": "revalidation-strategies",
+      "title": "Revalidation strategies",
+      "stars": 3
+     },
+     {
+      "id": "hydration-hydration-mismatches",
+      "title": "Hydration & hydration mismatches",
+      "stars": 3
+     },
+     {
+      "id": "server-actions",
+      "title": "Server actions",
+      "stars": 3
+     },
+     {
+      "id": "streaming-suspense-boundaries",
+      "title": "Streaming & Suspense boundaries",
+      "stars": 2
+     },
+     {
+      "id": "route-handlers",
+      "title": "Route handlers",
+      "stars": 2
+     },
+     {
+      "id": "middleware",
+      "title": "Middleware",
+      "stars": 2
+     },
+     {
+      "id": "dynamic-vs-static-rendering",
+      "title": "Dynamic vs static rendering",
+      "stars": 2
+     },
+     {
+      "id": "metadata-seo-api",
+      "title": "Metadata & SEO API",
+      "stars": 2
+     },
+     {
+      "id": "partial-prerendering",
+      "title": "Partial prerendering",
+      "stars": 1
+     },
+     {
+      "id": "edge-vs-node-runtime",
+      "title": "Edge vs Node runtime",
+      "stars": 1
+     },
+     {
+      "id": "image-font-optimization",
+      "title": "Image & font optimization",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "sql-and-postgres",
+    "title": "SQL and Postgres",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "joins",
+      "title": "Joins",
+      "stars": 3
+     },
+     {
+      "id": "indexes-b-trees",
+      "title": "Indexes & B-trees",
+      "stars": 3
+     },
+     {
+      "id": "composite-index-column-order",
+      "title": "Composite index column order",
+      "stars": 3
+     },
+     {
+      "id": "explain-query-plans",
+      "title": "EXPLAIN & query plans",
+      "stars": 3
+     },
+     {
+      "id": "n-1-queries",
+      "title": "N+1 queries",
+      "stars": 3
+     },
+     {
+      "id": "transactions-acid",
+      "title": "Transactions & ACID",
+      "stars": 3
+     },
+     {
+      "id": "normalization-vs-denormalization",
+      "title": "Normalization vs denormalization",
+      "stars": 3
+     },
+     {
+      "id": "schema-migrations-on-live-tables",
+      "title": "Schema migrations on live tables",
+      "stars": 3
+     },
+     {
+      "id": "zero-downtime-column-changes-backfills",
+      "title": "Zero-downtime column changes & backfills",
+      "stars": 3
+     },
+     {
+      "id": "connection-pooling",
+      "title": "Connection pooling",
+      "stars": 3
+     },
+     {
+      "id": "isolation-levels",
+      "title": "Isolation levels",
+      "stars": 2
+     },
+     {
+      "id": "locking-deadlocks",
+      "title": "Locking & deadlocks",
+      "stars": 2
+     },
+     {
+      "id": "window-functions",
+      "title": "Window functions",
+      "stars": 2
+     },
+     {
+      "id": "ctes",
+      "title": "CTEs",
+      "stars": 2
+     },
+     {
+      "id": "aggregations-group-by",
+      "title": "Aggregations & GROUP BY",
+      "stars": 2
+     },
+     {
+      "id": "materialized-views",
+      "title": "Materialized views",
+      "stars": 2
+     },
+     {
+      "id": "read-replicas-replication-lag",
+      "title": "Read replicas & replication lag",
+      "stars": 2
+     },
+     {
+      "id": "jsonb",
+      "title": "JSONB",
+      "stars": 2
+     },
+     {
+      "id": "soft-deletes",
+      "title": "Soft deletes",
+      "stars": 2
+     },
+     {
+      "id": "mvcc",
+      "title": "MVCC",
+      "stars": 1
+     },
+     {
+      "id": "partitioning",
+      "title": "Partitioning",
+      "stars": 1
+     },
+     {
+      "id": "sharding",
+      "title": "Sharding",
+      "stars": 1
+     },
+     {
+      "id": "triggers",
+      "title": "Triggers",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "api-design",
+    "title": "API design",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "rest-resource-modeling",
+      "title": "REST resource modeling",
+      "stars": 3
+     },
+     {
+      "id": "verb-semantics-put-vs-patch-vs-post",
+      "title": "Verb semantics: PUT vs PATCH vs POST",
+      "stars": 3
+     },
+     {
+      "id": "status-code-discipline",
+      "title": "Status code discipline",
+      "stars": 3
+     },
+     {
+      "id": "pagination-offset-vs-cursor",
+      "title": "Pagination: offset vs cursor",
+      "stars": 3
+     },
+     {
+      "id": "versioning-strategies",
+      "title": "Versioning strategies",
+      "stars": 3
+     },
+     {
+      "id": "graphql-schema-design",
+      "title": "GraphQL schema design",
+      "stars": 3
+     },
+     {
+      "id": "resolvers",
+      "title": "Resolvers",
+      "stars": 3
+     },
+     {
+      "id": "n-1-dataloader",
+      "title": "N+1 & DataLoader",
+      "stars": 3
+     },
+     {
+      "id": "graphql-vs-rest-trade-offs",
+      "title": "GraphQL vs REST trade-offs",
+      "stars": 3
+     },
+     {
+      "id": "filtering-sorting",
+      "title": "Filtering & sorting",
+      "stars": 2
+     },
+     {
+      "id": "hasura-permissions-row-level-rules",
+      "title": "Hasura permissions & row-level rules",
+      "stars": 2
+     },
+     {
+      "id": "idempotency",
+      "title": "Idempotency",
+      "stars": 2
+     },
+     {
+      "id": "webhooks",
+      "title": "Webhooks",
+      "stars": 2
+     },
+     {
+      "id": "openapi-contract-first",
+      "title": "OpenAPI & contract-first",
+      "stars": 2
+     },
+     {
+      "id": "api-gateways",
+      "title": "API gateways",
+      "stars": 1
+     },
+     {
+      "id": "subscriptions",
+      "title": "Subscriptions",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "auth-and-web-security",
+    "title": "Auth and web security",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "jwt-structure-signing-expiry-refresh-flows",
+      "title": "JWT structure, signing, expiry, refresh flows",
+      "stars": 3
+     },
+     {
+      "id": "session-vs-token-auth",
+      "title": "Session vs token auth",
+      "stars": 3
+     },
+     {
+      "id": "xss-stored-reflected-dom",
+      "title": "XSS: stored, reflected, DOM",
+      "stars": 3
+     },
+     {
+      "id": "csrf-tokens",
+      "title": "CSRF & tokens",
+      "stars": 3
+     },
+     {
+      "id": "cors-preflight",
+      "title": "CORS & preflight",
+      "stars": 3
+     },
+     {
+      "id": "secure-cookie-flags-httponly-samesite-secure",
+      "title": "Secure cookie flags: HttpOnly, SameSite, Secure",
+      "stars": 3
+     },
+     {
+      "id": "password-hashing-bcrypt-argon2",
+      "title": "Password hashing: bcrypt, argon2",
+      "stars": 3
+     },
+     {
+      "id": "sql-injection",
+      "title": "SQL injection",
+      "stars": 3
+     },
+     {
+      "id": "oauth-2-0-oidc",
+      "title": "OAuth 2.0 & OIDC",
+      "stars": 2
+     },
+     {
+      "id": "rate-limiting",
+      "title": "Rate limiting",
+      "stars": 2
+     },
+     {
+      "id": "secrets-management",
+      "title": "Secrets management",
+      "stars": 2
+     },
+     {
+      "id": "csp",
+      "title": "CSP",
+      "stars": 2
+     },
+     {
+      "id": "owasp-top-10",
+      "title": "OWASP Top 10",
+      "stars": 2
+     },
+     {
+      "id": "authorization-models-rbac-row-level",
+      "title": "Authorization models: RBAC, row-level",
+      "stars": 2
+     },
+     {
+      "id": "sso",
+      "title": "SSO",
+      "stars": 1
+     },
+     {
+      "id": "clickjacking",
+      "title": "Clickjacking",
+      "stars": 1
+     },
+     {
+      "id": "dependency-supply-chain-risk",
+      "title": "Dependency & supply-chain risk",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "testing",
+    "title": "Testing",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "unit-vs-integration-vs-e2e",
+      "title": "Unit vs integration vs E2E",
+      "stars": 3
+     },
+     {
+      "id": "jest-vitest",
+      "title": "Jest / Vitest",
+      "stars": 3
+     },
+     {
+      "id": "react-testing-library",
+      "title": "React Testing Library",
+      "stars": 3
+     },
+     {
+      "id": "mocking-spies",
+      "title": "Mocking & spies",
+      "stars": 3
+     },
+     {
+      "id": "what-is-actually-worth-testing",
+      "title": "What is actually worth testing",
+      "stars": 3
+     },
+     {
+      "id": "playwright-cypress",
+      "title": "Playwright / Cypress",
+      "stars": 2
+     },
+     {
+      "id": "msw",
+      "title": "MSW",
+      "stars": 2
+     },
+     {
+      "id": "testing-pyramid-and-trophy",
+      "title": "Testing pyramid and trophy",
+      "stars": 2
+     },
+     {
+      "id": "flaky-tests",
+      "title": "Flaky tests",
+      "stars": 2
+     },
+     {
+      "id": "coverage-and-its-limits",
+      "title": "Coverage and its limits",
+      "stars": 2
+     },
+     {
+      "id": "tdd",
+      "title": "TDD",
+      "stars": 1
+     },
+     {
+      "id": "snapshot-testing",
+      "title": "Snapshot testing",
+      "stars": 1
+     },
+     {
+      "id": "contract-testing",
+      "title": "Contract testing",
+      "stars": 1
+     },
+     {
+      "id": "load-testing-basics",
+      "title": "Load testing basics",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "behavioural-and-remote",
+    "title": "Behavioural and remote",
+    "group": "High leverage",
+    "lessons": [
+     {
+      "id": "star-method",
+      "title": "STAR method",
+      "stars": 3
+     },
+     {
+      "id": "a-production-incident-you-caused-or-fixed",
+      "title": "A production incident you caused or fixed",
+      "stars": 3
+     },
+     {
+      "id": "a-hard-bug-you-debugged",
+      "title": "A hard bug you debugged",
+      "stars": 3
+     },
+     {
+      "id": "a-technical-trade-off-you-made",
+      "title": "A technical trade-off you made",
+      "stars": 3
+     },
+     {
+      "id": "disagreeing-with-a-manager-or-teammate",
+      "title": "Disagreeing with a manager or teammate",
+      "stars": 3
+     },
+     {
+      "id": "async-communication-practice",
+      "title": "Async communication practice",
+      "stars": 3
+     },
+     {
+      "id": "timezone-overlap-handoff-answer",
+      "title": "Timezone overlap & handoff answer",
+      "stars": 3
+     },
+     {
+      "id": "written-communication-in-prs-and-docs",
+      "title": "Written communication in PRs and docs",
+      "stars": 3
+     },
+     {
+      "id": "receiving-critical-feedback",
+      "title": "Receiving critical feedback",
+      "stars": 2
+     },
+     {
+      "id": "missed-deadline",
+      "title": "Missed deadline",
+      "stars": 2
+     },
+     {
+      "id": "why-you-are-leaving",
+      "title": "Why you are leaving",
+      "stars": 2
+     },
+     {
+      "id": "mentoring",
+      "title": "Mentoring",
+      "stars": 2
+     },
+     {
+      "id": "conflict-escalation-stories",
+      "title": "Conflict escalation stories",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "node-and-backend",
+    "title": "Node and backend",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "node-event-loop-phases",
+      "title": "Node event loop phases",
+      "stars": 3
+     },
+     {
+      "id": "middleware-request-lifecycle",
+      "title": "Middleware & request lifecycle",
+      "stars": 3
+     },
+     {
+      "id": "error-handling-strategy",
+      "title": "Error-handling strategy",
+      "stars": 3
+     },
+     {
+      "id": "async-error-propagation",
+      "title": "Async error propagation",
+      "stars": 3
+     },
+     {
+      "id": "connection-pooling",
+      "title": "Connection pooling",
+      "stars": 3
+     },
+     {
+      "id": "environment-config",
+      "title": "Environment config",
+      "stars": 3
+     },
+     {
+      "id": "streams-backpressure",
+      "title": "Streams & backpressure",
+      "stars": 2
+     },
+     {
+      "id": "background-jobs-queues-with-bullmq",
+      "title": "Background jobs & queues with BullMQ",
+      "stars": 2
+     },
+     {
+      "id": "cron-scheduled-jobs",
+      "title": "Cron & scheduled jobs",
+      "stars": 2
+     },
+     {
+      "id": "retries-exponential-backoff",
+      "title": "Retries & exponential backoff",
+      "stars": 2
+     },
+     {
+      "id": "structured-logging",
+      "title": "Structured logging",
+      "stars": 2
+     },
+     {
+      "id": "graceful-shutdown",
+      "title": "Graceful shutdown",
+      "stars": 2
+     },
+     {
+      "id": "file-uploads-multipart",
+      "title": "File uploads & multipart",
+      "stars": 2
+     },
+     {
+      "id": "cluster-worker-threads",
+      "title": "Cluster & worker threads",
+      "stars": 1
+     },
+     {
+      "id": "circuit-breakers",
+      "title": "Circuit breakers",
+      "stars": 1
+     },
+     {
+      "id": "libuv",
+      "title": "libuv",
+      "stars": 1
+     },
+     {
+      "id": "buffers",
+      "title": "Buffers",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "system-design",
+    "title": "System design",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "requirements-gathering-scoping",
+      "title": "Requirements gathering & scoping",
+      "stars": 3
+     },
+     {
+      "id": "stateless-services",
+      "title": "Stateless services",
+      "stars": 3
+     },
+     {
+      "id": "horizontal-scaling",
+      "title": "Horizontal scaling",
+      "stars": 3
+     },
+     {
+      "id": "load-balancing",
+      "title": "Load balancing",
+      "stars": 3
+     },
+     {
+      "id": "caching-layers",
+      "title": "Caching layers",
+      "stars": 3
+     },
+     {
+      "id": "db-indexing-query-design",
+      "title": "DB indexing & query design",
+      "stars": 3
+     },
+     {
+      "id": "message-queues-async-processing",
+      "title": "Message queues & async processing",
+      "stars": 3
+     },
+     {
+      "id": "rate-limiting-algorithms-token-bucket-leaky-bucket-sliding-w",
+      "title": "Rate limiting algorithms: token bucket, leaky bucket, sliding window",
+      "stars": 3
+     },
+     {
+      "id": "idempotency-keys",
+      "title": "Idempotency keys",
+      "stars": 3
+     },
+     {
+      "id": "design-a-url-shortener",
+      "title": "Design a URL shortener",
+      "stars": 3
+     },
+     {
+      "id": "design-a-rate-limiter",
+      "title": "Design a rate limiter",
+      "stars": 3
+     },
+     {
+      "id": "design-a-notification-service",
+      "title": "Design a notification service",
+      "stars": 3
+     },
+     {
+      "id": "design-file-upload",
+      "title": "Design file upload",
+      "stars": 3
+     },
+     {
+      "id": "design-a-chat-app",
+      "title": "Design a chat app",
+      "stars": 3
+     },
+     {
+      "id": "back-of-envelope-estimation",
+      "title": "Back-of-envelope estimation",
+      "stars": 2
+     },
+     {
+      "id": "monolith-vs-microservices",
+      "title": "Monolith vs microservices",
+      "stars": 2
+     },
+     {
+      "id": "pub-sub-event-driven-architecture",
+      "title": "Pub/sub & event-driven architecture",
+      "stars": 2
+     },
+     {
+      "id": "consistency-models-strong-eventual",
+      "title": "Consistency models: strong, eventual",
+      "stars": 2
+     },
+     {
+      "id": "blob-storage-presigned-urls",
+      "title": "Blob storage & presigned URLs",
+      "stars": 2
+     },
+     {
+      "id": "multi-tenancy",
+      "title": "Multi-tenancy",
+      "stars": 2
+     },
+     {
+      "id": "feature-flags",
+      "title": "Feature flags",
+      "stars": 2
+     },
+     {
+      "id": "observability-logs-metrics-traces",
+      "title": "Observability: logs, metrics, traces",
+      "stars": 2
+     },
+     {
+      "id": "single-points-of-failure",
+      "title": "Single points of failure",
+      "stars": 2
+     },
+     {
+      "id": "cap-theorem",
+      "title": "CAP theorem",
+      "stars": 1
+     },
+     {
+      "id": "consistent-hashing",
+      "title": "Consistent hashing",
+      "stars": 1
+     },
+     {
+      "id": "unique-id-generation",
+      "title": "Unique ID generation",
+      "stars": 1
+     },
+     {
+      "id": "fan-out-on-read-vs-write",
+      "title": "Fan-out on read vs write",
+      "stars": 1
+     },
+     {
+      "id": "service-discovery",
+      "title": "Service discovery",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "caching",
+    "title": "Caching",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "http-caching-headers-cache-control-etag",
+      "title": "HTTP caching headers: Cache-Control, ETag",
+      "stars": 3
+     },
+     {
+      "id": "cache-aside-pattern",
+      "title": "Cache-aside pattern",
+      "stars": 3
+     },
+     {
+      "id": "cache-invalidation",
+      "title": "Cache invalidation",
+      "stars": 3
+     },
+     {
+      "id": "ttl",
+      "title": "TTL",
+      "stars": 3
+     },
+     {
+      "id": "redis-data-structures",
+      "title": "Redis data structures",
+      "stars": 2
+     },
+     {
+      "id": "eviction-policies",
+      "title": "Eviction policies",
+      "stars": 2
+     },
+     {
+      "id": "session-stores",
+      "title": "Session stores",
+      "stars": 2
+     },
+     {
+      "id": "cdn-behavior",
+      "title": "CDN behavior",
+      "stars": 2
+     },
+     {
+      "id": "cache-stampede",
+      "title": "Cache stampede",
+      "stars": 1
+     },
+     {
+      "id": "distributed-locks",
+      "title": "Distributed locks",
+      "stars": 1
+     },
+     {
+      "id": "write-through-write-behind",
+      "title": "Write-through & write-behind",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "performance",
+    "title": "Performance",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "core-web-vitals-lcp-inp-cls",
+      "title": "Core Web Vitals: LCP, INP, CLS",
+      "stars": 3
+     },
+     {
+      "id": "code-splitting",
+      "title": "Code splitting",
+      "stars": 3
+     },
+     {
+      "id": "lazy-loading",
+      "title": "Lazy loading",
+      "stars": 3
+     },
+     {
+      "id": "bundle-analysis",
+      "title": "Bundle analysis",
+      "stars": 3
+     },
+     {
+      "id": "react-profiler-finding-wasted-renders",
+      "title": "React Profiler & finding wasted renders",
+      "stars": 3
+     },
+     {
+      "id": "db-query-optimization",
+      "title": "DB query optimization",
+      "stars": 3
+     },
+     {
+      "id": "image-formats-responsive-images",
+      "title": "Image formats & responsive images",
+      "stars": 2
+     },
+     {
+      "id": "preload-prefetch-preconnect",
+      "title": "Preload, prefetch, preconnect",
+      "stars": 2
+     },
+     {
+      "id": "ttfb",
+      "title": "TTFB",
+      "stars": 2
+     },
+     {
+      "id": "tree-shaking",
+      "title": "Tree shaking",
+      "stars": 2
+     },
+     {
+      "id": "long-tasks-main-thread-blocking",
+      "title": "Long tasks & main-thread blocking",
+      "stars": 2
+     },
+     {
+      "id": "lighthouse",
+      "title": "Lighthouse",
+      "stars": 2
+     },
+     {
+      "id": "api-response-shaping",
+      "title": "API response shaping",
+      "stars": 2
+     },
+     {
+      "id": "font-loading-strategies",
+      "title": "Font loading strategies",
+      "stars": 1
+     },
+     {
+      "id": "compression-gzip-brotli",
+      "title": "Compression: gzip, brotli",
+      "stars": 1
+     },
+     {
+      "id": "edge-caching",
+      "title": "Edge caching",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "browser-and-networking",
+    "title": "Browser and networking",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "http-methods-status-codes",
+      "title": "HTTP methods & status codes",
+      "stars": 3
+     },
+     {
+      "id": "caching-headers",
+      "title": "Caching headers",
+      "stars": 3
+     },
+     {
+      "id": "cors",
+      "title": "CORS",
+      "stars": 3
+     },
+     {
+      "id": "event-bubbling-capturing-delegation",
+      "title": "Event bubbling, capturing, delegation",
+      "stars": 3
+     },
+     {
+      "id": "cookies-vs-localstorage-vs-sessionstorage",
+      "title": "Cookies vs localStorage vs sessionStorage",
+      "stars": 3
+     },
+     {
+      "id": "critical-rendering-path",
+      "title": "Critical rendering path",
+      "stars": 2
+     },
+     {
+      "id": "reflow-vs-repaint",
+      "title": "Reflow vs repaint",
+      "stars": 2
+     },
+     {
+      "id": "websockets",
+      "title": "WebSockets",
+      "stars": 2
+     },
+     {
+      "id": "server-sent-events",
+      "title": "Server-Sent Events",
+      "stars": 2
+     },
+     {
+      "id": "http-2-vs-http-3",
+      "title": "HTTP/2 vs HTTP/3",
+      "stars": 2
+     },
+     {
+      "id": "cdns",
+      "title": "CDNs",
+      "stars": 2
+     },
+     {
+      "id": "dns-resolution",
+      "title": "DNS resolution",
+      "stars": 1
+     },
+     {
+      "id": "tcp-vs-udp",
+      "title": "TCP vs UDP",
+      "stars": 1
+     },
+     {
+      "id": "long-polling",
+      "title": "Long polling",
+      "stars": 1
+     },
+     {
+      "id": "requestanimationframe",
+      "title": "requestAnimationFrame",
+      "stars": 1
+     },
+     {
+      "id": "web-workers",
+      "title": "Web Workers",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "html-and-css",
+    "title": "HTML and CSS",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "flexbox",
+      "title": "Flexbox",
+      "stars": 3
+     },
+     {
+      "id": "grid",
+      "title": "Grid",
+      "stars": 3
+     },
+     {
+      "id": "box-model",
+      "title": "Box model",
+      "stars": 3
+     },
+     {
+      "id": "specificity-the-cascade",
+      "title": "Specificity & the cascade",
+      "stars": 3
+     },
+     {
+      "id": "responsive-design-media-queries",
+      "title": "Responsive design & media queries",
+      "stars": 3
+     },
+     {
+      "id": "semantic-html",
+      "title": "Semantic HTML",
+      "stars": 3
+     },
+     {
+      "id": "tailwind-utility-model",
+      "title": "Tailwind utility model",
+      "stars": 3
+     },
+     {
+      "id": "positioning-stacking-contexts",
+      "title": "Positioning & stacking contexts",
+      "stars": 2
+     },
+     {
+      "id": "z-index-behavior",
+      "title": "z-index behavior",
+      "stars": 2
+     },
+     {
+      "id": "css-variables",
+      "title": "CSS variables",
+      "stars": 2
+     },
+     {
+      "id": "transitions-animations",
+      "title": "Transitions & animations",
+      "stars": 2
+     },
+     {
+      "id": "container-queries",
+      "title": "Container queries",
+      "stars": 1
+     },
+     {
+      "id": "has",
+      "title": ":has()",
+      "stars": 1
+     },
+     {
+      "id": "block-formatting-context",
+      "title": "Block formatting context",
+      "stars": 1
+     },
+     {
+      "id": "critical-css",
+      "title": "Critical CSS",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "docker-ci-cd-and-cloud",
+    "title": "Docker, CI/CD and cloud",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "docker-images-layers-multi-stage-builds",
+      "title": "Docker images, layers, multi-stage builds",
+      "stars": 3
+     },
+     {
+      "id": "docker-compose",
+      "title": "Docker Compose",
+      "stars": 3
+     },
+     {
+      "id": "ci-cd-pipeline-stages",
+      "title": "CI/CD pipeline stages",
+      "stars": 3
+     },
+     {
+      "id": "github-actions",
+      "title": "GitHub Actions",
+      "stars": 3
+     },
+     {
+      "id": "rollback-strategy",
+      "title": "Rollback strategy",
+      "stars": 2
+     },
+     {
+      "id": "environment-parity",
+      "title": "Environment parity",
+      "stars": 2
+     },
+     {
+      "id": "cloud-basics-managed-db-object-storage-iam-serverless-regist",
+      "title": "Cloud basics: managed DB, object storage, IAM, serverless, registry",
+      "stars": 2
+     },
+     {
+      "id": "monitoring-alerting",
+      "title": "Monitoring & alerting",
+      "stars": 2
+     },
+     {
+      "id": "kubernetes-pods-deployments-services-ingress-configmaps-secr",
+      "title": "Kubernetes: pods, deployments, services, ingress, ConfigMaps, secrets",
+      "stars": 1
+     },
+     {
+      "id": "blue-green-canary-deployments",
+      "title": "Blue-green & canary deployments",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "git-and-workflow",
+    "title": "Git and workflow",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "merge-vs-rebase",
+      "title": "Merge vs rebase",
+      "stars": 3
+     },
+     {
+      "id": "conflict-resolution",
+      "title": "Conflict resolution",
+      "stars": 3
+     },
+     {
+      "id": "branching-strategy",
+      "title": "Branching strategy",
+      "stars": 3
+     },
+     {
+      "id": "pr-review-practice",
+      "title": "PR review practice",
+      "stars": 3
+     },
+     {
+      "id": "interactive-rebase-squashing",
+      "title": "Interactive rebase & squashing",
+      "stars": 2
+     },
+     {
+      "id": "cherry-pick",
+      "title": "Cherry-pick",
+      "stars": 2
+     },
+     {
+      "id": "semantic-commits",
+      "title": "Semantic commits",
+      "stars": 2
+     },
+     {
+      "id": "git-bisect",
+      "title": "git bisect",
+      "stars": 1
+     },
+     {
+      "id": "tags-releases",
+      "title": "Tags & releases",
+      "stars": 1
+     },
+     {
+      "id": "monorepo-vs-polyrepo",
+      "title": "Monorepo vs polyrepo",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "design-and-engineering-practice",
+    "title": "Design and engineering practice",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "solid-applied-single-responsibility",
+      "title": "SOLID applied: single responsibility",
+      "stars": 3
+     },
+     {
+      "id": "solid-applied-dependency-inversion",
+      "title": "SOLID applied: dependency inversion",
+      "stars": 3
+     },
+     {
+      "id": "separation-of-concerns",
+      "title": "Separation of concerns",
+      "stars": 3
+     },
+     {
+      "id": "error-handling-strategy",
+      "title": "Error handling strategy",
+      "stars": 3
+     },
+     {
+      "id": "refactoring-code-smells",
+      "title": "Refactoring & code smells",
+      "stars": 3
+     },
+     {
+      "id": "technical-debt-trade-offs",
+      "title": "Technical debt trade-offs",
+      "stars": 3
+     },
+     {
+      "id": "code-review-standards",
+      "title": "Code review standards",
+      "stars": 3
+     },
+     {
+      "id": "factory-pattern",
+      "title": "Factory pattern",
+      "stars": 2
+     },
+     {
+      "id": "observer-pattern",
+      "title": "Observer pattern",
+      "stars": 2
+     },
+     {
+      "id": "strategy-pattern",
+      "title": "Strategy pattern",
+      "stars": 2
+     },
+     {
+      "id": "adapter-pattern",
+      "title": "Adapter pattern",
+      "stars": 2
+     },
+     {
+      "id": "dependency-injection",
+      "title": "Dependency injection",
+      "stars": 2
+     },
+     {
+      "id": "layering",
+      "title": "Layering",
+      "stars": 2
+     },
+     {
+      "id": "documentation",
+      "title": "Documentation",
+      "stars": 2
+     },
+     {
+      "id": "singleton",
+      "title": "Singleton",
+      "stars": 1
+     },
+     {
+      "id": "facade",
+      "title": "Facade",
+      "stars": 1
+     },
+     {
+      "id": "clean-architecture-as-a-formal-thing",
+      "title": "Clean architecture as a formal thing",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "ai-application-layer",
+    "title": "AI application layer",
+    "group": "Mid leverage",
+    "lessons": [
+     {
+      "id": "llm-api-integration",
+      "title": "LLM API integration",
+      "stars": 2
+     },
+     {
+      "id": "streaming-responses",
+      "title": "Streaming responses",
+      "stars": 2
+     },
+     {
+      "id": "structured-output-tool-function-calling",
+      "title": "Structured output & tool/function calling",
+      "stars": 2
+     },
+     {
+      "id": "rag-architecture",
+      "title": "RAG architecture",
+      "stars": 2
+     },
+     {
+      "id": "embeddings-chunking",
+      "title": "Embeddings & chunking",
+      "stars": 2
+     },
+     {
+      "id": "vector-search-retrieval",
+      "title": "Vector search & retrieval",
+      "stars": 2
+     },
+     {
+      "id": "context-windows-token-limits",
+      "title": "Context windows & token limits",
+      "stars": 2
+     },
+     {
+      "id": "cost-latency-trade-offs",
+      "title": "Cost & latency trade-offs",
+      "stars": 2
+     },
+     {
+      "id": "agents-orchestration",
+      "title": "Agents & orchestration",
+      "stars": 1
+     },
+     {
+      "id": "evals",
+      "title": "Evals",
+      "stars": 1
+     },
+     {
+      "id": "guardrails-hallucination-mitigation",
+      "title": "Guardrails & hallucination mitigation",
+      "stars": 1
+     },
+     {
+      "id": "mcp",
+      "title": "MCP",
+      "stars": 1
+     },
+     {
+      "id": "ai-assisted-coding-workflow-reviewing-ai-output",
+      "title": "AI-assisted coding workflow & reviewing AI output",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "cs-fundamentals",
+    "title": "CS fundamentals",
+    "group": "Lower leverage",
+    "lessons": [
+     {
+      "id": "processes-vs-threads",
+      "title": "Processes vs threads",
+      "stars": 2
+     },
+     {
+      "id": "concurrency-vs-parallelism",
+      "title": "Concurrency vs parallelism",
+      "stars": 2
+     },
+     {
+      "id": "race-conditions",
+      "title": "Race conditions",
+      "stars": 2
+     },
+     {
+      "id": "utc-timezones-epoch-handling",
+      "title": "UTC, timezones & epoch handling",
+      "stars": 2
+     },
+     {
+      "id": "utf-8-encoding",
+      "title": "UTF-8 & encoding",
+      "stars": 2
+     },
+     {
+      "id": "deadlocks",
+      "title": "Deadlocks",
+      "stars": 1
+     },
+     {
+      "id": "context-switching",
+      "title": "Context switching",
+      "stars": 1
+     },
+     {
+      "id": "memory-management",
+      "title": "Memory management",
+      "stars": 1
+     },
+     {
+      "id": "proxies-vs-reverse-proxies",
+      "title": "Proxies vs reverse proxies",
+      "stars": 1
+     },
+     {
+      "id": "osi-model",
+      "title": "OSI model",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "nosql",
+    "title": "NoSQL",
+    "group": "Lower leverage",
+    "lessons": [
+     {
+      "id": "document-modeling",
+      "title": "Document modeling",
+      "stars": 2
+     },
+     {
+      "id": "embedding-vs-referencing",
+      "title": "Embedding vs referencing",
+      "stars": 2
+     },
+     {
+      "id": "when-not-to-use-nosql",
+      "title": "When NOT to use NoSQL",
+      "stars": 2
+     },
+     {
+      "id": "aggregation-pipeline",
+      "title": "Aggregation pipeline",
+      "stars": 1
+     },
+     {
+      "id": "elasticsearch-basics",
+      "title": "Elasticsearch basics",
+      "stars": 1
+     },
+     {
+      "id": "vector-databases",
+      "title": "Vector databases",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "frontend-system-design",
+    "title": "Frontend system design",
+    "group": "Lower leverage",
+    "lessons": [
+     {
+      "id": "component-api-design",
+      "title": "Component API design",
+      "stars": 2
+     },
+     {
+      "id": "data-fetching-caching-layer",
+      "title": "Data fetching & caching layer",
+      "stars": 2
+     },
+     {
+      "id": "state-architecture-at-scale",
+      "title": "State architecture at scale",
+      "stars": 2
+     },
+     {
+      "id": "design-autocomplete-typeahead",
+      "title": "Design autocomplete / typeahead",
+      "stars": 2
+     },
+     {
+      "id": "design-an-infinite-feed",
+      "title": "Design an infinite feed",
+      "stars": 2
+     },
+     {
+      "id": "design-a-data-table",
+      "title": "Design a data table",
+      "stars": 2
+     },
+     {
+      "id": "design-a-chat-ui",
+      "title": "Design a chat UI",
+      "stars": 2
+     },
+     {
+      "id": "design-systems-tokens",
+      "title": "Design systems & tokens",
+      "stars": 1
+     },
+     {
+      "id": "optimistic-updates",
+      "title": "Optimistic updates",
+      "stars": 1
+     },
+     {
+      "id": "code-splitting-budgets",
+      "title": "Code splitting budgets",
+      "stars": 1
+     },
+     {
+      "id": "i18n-l10n",
+      "title": "i18n & l10n",
+      "stars": 1
+     },
+     {
+      "id": "error-loading-state-strategy",
+      "title": "Error & loading state strategy",
+      "stars": 1
+     },
+     {
+      "id": "design-a-file-uploader",
+      "title": "Design a file uploader",
+      "stars": 1
+     }
+    ]
+   },
+   {
+    "id": "accessibility",
+    "title": "Accessibility",
+    "group": "Lower leverage",
+    "lessons": [
+     {
+      "id": "semantic-markup",
+      "title": "Semantic markup",
+      "stars": 2
+     },
+     {
+      "id": "keyboard-navigation-focus-management",
+      "title": "Keyboard navigation & focus management",
+      "stars": 2
+     },
+     {
+      "id": "form-labeling",
+      "title": "Form labeling",
+      "stars": 2
+     },
+     {
+      "id": "color-contrast",
+      "title": "Color contrast",
+      "stars": 2
+     },
+     {
+      "id": "aria-roles-attributes",
+      "title": "ARIA roles & attributes",
+      "stars": 1
+     },
+     {
+      "id": "screen-reader-behavior",
+      "title": "Screen reader behavior",
+      "stars": 1
+     },
+     {
+      "id": "wcag-levels",
+      "title": "WCAG levels",
+      "stars": 1
+     },
+     {
+      "id": "reduced-motion",
+      "title": "Reduced motion",
+      "stars": 1
+     }
+    ]
+   }
+  ]
+ }
+]

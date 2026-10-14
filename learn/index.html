@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prep Notebook</title>
+<meta name="description" content="Python for DSA and interview prep lessons with runnable exercises.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="vendor/codemirror/codemirror.css">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar" aria-label="Course contents">
+    <div class="brand">
+      <a href="#/" class="brand-name">Prep Notebook</a>
+      <button class="icon-btn only-mobile" id="closeNav" aria-label="Close contents">✕</button>
+    </div>
+    <label class="search">
+      <span class="visually-hidden">Search lessons</span>
+      <input id="search" type="search" placeholder="Search lessons">
+    </label>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      <a href="https://shrey120.github.io/Progress-Tracker/" target="_blank" rel="noopener">Open tracker</a>
+      <button class="link-btn" id="backupBtn">Backup progress</button>
+    </div>
+  </aside>
+  <main class="main" id="main">
+    <header class="topbar only-mobile">
+      <button class="icon-btn" id="openNav" aria-label="Open contents">☰</button>
+      <span class="topbar-title" id="topTitle">Prep Notebook</span>
+    </header>
+    <div id="view" class="view"></div>
+  </main>
+</div>
+
+<dialog id="backupDlg">
+  <form method="dialog" class="dlg">
+    <h2>Backup progress</h2>
+    <p>Progress is saved in this browser only. Copy this text somewhere safe, or paste a saved backup and choose Restore.</p>
+    <textarea id="backupText" rows="8" spellcheck="false"></textarea>
+    <div class="dlg-actions">
+      <button type="button" id="restoreBtn" class="btn ghost">Restore</button>
+      <button type="button" id="downloadBtn" class="btn ghost">Download</button>
+      <button value="close" class="btn">Close</button>
+    </div>
+    <p id="backupMsg" class="muted" role="status"></p>
+  </form>
+</dialog>
+
+<script src="vendor/codemirror/codemirror.js"></script>
+<script src="vendor/codemirror/python.js"></script>
+<script src="vendor/codemirror/matchbrackets.js"></script>
+<script src="vendor/codemirror/runmode.js"></script>
+<script src="vendor/marked.min.js"></script>
+<script src="content.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
