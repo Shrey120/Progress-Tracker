@@ -4,6 +4,36 @@ module: react
 title: React
 order: 103
 ---
+=== lesson: props-vs-state | Props vs state
+The first React question in many interviews.
+
+| | Props | State |
+|---|---|---|
+| comes from | the parent | the component itself (`useState`, `useReducer`) |
+| can the component change it? | **no**, read-only | yes, through its setter |
+| changes cause | a re-render when the parent passes new values | a re-render of this component and its children |
+| used for | configuring a component | data that changes over time inside it |
+
+```jsx
+function Counter({ step = 1, label }) {          // props: given by the parent
+  const [count, setCount] = useState(0);         // state: owned here
+  return <button onClick={() => setCount(c => c + step)}>{label}: {count}</button>;
+}
+<Counter label="Likes" step={1} />
+```
+
+## Data flows down, events flow up
+
+Parents pass data down as props; children report changes up by calling functions the parent passed as props (`onChange`, `onSelect`). This one-way flow makes it clear where any value came from.
+
+## Common mistakes
+
+- **Mutating props or state directly** (`props.items.push(x)`, `state.count++`): React won't re-render. Always create new values.
+- **Copying props into state** (`useState(props.value)`): the state ignores later prop changes. Use the prop directly, or derive values during render.
+- **Storing what can be computed**: if it can be derived from props or other state, don't make it state.
+
+> "Props are inputs a component receives and can't change; state is data a component owns and updates over time. When state changes, React re-renders the component, and new props flow down to its children."
+
 === lesson: controlled-vs-uncontrolled-components | Controlled vs uncontrolled components
 How a form input's value is owned.
 
@@ -72,6 +102,24 @@ Changing a component's key unmounts it and mounts a fresh one. That's the cleane
 ```
 
 > **"Why does React need keys?"** To match list items across renders during reconciliation. Stable keys preserve each item's state and DOM; unstable or index keys make React mix up items when the list changes order.
+
+=== lesson: virtual-dom | The virtual DOM
+The **virtual DOM** is a lightweight JavaScript description of the UI: plain objects like `{ type: "li", props: { className: "done" }, children: [...] }`. Your components return these descriptions; React compares the new description with the previous one and applies only the differences to the real DOM.
+
+## Why it exists
+
+Writing manual DOM updates for every possible state change is error-prone. With React you describe what the UI **should** look like for the current state, and React works out the minimal updates (reconciliation). The win is mostly about **developer model**: declarative UI that stays correct.
+
+## What it is not
+
+- It's not "faster than the DOM". Direct, hand-optimised DOM updates beat it; the virtual DOM adds work (diffing). It's fast **enough**, and avoids wasteful updates that naive code would make.
+- Other frameworks skip it: Svelte and SolidJS compile components into direct, fine-grained DOM updates (signals), which is why "virtual DOM" isn't the only modern approach.
+
+## How it connects to other topics
+
+Diffing rules (element type, keys) are in **Reconciliation**; how React splits that work into interruptible units is **Fiber**.
+
+> "The virtual DOM is React's in-memory representation of the UI. On each update React renders a new tree, diffs it against the previous one, and commits only the changes to the real DOM. Its main benefit is a declarative programming model with reasonable performance, not raw speed."
 
 === lesson: state-colocation-lifting | State colocation and lifting state up
 Two opposite moves, both about putting state in the right place.

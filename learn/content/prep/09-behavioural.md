@@ -29,6 +29,33 @@ Write 6–8 real stories now, each usable for several questions: a hard bug, a p
 
 Specifics over generalities, honest about mistakes, show reflection ("next time I'd…"), and connect it to the role you're interviewing for.
 
+=== lesson: walking-through-a-project-you-built | Walking through a project you built
+"Tell me about a project you're proud of" or "Walk me through the architecture of your last project" opens most interviews. It's your best chance to steer the conversation onto ground you know well, so prepare it like a talk.
+
+## A structure that works (5–7 minutes)
+
+1. **What it is and who uses it** — one sentence. "A booking platform for a car-service garage: customers book slots, staff manage the workshop schedule."
+2. **Your role** — solo, lead, one of four. Be precise about what **you** built.
+3. **Architecture** — draw it if there's a whiteboard: client (Next.js), API (route handlers / Node), database (Postgres via Supabase), auth, payments, background jobs, hosting (Vercel), third-party services.
+4. **One or two hard problems**, in depth: what was hard, options considered, what you chose, the result in numbers.
+5. **What you'd change** now, and what you learned.
+
+## Be ready for drill-down questions
+
+- Why this database / framework / hosting?
+- How does auth work, end to end? Where are tokens stored?
+- What happens when two users book the same slot at the same time? (transactions, unique constraints)
+- How did you deploy it? How do you roll back?
+- How did you test it? How do you know when it breaks in production?
+- What would break first at 100× the users?
+- What did you use AI for while building it?
+
+If you can't answer one, say what you'd check. Inventing details is the fastest way to lose credibility, since interviewers keep asking "why" until they reach the bottom.
+
+## Prepare two projects
+
+One deep (your strongest, most complex) and one different (another stack or a personal project like this tracker, the WHOOP + Lyfta coach, or the portfolio tracker). For each, write the architecture, three hard problems, three numbers, and three things you'd change.
+
 === lesson: a-hard-bug-you-debugged | A hard bug you debugged
 Interviewers use this to see how you think: hypotheses, evidence, narrowing down, and persistence.
 
@@ -81,6 +108,42 @@ Senior signals: you saw options, weighed costs against the context, decided, and
 > "For a client dashboard, I had to choose between building our own charting with D3 or using a library like Recharts. D3 would have matched the designs exactly; Recharts would cover 90% of them in a fraction of the time. With a three-week deadline and me as the only developer, I chose Recharts, agreed with the designer which two charts would be simplified, and wrapped the library in our own components so we could swap it later. We shipped on time; six months later we replaced one chart with custom D3 without touching the pages."
 
 Other good topics: SSR vs SPA, Postgres vs MongoDB, a monolith vs splitting a service, building vs buying (auth, payments), tech debt now vs later.
+
+=== lesson: how-you-use-ai-tools-in-your-work | How you use AI tools in your work
+Since 2025, many interviews include some version of: "How do you use AI in your daily work? What does it help with? Where do you still write things yourself?" Some companies now run AI-assisted coding rounds. They're testing **judgement**, not whether you use AI.
+
+## What a strong answer covers
+
+- **Specific uses**, with tools: "Claude / Copilot / Cursor for boilerplate, tests, unfamiliar APIs, refactors across files, explaining legacy code, first drafts of docs and SQL."
+- **Where you don't rely on it**: core business logic you need to fully understand, security-sensitive code, performance-critical paths, and anything you can't verify.
+- **How you verify**: you read every line, run it, write or run tests, check the docs for APIs it used (it invents functions and options), and review it like a junior's pull request.
+- **Context management**: giving it the right files, constraints and examples; breaking work into small steps.
+- **Data care**: not pasting secrets or client code into tools your company hasn't approved.
+- **Impact**, honestly: "It roughly halves the time on CRUD and tests; it doesn't help much on debugging production issues, where I need to reason about our system."
+
+## Example answer
+
+> "I use AI daily, mainly Claude and Copilot. It's best for scaffolding, writing tests, converting between formats and explaining code I haven't seen. For anything going to production I treat its output as a draft: I read it line by line, run the tests, and check any library call against the docs, because it sometimes uses APIs that don't exist. I don't use it for auth or payment logic without fully understanding every line. I also use it to learn: asking it to explain an unfamiliar concept, then confirming in the docs."
+
+## In an AI-allowed coding round
+
+Narrate your choices: what you ask for and why, what you accept, what you reject. Interviewers watch whether you can catch its mistakes and keep ownership of the design.
+
+=== lesson: a-time-ai-generated-code-was-wrong | A time AI-generated code was wrong
+A newer behavioural question: "Walk me through a time AI-generated code failed or was wrong, and how you found it." It checks that you verify output and learn from it.
+
+## Structure (STAR)
+
+- **Situation**: what you were building and what you asked the AI for.
+- **What was wrong**: be specific. Common real examples: a library method that doesn't exist or belongs to an older version; a query missing a tenant filter (a data leak); an off-by-one in pagination; no error handling around a network call; a race condition; a test that asserted the wrong thing and passed anyway.
+- **How you caught it**: a failing test, code review, reading the docs, testing an edge case, a production alert.
+- **The fix**, and **what you changed** in how you work: added tests first, more context in prompts, a review checklist, never accepting changes to auth code without a full read.
+
+## Example outline
+
+> "I asked an AI assistant to add cursor pagination to an orders endpoint. The code looked right and the happy-path test passed. When I tested with two orders created in the same second, one was skipped: it paginated on `created_at` alone, without a unique tiebreaker. I added `id` to the sort and the cursor, plus a test with duplicate timestamps. Since then, I write the edge-case tests before accepting generated code for anything involving ordering, money or permissions."
+
+Pick a real story from your own work, with a concrete bug. Interviewers will ask follow-ups.
 
 === lesson: disagreeing-with-a-manager-or-teammate | Disagreeing with a manager or teammate
 They're looking for: you speak up with evidence, you listen and might be wrong, you keep the relationship, and you commit once a decision is made.

@@ -4,6 +4,87 @@ module: javascript-core
 title: JavaScript core
 order: 101
 ---
+=== lesson: data-types-null-vs-undefined-and-typeof | Data types, null vs undefined and typeof
+JavaScript has **7 primitive types** and **objects**.
+
+| Primitive | Example |
+|---|---|
+| `string` | `"hi"` |
+| `number` | `42`, `3.14`, `NaN`, `Infinity` (one type for ints and floats) |
+| `bigint` | `9007199254740993n` (integers beyond 2⁵³) |
+| `boolean` | `true` |
+| `undefined` | a variable declared but not assigned |
+| `null` | "intentionally empty" |
+| `symbol` | `Symbol("id")` (unique keys) |
+
+Everything else (arrays, functions, dates, maps) is an **object**. Primitives are copied by value; objects by reference.
+
+## typeof and its quirks
+
+```jsrun
+console.log(typeof "a", typeof 1, typeof 1n, typeof true, typeof undefined, typeof Symbol());
+console.log(typeof null);          // "object" — a famous bug kept for compatibility
+console.log(typeof [], typeof {}); // both "object"
+console.log(typeof function () {});// "function"
+console.log(Array.isArray([]), Number.isNaN(NaN), typeof NaN);
+```
+
+To check for arrays use `Array.isArray`; for null use `x === null`; for "null or undefined" use `x == null` (the one accepted use of `==`).
+
+## null vs undefined
+
+- `undefined` — the language's "no value yet": missing variables, missing properties, missing arguments, functions without `return`.
+- `null` — a value you assign on purpose to mean "nothing".
+
+```jsrun
+let a;
+const obj = {};
+function f(x) { return x; }
+console.log(a, obj.missing, f(), (() => {})());
+console.log(null == undefined, null === undefined);
+console.log(JSON.stringify({ a: undefined, b: null }));   // undefined keys are dropped
+```
+
+## Number gotchas
+
+```jsrun
+console.log(0.1 + 0.2, 0.1 + 0.2 === 0.3);           // floating point
+console.log(Number.MAX_SAFE_INTEGER + 2);             // precision lost above 2^53
+console.log(NaN === NaN, Object.is(NaN, NaN));
+console.log(parseInt("08px"), Number("08px"), +"");   // parsing differences
+```
+
+Store money as integers (paise) or use a decimal library, never floats.
+
+=== lesson: equality-and-type-coercion-vs | Equality and type coercion: == vs ===
+- `===` (strict equality): equal only if same type **and** same value. No conversion.
+- `==` (loose equality): converts the operands to a common type first, using rules that surprise people.
+
+```jsrun
+console.log(1 == "1", 1 === "1");
+console.log(0 == "", 0 == "0", "" == "0");          // not transitive!
+console.log(false == "0", null == 0, null == undefined);
+console.log([] == false, [] == ![], [1] == 1);
+```
+
+## How coercion works
+
+- `+` with a string concatenates; other arithmetic operators convert to numbers.
+- Objects convert to primitives via `valueOf`/`toString` (`[]` → `""`, `[1,2]` → `"1,2"`, `{}` → `"[object Object]"`).
+- In `if`, `&&`, `||`, `!`, values convert to booleans (truthy/falsy).
+
+```jsrun
+console.log("5" + 3, "5" - 3, "5" * "2", true + 1);
+console.log([] + [], [] + {}, [1, 2] + [3]);
+console.log(!!"", !!"0", !!0, !!NaN, !![], !!{});   // falsy: "", 0, NaN, null, undefined, false, 0n
+```
+
+## What to say in the interview
+
+> "I always use `===`, which compares type and value with no conversion. `==` coerces types with rules like `0 == ""` being true, which causes bugs. The one exception some teams allow is `x == null` to check for both null and undefined. `Object.is` is like `===` except it treats `NaN` as equal to itself and distinguishes `0` from `-0`."
+
+Objects are compared by **reference**: `{} === {}` is false; two variables are equal only if they point at the same object.
+
 === lesson: scope-chains | Scope chains
 **Scope** decides where a variable can be seen. JavaScript has three kinds: global, function and block (`{ }` with `let`/`const`). `var` ignores blocks and is scoped to the whole function.
 
@@ -158,6 +239,46 @@ console.log(timer.start());
 
 > **"What determines this?"** The call site. new beats explicit binding beats a method call beats a plain call; arrow functions don't have their own `this` and use the surrounding one.
 
+=== lesson: arrow-functions-vs-regular-functions | Arrow functions vs regular functions
+```js
+function add(a, b) { return a + b; }        // declaration (hoisted)
+const add2 = function (a, b) { return a + b; };
+const add3 = (a, b) => a + b;               // arrow: implicit return for one expression
+const toObj = (id) => ({ id });             // wrap object literals in ( )
+```
+
+## The real differences
+
+| | Regular function | Arrow function |
+|---|---|---|
+| `this` | set by how it's called | inherited from the surrounding scope |
+| `arguments` object | yes | no (use `...args`) |
+| can be used with `new` | yes | no |
+| has `prototype` | yes | no |
+| hoisted (declarations) | yes | no (it's a variable) |
+| good as object methods | yes | usually not |
+
+## this is the one that matters
+
+```jsrun
+const counter = {
+  count: 0,
+  regular() {
+    setTimeout(function () { console.log("regular: is this the counter?", this === counter); }, 0);
+  },
+  arrow() {
+    setTimeout(() => { this.count++; console.log("arrow:", this.count); }, 0);
+  },
+};
+counter.regular();
+counter.arrow();
+
+const obj = { name: "box", hi: () => this?.name, hello() { return this.name; } };
+console.log(obj.hi(), obj.hello());   // arrow method: no own this → undefined; shorthand method: "box"
+```
+
+Arrows are ideal for callbacks inside methods (they keep the method's `this`), array methods, and React components and handlers. Use regular functions (or method shorthand) for object methods, constructors, and when you need dynamic `this` (event listeners that use `this` as the element).
+
 === lesson: prototypes-the-prototype-chain | Prototypes and the prototype chain
 Every object has a hidden link, `[[Prototype]]`, to another object. When you read a property that isn't on the object itself, JS follows the link, and keeps following until it finds it or reaches `null`. That's the **prototype chain**, and it's how inheritance works in JS.
 
@@ -244,6 +365,50 @@ console.log([1, 2, 3].myMap(x => x * 10));
 ## What interviewers ask
 
 > **"forEach vs map?"** `map` returns a new array and is for transforming; `forEach` returns `undefined` and is for side effects. You can't `break` out of either; use `for...of`, `some` or `find` when you need to stop early.
+
+=== lesson: spread-rest-and-destructuring | Spread, rest and destructuring
+Three pieces of syntax you'll write constantly in React and Node.
+
+## Destructuring
+
+```jsrun
+const user = { id: 7, name: "Asha", address: { city: "Kanpur" }, roles: ["admin", "dev"] };
+const { name, address: { city }, phone = "n/a" } = user;   // nested + default
+const [firstRole, ...otherRoles] = user.roles;
+console.log(name, city, phone, firstRole, otherRoles);
+
+let a = 1, b = 2;
+[a, b] = [b, a];                                          // swap
+console.log(a, b);
+```
+
+In parameters: `function Card({ title, children })`, `useState` returns `[value, setValue]`.
+
+## Spread `...` (expands)
+
+```jsrun
+const base = { theme: "dark", lang: "en" };
+const settings = { ...base, lang: "hi" };    // copy and override (later wins)
+const nums = [3, 1, 2];
+console.log(settings, Math.max(...nums), [...nums, 4]);
+```
+
+Spread copies are **shallow** (see Deep vs shallow copy): nested objects are still shared. That's why immutable React updates spread each level you change:
+
+```js
+setUser(u => ({ ...u, address: { ...u.address, city: "Pune" } }));
+```
+
+## Rest `...` (collects)
+
+```jsrun
+function log(level, ...messages) { console.log(`[${level}]`, messages.join(" | ")); }
+log("info", "server started", "port 3000");
+const { password, ...safeUser } = { id: 1, email: "a@x.com", password: "secret" };
+console.log(safeUser);                     // remove a key without mutating
+```
+
+Same `...` symbol: **spread** when it appears where values are used, **rest** when it appears where variables are declared or parameters are listed.
 
 === lesson: optional-chaining-nullish-coalescing | Optional chaining and nullish coalescing
 Two operators for values that might be `null` or `undefined`.

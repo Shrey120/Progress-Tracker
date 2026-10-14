@@ -22,7 +22,9 @@ intro paragraph occupied the row where its title should have been. Every other s
 matches its official count exactly. Add the missing one using the "Add a problem" row
 inside any topic.
 
-**Interview prep** — 3 sections, 23 topics, 339 items, grouped by how much they actually
+**Python for DSA** — 19 topics, 51 lessons, matching the Learn site, at the start of the DSA track.
+
+**Interview prep** — 3 sections, 23 topics, 364 items, grouped by how much they actually
 decide an interview outcome:
 
 - **High leverage** (9 topics, 149 items) — JavaScript core, TypeScript, React, Next.js
@@ -67,41 +69,37 @@ Each problem gets its own due date (see below), and:
 A problem not yet due, and not manually started, doesn't appear on this board at all —
 it's still visible in the Module view and Calendar, just not cluttering the working set.
 
-## How due dates are assigned
+## How long things take
 
-Every problem carries a difficulty, and difficulty is treated as cost:
-**Easy = 1 unit, Medium = 2, Hard = 3.**
+Every item carries an **estimate in minutes**, and every track has a **daily time budget**
+(default: DSA 80 min, interview prep 40 min, which is 2 hours a day). A topic's length is its total
+minutes divided by its track's daily minutes, rounded up. Change the budget with **Daily time** in
+the footer and every topic's length is recomputed; the footer also shows hours left per track.
 
-A topic's length is `ceil(total weight / 4)` days — four units of effort per day, so a day
-is four Easies, or two Mediums, or one Hard plus one Easy. Within the topic, problem *i*
-falls on `start + floor(weightBefore(i) x span / totalWeight)`, so a run of Hards eats more
-calendar than a run of Easies. With uniform difficulty this reduces to an even split.
+Where the estimates come from:
 
-Worked examples from the loaded plan:
+- **Python for DSA** (the first section of the DSA track): measured from the lessons on the Learn
+  site: reading time, runnable examples, and 10/15/20 minutes per practice exercise for
+  Beginner/Intermediate/Advanced topics.
+- **Striver A2Z**: 20 / 45 / 75 minutes for Easy / Medium / Hard (12 / 30 / 50 in "Learn the
+  basics"). That's for someone relearning DSA in Python, including watching the explanation for new
+  concepts.
+- **Interview prep**: 20 / 35 / 50 minutes for Easy / Medium / Hard: reading the lesson plus
+  practising the answer out loud until you can give it cold.
 
-```
-Things to Know in C++/Java/Python   3 days, 9 items, all Easy
-  06 Sep   E E E
-  07 Sep   E E E
-  08 Sep   E E E
+Totals at the default budget: DSA track about 384 hours (Python 31 + A2Z 353), interview prep about
+201 hours (High leverage about 89). At 80 + 40 minutes a day, each track takes about 310–325 days:
+roughly 10–11 months for everything, with both tracks finishing at about the same time.
 
-Trying out all Combos / Hard        6 days, 8 items, mostly Hard
-  04 Dec   H H
-  05 Dec   H
-  06 Dec   H
-  07 Dec   M H
-  08 Dec   H
-  09 Dec   H
-```
+Inside a topic, items are spread across its days in proportion to their minutes, so a run of long
+items takes more calendar than a run of short ones. `-` and `+` still add or remove days by hand.
 
-Nothing is stored. Due dates are recomputed from the topic's current `start`, `days`,
-`extra` and item list every time they're read, so `-`/`+` or adding and removing problems
-reflows the whole topic instantly.
+## Upgrading a saved plan
 
-Every item in both tracks has a difficulty. For DSA these come from the A2Z sheet itself.
-For the interview-prep track there is no published rating for conceptual topics, so those
-are estimates of interview depth and time-to-learn — change any that don't match your
-experience, and the schedule adjusts.
+The plan is saved in the browser. When the built-in plan changes (new items, the Python section,
+estimates), it carries a version number; on first load after an update, the saved plan is upgraded
+in place: matching topics keep their items, statuses, dates and extra days, items gain estimates,
+new built-in items and topics are added, and topics you imported yourself are kept.
 
 ## Backing up
 

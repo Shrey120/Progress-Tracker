@@ -79,6 +79,16 @@
       "stars": 3
      },
      {
+      "id": "equality-and-type-coercion-vs",
+      "title": "Equality and type coercion: == vs ===",
+      "stars": 3
+     },
+     {
+      "id": "arrow-functions-vs-regular-functions",
+      "title": "Arrow functions vs regular functions",
+      "stars": 3
+     },
+     {
       "id": "prototypes-the-prototype-chain",
       "title": "Prototypes & the prototype chain",
       "stars": 2
@@ -101,6 +111,16 @@
      {
       "id": "memory-leaks",
       "title": "Memory leaks",
+      "stars": 2
+     },
+     {
+      "id": "data-types-null-vs-undefined-and-typeof",
+      "title": "Data types, null vs undefined and typeof",
+      "stars": 2
+     },
+     {
+      "id": "spread-rest-and-destructuring",
+      "title": "Spread, rest and destructuring",
       "stars": 2
      },
      {
@@ -247,6 +267,11 @@
       "stars": 3
      },
      {
+      "id": "props-vs-state",
+      "title": "Props vs state",
+      "stars": 3
+     },
+     {
       "id": "useref",
       "title": "useRef",
       "stars": 2
@@ -284,6 +309,11 @@
      {
       "id": "uselayouteffect-vs-useeffect",
       "title": "useLayoutEffect vs useEffect",
+      "stars": 2
+     },
+     {
+      "id": "virtual-dom",
+      "title": "Virtual DOM",
       "stars": 2
      },
      {
@@ -447,6 +477,11 @@
      {
       "id": "connection-pooling",
       "title": "Connection pooling",
+      "stars": 3
+     },
+     {
+      "id": "sql-vs-nosql-how-to-choose",
+      "title": "SQL vs NoSQL: how to choose",
       "stars": 3
      },
      {
@@ -826,6 +861,16 @@
       "stars": 3
      },
      {
+      "id": "walking-through-a-project-you-built",
+      "title": "Walking through a project you built",
+      "stars": 3
+     },
+     {
+      "id": "how-you-use-ai-tools-in-your-work",
+      "title": "How you use AI tools in your work",
+      "stars": 3
+     },
+     {
       "id": "receiving-critical-feedback",
       "title": "Receiving critical feedback",
       "stars": 2
@@ -843,6 +888,11 @@
      {
       "id": "mentoring",
       "title": "Mentoring",
+      "stars": 2
+     },
+     {
+      "id": "a-time-ai-generated-code-was-wrong",
+      "title": "A time AI-generated code was wrong",
       "stars": 2
      },
      {
@@ -1281,6 +1331,11 @@
       "stars": 3
      },
      {
+      "id": "what-happens-when-you-type-a-url",
+      "title": "What happens when you type a URL",
+      "stars": 3
+     },
+     {
       "id": "critical-rendering-path",
       "title": "Critical rendering path",
       "stars": 2
@@ -1449,6 +1504,16 @@
       "stars": 3
      },
      {
+      "id": "how-deployment-works-end-to-end-git-push-to-live-url",
+      "title": "How deployment works end to end: git push to live URL",
+      "stars": 3
+     },
+     {
+      "id": "environments-dev-staging-production-preview-deploys",
+      "title": "Environments: dev, staging, production, preview deploys",
+      "stars": 3
+     },
+     {
       "id": "rollback-strategy",
       "title": "Rollback strategy",
       "stars": 2
@@ -1466,6 +1531,21 @@
      {
       "id": "monitoring-alerting",
       "title": "Monitoring & alerting",
+      "stars": 2
+     },
+     {
+      "id": "hosting-choices-vercel-vs-vps-vs-containers-vs-serverless",
+      "title": "Hosting choices: Vercel vs VPS vs containers vs serverless",
+      "stars": 2
+     },
+     {
+      "id": "domains-dns-records-and-https-certificates",
+      "title": "Domains, DNS records and HTTPS certificates",
+      "stars": 2
+     },
+     {
+      "id": "running-node-in-production-reverse-proxy-process-manager-hea",
+      "title": "Running Node in production: reverse proxy, process manager, health checks",
       "stars": 2
      },
      {
@@ -1508,6 +1588,21 @@
       "stars": 3
      },
      {
+      "id": "git-fundamentals-working-tree-staging-commits-head",
+      "title": "Git fundamentals: working tree, staging, commits, HEAD",
+      "stars": 3
+     },
+     {
+      "id": "undoing-changes-reset-vs-revert-vs-restore-amend-reflog",
+      "title": "Undoing changes: reset vs revert vs restore, amend, reflog",
+      "stars": 3
+     },
+     {
+      "id": "remotes-fetch-vs-pull-push-origin-upstream-forks",
+      "title": "Remotes: fetch vs pull, push, origin, upstream, forks",
+      "stars": 3
+     },
+     {
       "id": "interactive-rebase-squashing",
       "title": "Interactive rebase & squashing",
       "stars": 2
@@ -1520,6 +1615,21 @@
      {
       "id": "semantic-commits",
       "title": "Semantic commits",
+      "stars": 2
+     },
+     {
+      "id": "git-stash",
+      "title": "git stash",
+      "stars": 2
+     },
+     {
+      "id": "fast-forward-vs-three-way-merge-detached-head",
+      "title": "Fast-forward vs three-way merge; detached HEAD",
+      "stars": 2
+     },
+     {
+      "id": "gitignore-and-removing-committed-secrets",
+      "title": ".gitignore and removing committed secrets",
       "stars": 2
      },
      {
@@ -1641,6 +1751,11 @@
     "title": "AI application layer",
     "lessons": [
      {
+      "id": "prompt-engineering-basics",
+      "title": "Prompt engineering basics",
+      "stars": 3
+     },
+     {
       "id": "llm-api-integration",
       "title": "LLM API integration",
       "stars": 2
@@ -1678,6 +1793,16 @@
      {
       "id": "cost-latency-trade-offs",
       "title": "Cost & latency trade-offs",
+      "stars": 2
+     },
+     {
+      "id": "prompt-injection-and-ai-feature-security",
+      "title": "Prompt injection and AI feature security",
+      "stars": 2
+     },
+     {
+      "id": "prompting-vs-rag-vs-fine-tuning",
+      "title": "Prompting vs RAG vs fine-tuning",
       "stars": 2
      },
      {

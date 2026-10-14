@@ -358,6 +358,33 @@ Duplicated data must be kept in sync (triggers, application code, events), and i
 
 > **"Normalize or denormalize?"** Normalize by default for correctness. Denormalize specific, measured hot paths, and own the mechanism that keeps the copy in sync.
 
+=== lesson: sql-vs-nosql-how-to-choose | SQL vs NoSQL: how to choose
+Asked in almost every full-stack interview, usually as "Why did you use MongoDB / Postgres in your project?"
+
+## The real differences
+
+| | Relational (Postgres, MySQL) | Document (MongoDB, Firestore, DynamoDB) |
+|---|---|---|
+| Data model | tables, rows, fixed schema, relations via foreign keys | JSON-like documents, flexible schema per document |
+| Queries | SQL: joins, aggregations, ad-hoc questions | best at fetching by key or known access patterns; joins limited or absent |
+| Integrity | constraints, foreign keys, multi-row ACID transactions | mostly enforced in application code; multi-document transactions exist but cost more |
+| Scaling | vertical first; read replicas; sharding is harder | designed to shard horizontally (DynamoDB, Mongo sharding) |
+| Schema changes | migrations | add fields freely (and handle old shapes in code) |
+
+## How to decide
+
+Start from the **data and the queries**:
+
+- Data is relational (users, orders, products, payments), needs consistency, and you'll ask questions you can't predict (reports, admin search) → **Postgres**. This is most business apps.
+- Access patterns are known and simple (get by key), data is naturally a self-contained document, scale is massive or spiky → a document or key-value store.
+- Special shapes need special stores: time series (Timescale), search (Elasticsearch), graphs (Neo4j), cache (Redis), vectors (pgvector, Pinecone).
+
+## A strong answer
+
+> "I default to Postgres: most product data is relational, I get joins, constraints and transactions, and `jsonb` covers the flexible parts. I'd pick a document store when the access pattern is known up front and mostly key-based at very high scale, like a session store or an event feed, or when the team's infrastructure is already built around it. 'NoSQL scales better' alone isn't a reason: Postgres handles far more than most apps ever need."
+
+If your project used MongoDB, explain the reason honestly (schema flexibility while iterating, team familiarity) and what you'd do differently, such as where you missed joins or transactions.
+
 === lesson: transactions-acid | Transactions and ACID
 A **transaction** groups statements so they succeed or fail together.
 

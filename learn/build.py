@@ -189,7 +189,7 @@ def verify_snippets(courses):
         "const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;"
         "const code = require('fs').readFileSync(process.argv[1], 'utf8');"
         "process.on('unhandledRejection', e => { console.log('UNHANDLED', e && e.message); process.exitCode = 3; });"
-        "new AsyncFunction(code)().then(() => setTimeout(() => {}, 400), e => { console.log('ERROR', e && e.message); process.exitCode = 2; });"
+        "new AsyncFunction('const process = undefined, Buffer = undefined, setImmediate = undefined, require = undefined, global = undefined;\\n' + code)().then(() => setTimeout(() => {}, 400), e => { console.log('ERROR', e && e.message); process.exitCode = 2; });"
     )
     for c in courses:
         for m in c["modules"]:
