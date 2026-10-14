@@ -1,11 +1,14 @@
 ---
 course: python
 module: classes
-title: Classes and the LeetCode node types
-order: 7
+title: Classes and problem formats
+level: Intermediate
+icon: 🏗️
+tagline: Classes, the LeetCode template, linked-list nodes and OA input
+order: 11
 ---
 === lesson: classes | Classes in five minutes
-```python
+```pyrun
 class Stack:
     def __init__(self):          # constructor
         self.items = []          # instance attribute
@@ -20,8 +23,8 @@ class Stack:
         return len(self.items)
 
 s = Stack()
-s.push(1)
-len(s)    # 1
+print(s.push(1))
+print(len(s))  # 1
 ```
 
 - `self` is explicit. Every method takes it, and attributes are always reached through it (`self.items`, never just `items`).
@@ -67,7 +70,7 @@ If you define `__eq__`, Python sets `__hash__` to `None` (unhashable) unless you
 
 Generates `__init__`, `__repr__` and `__eq__` from type-annotated fields. `order=True` adds comparisons in field order, `frozen=True` makes it immutable and hashable:
 
-```python
+```pyrun
 from dataclasses import dataclass
 
 @dataclass(order=True, frozen=True)
@@ -76,7 +79,7 @@ class Edge:
     u: int
     v: int
 
-sorted([Edge(5, 0, 1), Edge(2, 1, 2)])   # sorts by w, then u, then v
+print(sorted([Edge(5, 0, 1), Edge(2, 1, 2)]))  # sorts by w, then u, then v
 ```
 
 ::: exercise min-stack | Min Stack (LeetCode 155)
@@ -124,6 +127,7 @@ class MinStack:
 Store `(value, minimum so far)` pairs on one list.
 :::
 
+
 ::: exercise point-hash | Make an object usable as a dict key
 `Point` objects with the same `x` and `y` should be equal **and** work as the same set member / dict key. Fill in `__eq__` and `__hash__`.
 
@@ -156,6 +160,64 @@ class Point:
         return hash((self.x, self.y))
 --- hint
 Equal objects must have equal hashes. Hash the tuple `(self.x, self.y)`.
+:::
+
+=== lesson: leetcode-format | The LeetCode format in Python
+On LeetCode, Python solutions live inside a class:
+
+```python
+from typing import List, Optional
+
+class Solution:
+    def twoSum(self, nums: List[int], target: int) -> List[int]:
+        seen = {}
+        for i, x in enumerate(nums):
+            if target - x in seen:
+                return [seen[target - x], i]
+            seen[x] = i
+```
+
+Things worth knowing about this template:
+
+- `self` is the first parameter of every method. You can ignore it, but you must keep it.
+- The type hints (`List[int]`, `Optional[TreeNode]`) are only documentation. Python does not check them. Modern Python also accepts `list[int]`, which LeetCode supports.
+- **Helper functions** can be nested inside the method (they see the method's variables) or written as another method and called with `self.helper(...)`.
+- LeetCode imports most of the standard library for you (`collections`, `heapq`, `math`...), but write the imports anyway — interviewers notice, and other judges don't do it.
+- State that must persist across calls on the same object goes on `self`. State that must not persist (almost everything) stays local, because LeetCode may reuse the object between test cases.
+
+```python
+class Solution:
+    def maxDepth(self, root) -> int:
+        def depth(node):          # nested helper: sees nothing it doesn't need
+            if not node:
+                return 0
+            return 1 + max(depth(node.left), depth(node.right))
+        return depth(root)
+```
+
+In this course, exercises ask for plain functions so the tests can call them directly. Wrapping one in `class Solution` is mechanical.
+
+::: exercise solution-class | Write a method inside Solution
+Complete `Solution.containsDuplicate`, which returns `True` when any value appears at least twice in `nums`.
+
+--- starter
+from typing import List
+
+class Solution:
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        pass
+--- tests
+assert Solution().containsDuplicate([1, 2, 3, 1]) == True
+assert Solution().containsDuplicate([1, 2, 3, 4]) == False
+assert Solution().containsDuplicate([]) == False
+--- solution
+from typing import List
+
+class Solution:
+    def containsDuplicate(self, nums: List[int]) -> bool:
+        return len(set(nums)) != len(nums)
+--- hint
+A `set` keeps one copy of each value. Compare sizes.
 :::
 
 === lesson: listnode-treenode | ListNode, TreeNode and Optional
@@ -207,7 +269,7 @@ Nodes compare by identity unless you define `__eq__`: two different nodes with `
 
 When the head of a list might change (removals, merges, insertions at the front), start with a dummy node that points at the head and return `dummy.next`. It removes every special case for "what if it's the first node".
 
-```python
+```pyrun
 def remove_val(head, val):
     dummy = ListNode(0, head)
     prev = dummy
@@ -217,6 +279,24 @@ def remove_val(head, val):
         else:
             prev = prev.next
     return dummy.next
+
+# try it
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+
+def build(vals):
+    head = None
+    for v in reversed(vals):
+        head = ListNode(v, head)
+    return head
+
+def show(h):
+    out = []
+    while h:
+        out.append(h.val); h = h.next
+    return out
+print(show(remove_val(build([1, 2, 6, 3, 6]), 6)))
 ```
 
 ::: exercise build-list | Build and read a linked list
@@ -259,6 +339,7 @@ def to_list(head):
         head = head.next
     return out
 :::
+
 
 ::: exercise remove-elements | Remove linked list elements (LeetCode 203)
 `remove_elements(head, val)` removes every node whose value is `val` and returns the new head. `ListNode`, `build_list` and `to_list` are provided.
@@ -321,4 +402,142 @@ def remove_elements(head, val):
     return dummy.next
 --- hint
 Use a dummy node before the head; only advance `prev` when you didn't delete.
+:::
+
+=== lesson: input-output | Reading input in online assessments
+LeetCode passes arguments to your function, so you rarely read input. But online assessments (HackerRank, CodeChef-style rounds, many Indian company OAs) give you raw stdin. Know both.
+
+## Reading input
+
+```python
+n = int(input())                        # one integer on a line
+a, b = map(int, input().split())        # two integers on a line
+nums = list(map(int, input().split()))  # a whole line of integers
+grid = [input() for _ in range(rows)]   # several lines of text
+```
+
+`input()` returns one line as a string without the newline. `split()` with no argument splits on any whitespace and ignores repeats.
+
+## Fast input for big tests
+
+`input()` is slow when a test has 10⁵+ lines. Read everything at once:
+
+```python
+import sys
+data = sys.stdin.buffer.read().split()   # every token, as bytes
+n = int(data[0])
+nums = list(map(int, data[1:1 + n]))
+```
+
+Or line by line, faster than `input()`:
+
+```python
+import sys
+input = sys.stdin.readline     # note: keeps the trailing "\n"; strip if you read strings
+n = int(input())
+```
+
+## Printing
+
+```python
+print(a, b)                  # "3 4" — space separated by default
+print(a, b, sep=",")         # "3,4"
+print(*nums)                 # spread a list: "1 2 3"
+print(x, end="")             # no newline
+print(f"{name}: {score:.2f}")  # f-string with formatting
+```
+
+Printing thousands of lines one `print` at a time is slow. Build one string:
+
+```python
+print("\n".join(map(str, answers)))
+```
+
+## The solve() pattern
+
+Wrap the logic in a function and keep input parsing separate. It's faster (local variables are quicker than globals) and it lets you test the logic directly:
+
+```python
+import sys
+
+def solve(nums):
+    return sum(nums)
+
+def main():
+    data = sys.stdin.read().split()
+    t = int(data[0]); idx = 1
+    out = []
+    for _ in range(t):
+        n = int(data[idx]); idx += 1
+        nums = list(map(int, data[idx:idx + n])); idx += n
+        out.append(str(solve(nums)))
+    print("\n".join(out))
+
+main()
+```
+
+::: exercise read-tests | Parse a multi-test-case input
+The input (already fed to stdin when you run) is: a line with `t`, then for each test case a line with `n` followed by a line with `n` integers. Write `main()` so it reads stdin and **returns** a list with the maximum of each test case. (Returning instead of printing lets the tests check it.)
+
+The stdin for this exercise is:
+
+```
+3
+4
+3 9 -2 5
+1
+-7
+3
+0 0 1
+```
+
+--- starter
+import sys
+
+def main():
+    data = sys.stdin.read().split()
+    # your parsing here
+    pass
+--- stdin
+3
+4
+3 9 -2 5
+1
+-7
+3
+0 0 1
+--- tests
+import io, sys; sys.stdin = io.StringIO("3\n4\n3 9 -2 5\n1\n-7\n3\n0 0 1\n"); assert main() == [9, -7, 1]
+import io, sys; sys.stdin = io.StringIO("1\n2\n5 5\n"); assert main() == [5]
+--- solution
+import sys
+
+def main():
+    data = sys.stdin.read().split()
+    t = int(data[0]); idx = 1
+    res = []
+    for _ in range(t):
+        n = int(data[idx]); idx += 1
+        res.append(max(map(int, data[idx:idx + n]))); idx += n
+    return res
+--- hint
+Keep an index into `data`. Read `t`, then for each case read `n`, slice the next `n` tokens, convert with `map(int, ...)`.
+:::
+
+
+::: exercise format-out | Format output in one go
+`render(rows)` takes a list of lists of numbers and returns the text you would print: each row's numbers separated by single spaces, rows separated by newlines, no trailing newline.
+
+--- starter
+def render(rows):
+    pass
+--- tests
+assert render([[1, 2, 3], [4, 5, 6]]) == "1 2 3\n4 5 6"
+assert render([[7]]) == "7"
+assert render([]) == ""
+--- solution
+def render(rows):
+    return "\n".join(" ".join(map(str, row)) for row in rows)
+--- hint
+`" ".join(...)` needs strings, so `map(str, row)` first.
 :::

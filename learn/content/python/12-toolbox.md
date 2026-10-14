@@ -2,7 +2,10 @@
 course: python
 module: toolbox
 title: The DSA toolbox
-order: 8
+level: Intermediate
+icon: 🧰
+tagline: deque, heapq, bisect, itertools and math
+order: 12
 ---
 === lesson: deque | deque: queues and sliding windows
 `collections.deque` is a double-ended queue: O(1) append and pop at **both** ends. Use it for every queue, BFS, and sliding-window maximum. Never use `list.pop(0)`; it's O(n).
@@ -26,7 +29,7 @@ Indexing into the middle (`q[i]`) is O(n). A deque is for the ends.
 
 ## BFS template
 
-```python
+```pyrun
 def bfs(start, graph):
     dist = {start: 0}
     q = deque([start])
@@ -37,6 +40,11 @@ def bfs(start, graph):
                 dist[v] = dist[u] + 1
                 q.append(v)
     return dist
+
+# try it
+from collections import deque
+graph = {0: [1, 2], 1: [3], 2: [3], 3: []}
+print(bfs(0, graph))
 ```
 
 Mark nodes visited when you **enqueue** them, not when you dequeue them, or the same node gets added many times.
@@ -57,7 +65,7 @@ while q:
 
 Keep indexes whose values are decreasing. The front is always the max of the current window.
 
-```python
+```pyrun
 def max_sliding_window(nums, k):
     dq, out = deque(), []
     for i, x in enumerate(nums):
@@ -69,6 +77,10 @@ def max_sliding_window(nums, k):
         if i >= k - 1:
             out.append(nums[dq[0]])
     return out
+
+# try it
+from collections import deque
+print(max_sliding_window([1, 3, -1, -3, 5, 3, 6, 7], 3))
 ```
 
 ::: exercise sliding-max | Sliding window maximum (LeetCode 239)
@@ -102,6 +114,7 @@ def max_sliding_window(nums, k):
 --- hint
 Store indexes in the deque, keep their values decreasing, and drop the front when it leaves the window.
 :::
+
 
 ::: exercise grid-bfs | Shortest path in a grid with BFS
 `shortest(grid)` returns the number of steps to go from the top-left to the bottom-right of a grid of `0` (open) and `1` (wall), moving up/down/left/right. Return `-1` if it's impossible. The start counts as step 0.
@@ -178,7 +191,7 @@ heapq.heappush(h, (node.val, i, node))          # i breaks ties before node is c
 
 To keep the k **largest**, keep a min-heap of size k: its root is the smallest of the top k, so anything smaller than the root can't belong.
 
-```python
+```pyrun
 def kth_largest(nums, k):
     h = []
     for x in nums:
@@ -186,6 +199,10 @@ def kth_largest(nums, k):
         if len(h) > k:
             heapq.heappop(h)
     return h[0]
+
+# try it
+import heapq
+print(kth_largest([3, 2, 1, 5, 6, 4], 2))
 ```
 
 O(n log k) time, O(k) space.
@@ -219,6 +236,7 @@ def kth_largest(nums, k):
     return h[0]
 :::
 
+
 ::: exercise last-stone | Last stone weight with a max-heap (LeetCode 1046)
 Repeatedly smash the two heaviest stones. If they're equal both disappear; otherwise the difference goes back. `last_stone(stones)` returns the last weight, or 0 if none remain.
 
@@ -247,6 +265,7 @@ def last_stone(stones):
 --- hint
 Negate every weight, `heapify`, and negate again when you pop.
 :::
+
 
 ::: exercise merge-k | Merge k sorted lists
 `merge_k(lists)` merges k sorted Python lists into one sorted list in O(N log k), using a heap of `(value, list_index, element_index)`. Don't just concatenate and sort.
@@ -281,15 +300,15 @@ Seed the heap with the first element of each non-empty list. After popping `(val
 === lesson: bisect | bisect: binary search on sorted lists
 `bisect` finds insertion points in a sorted list in O(log n).
 
-```python
+```pyrun
 from bisect import bisect_left, bisect_right, insort
 
 a = [1, 2, 4, 4, 4, 7]
-bisect_left(a, 4)    # 2 — first index where 4 could go (first index with a[i] >= 4)
-bisect_right(a, 4)   # 5 — after the last 4 (first index with a[i] > 4)
-bisect_left(a, 5)    # 5
-bisect_right(a, 4) - bisect_left(a, 4)    # 3 — how many 4s
-insort(a, 3)         # insert keeping it sorted: O(log n) search + O(n) shift
+print(bisect_left(a, 4))  # 2 — first index where 4 could go (first index with a[i] >= 4)
+print(bisect_right(a, 4))  # 5 — after the last 4 (first index with a[i] > 4)
+print(bisect_left(a, 5))  # 5
+print(bisect_right(a, 4) - bisect_left(a, 4))  # 3 — how many 4s
+print(insort(a, 3))  # insert keeping it sorted: O(log n) search + O(n) shift
 ```
 
 The two definitions to remember:
@@ -325,7 +344,7 @@ i = bisect_left(intervals, 5, key=lambda iv: iv[0])
 
 `tails[k]` holds the smallest possible tail of an increasing subsequence of length k + 1:
 
-```python
+```pyrun
 def lis(nums):
     tails = []
     for x in nums:
@@ -335,6 +354,10 @@ def lis(nums):
         else:
             tails[i] = x
     return len(tails)
+
+# try it
+from bisect import bisect_left
+print(lis([10, 9, 2, 5, 3, 7, 101, 18]))
 ```
 
 ## No ordered map
@@ -363,6 +386,7 @@ def search_range(nums, target):
         return [-1, -1]
     return [lo, bisect_right(nums, target) - 1]
 :::
+
 
 ::: exercise lis | Longest increasing subsequence (LeetCode 300)
 `lis(nums)` returns the length of the longest strictly increasing subsequence in O(n log n).
@@ -397,18 +421,18 @@ Keep `tails`. For each `x`, `bisect_left(tails, x)` tells you which tail to repl
 === lesson: itertools-functools-math | itertools, functools and math
 ## itertools
 
-```python
+```pyrun
 from itertools import permutations, combinations, product, accumulate, groupby, chain, pairwise
 
-list(permutations([1, 2, 3]))        # all 6 orderings, as tuples
-list(permutations([1, 2, 3], 2))     # ordered pairs
-list(combinations([1, 2, 3], 2))     # [(1,2), (1,3), (2,3)]
-list(product("ab", repeat=2))        # [('a','a'), ('a','b'), ('b','a'), ('b','b')]
-list(accumulate([1, 2, 3, 4]))       # [1, 3, 6, 10] — prefix sums
-list(accumulate([3, 1, 4], max))     # [3, 3, 4] — running max
-[(k, len(list(g))) for k, g in groupby("aaabcc")]   # [('a',3), ('b',1), ('c',2)]
-list(chain([1, 2], [3]))             # [1, 2, 3]
-list(pairwise([1, 2, 3]))            # [(1,2), (2,3)]  (3.10+)
+print(list(permutations([1, 2, 3]))) # all 6 orderings, as tuples
+print(list(permutations([1, 2, 3], 2)))  # ordered pairs
+print(list(combinations([1, 2, 3], 2)))  # [(1,2), (1,3), (2,3)]
+print(list(product("ab", repeat=2))) # [('a','a'), ('a','b'), ('b','a'), ('b','b')]
+print(list(accumulate([1, 2, 3, 4])))  # [1, 3, 6, 10] — prefix sums
+print(list(accumulate([3, 1, 4], max)))  # [3, 3, 4] — running max
+print([(k, len(list(g))) for k, g in groupby("aaabcc")])  # [('a',3), ('b',1), ('c',2)]
+print(list(chain([1, 2], [3])))      # [1, 2, 3]
+print(list(pairwise([1, 2, 3])))     # [(1,2), (2,3)]  (3.10+)
 ```
 
 In interviews, interviewers usually want you to write permutations/combinations by hand with backtracking, since that's the skill being tested. Use `itertools` for brute-force checks and in OAs.
@@ -475,6 +499,7 @@ def range_sums(nums, queries):
 `pre = [0, *accumulate(nums)]`, then the sum of `nums[i..j]` is `pre[j + 1] - pre[i]`.
 :::
 
+
 ::: exercise gcd-array | GCD and LCM of a list
 `gcd_lcm(nums)` returns a tuple `(gcd of all, lcm of all)` for a non-empty list of positive integers. Use `math` and `functools.reduce`.
 
@@ -495,6 +520,7 @@ from functools import reduce
 def gcd_lcm(nums):
     return reduce(math.gcd, nums), reduce(lambda a, b: a * b // math.gcd(a, b), nums)
 :::
+
 
 ::: exercise count-pairs-sum | Brute-force checker with combinations
 Write `count_pairs(nums, target)` that counts index pairs `i < j` with `nums[i] + nums[j] == target`, using `itertools.combinations`. (This is the kind of brute force you'd use to check a faster solution.)

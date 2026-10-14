@@ -2,7 +2,10 @@
 course: python
 module: strings
 title: Strings
-order: 2
+level: Beginner
+icon: 📝
+tagline: Index, slice and build text
+order: 5
 ---
 === lesson: string-basics | Indexing and slicing
 A string is an immutable sequence of characters. There is no separate `char` type: `s[0]` is a string of length 1.
@@ -22,26 +25,30 @@ s[6]     # IndexError
 
 `start` is included, `stop` is excluded, every part is optional, and slicing never raises an IndexError.
 
-```python
+```pyrun
 s = "python"
-s[1:4]    # 'yth'
-s[:3]     # 'pyt'      first 3
-s[3:]     # 'hon'      from index 3
-s[-3:]    # 'hon'      last 3
-s[::2]    # 'pto'      every second char
-s[::-1]   # 'nohtyp'   reversed
-s[1:100]  # 'ython'    out of range is fine
+print(s[1:4])  # 'yth'
+print(s[:3])  # 'pyt'      first 3
+print(s[3:])  # 'hon'      from index 3
+print(s[-3:])  # 'hon'      last 3
+print(s[::2])  # 'pto'      every second char
+print(s[::-1])  # 'nohtyp'   reversed
+print(s[1:100])  # 'ython'    out of range is fine
 ```
 
 A slice **copies**: `s[1:]` is O(k) time and memory where k is the slice length. Slicing in a loop or in recursion (`solve(s[1:])`) quietly turns O(n) into O(n²). Pass indexes instead:
 
-```python
+```pyrun
 def is_pal(s, i, j):          # O(1) extra space
     while i < j:
         if s[i] != s[j]:
             return False
         i, j = i + 1, j - 1
     return True
+
+# try it
+s = 'racecar'
+print(is_pal(s, 0, len(s) - 1))
 ```
 
 ## Immutability
@@ -86,6 +93,7 @@ def is_palindrome(s):
         j -= 1
     return True
 :::
+
 
 ::: exercise rotate-string | Rotate with slices
 `rotate(s, k)` moves the last `k` characters to the front. `k` may be larger than the string's length; rotating by `len(s)` gives the original string.
@@ -180,6 +188,7 @@ def valid_palindrome(s):
 Two pointers that skip characters where `isalnum()` is false. Compare with `.lower()`.
 :::
 
+
 ::: exercise reverse-words | Reverse words in a string (LeetCode 151)
 `reverse_words(s)` returns the words of `s` in reverse order, separated by single spaces, with no leading or trailing spaces. Words may be separated by several spaces.
 
@@ -196,6 +205,7 @@ def reverse_words(s):
 --- hint
 `split()` with no argument already handles repeated spaces.
 :::
+
 
 ::: exercise caesar | Shift letters with ord and chr
 `caesar(s, k)` shifts every lowercase letter forward by `k` places, wrapping from `z` to `a`. Other characters stay as they are. `k` can be large.
@@ -246,7 +256,7 @@ res = "".join(ch for ch in s if ch != " ")
 
 Problems like "string compression" or "count and say" build output as you scan groups:
 
-```python
+```pyrun
 def compress(s):
     out = []
     i = 0
@@ -257,6 +267,9 @@ def compress(s):
         out.append(s[i] + str(j - i))
         i = j
     return "".join(out)
+
+# try it
+print(compress('aaabccdddd'))
 ```
 
 `itertools.groupby` does the grouping for you, covered in the toolbox module:
@@ -300,6 +313,7 @@ def rle(s):
         i = j
     return "".join(out)
 :::
+
 
 ::: exercise longest-common-prefix | Longest common prefix (LeetCode 14)
 `lcp(words)` returns the longest prefix shared by every string in the list, or `""` if there is none or the list is empty.

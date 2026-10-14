@@ -2,7 +2,10 @@
 course: python
 module: hashing
 title: Dicts, sets and counting
-order: 5
+level: Intermediate
+icon: 📖
+tagline: O(1) lookups and the patterns built on them
+order: 9
 ---
 === lesson: dicts | Dictionaries
 A `dict` is a hash map. Average O(1) for get, set, delete and `in`. Since Python 3.7 it remembers insertion order.
@@ -50,13 +53,16 @@ Keys must be **hashable**: ints, strings, tuples of hashables, frozensets, `None
 
 Store what you've seen so far, then ask the dict a question about the current element in O(1). Two Sum is the canonical example: instead of checking every pair (O(n²)), remember each value's index and look up its complement.
 
-```python
+```pyrun
 def two_sum(nums, target):
     seen = {}                      # value -> index
     for i, x in enumerate(nums):
         if target - x in seen:
             return [seen[target - x], i]
         seen[x] = i
+
+# try it
+print(two_sum([2, 7, 11, 15], 9))
 ```
 
 ::: exercise two-sum | Two Sum (LeetCode 1)
@@ -80,6 +86,7 @@ def two_sum(nums, target):
 --- hint
 Check for the complement **before** inserting the current value, so `[3, 3]` works.
 :::
+
 
 ::: exercise subarray-sum-k | Subarray sum equals K (LeetCode 560)
 `subarray_sum(nums, k)` counts the contiguous subarrays whose sum is `k`. Numbers can be negative, so a sliding window won't work. Use prefix sums and a dict counting how often each prefix sum has occurred.
@@ -169,6 +176,7 @@ def is_anagram(s, t):
     return Counter(s) == Counter(t)
 :::
 
+
 ::: exercise group-anagrams | Group anagrams (LeetCode 49)
 `group_anagrams(words)` groups words that are anagrams of each other. Return the groups in the order their first word appears, and keep words inside a group in input order.
 
@@ -192,6 +200,7 @@ def group_anagrams(words):
 --- hint
 Key each word by its sorted letters. Dicts keep insertion order, so `list(groups.values())` comes out in first-appearance order.
 :::
+
 
 ::: exercise top-k-frequent | Top K frequent elements (LeetCode 347)
 `top_k(nums, k)` returns the `k` most frequent values, most frequent first. Ties won't affect the tests.
@@ -253,7 +262,7 @@ result = [w for w in words if w not in banned]
 
 A great set problem. Only start counting from numbers that begin a run (`x - 1` not in the set), so each number is visited a constant number of times:
 
-```python
+```pyrun
 def longest_consecutive(nums):
     s = set(nums)
     best = 0
@@ -264,6 +273,9 @@ def longest_consecutive(nums):
                 y += 1
             best = max(best, y - x + 1)
     return best
+
+# try it
+print(longest_consecutive([100, 4, 200, 1, 3, 2]))
 ```
 
 ::: exercise intersection | Intersection of two arrays (LeetCode 349)
@@ -280,6 +292,7 @@ assert intersection([], [1]) == []
 def intersection(a, b):
     return sorted(set(a) & set(b))
 :::
+
 
 ::: exercise longest-consecutive | Longest consecutive sequence (LeetCode 128)
 `longest_consecutive(nums)` returns the length of the longest run of consecutive integers that can be formed from the values (order in the list doesn't matter). Must be O(n): no sorting.

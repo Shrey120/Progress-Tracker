@@ -2,7 +2,10 @@
 course: python
 module: graphs
 title: Graphs
-order: 12
+level: Advanced
+icon: 🕸️
+tagline: BFS, DFS, topological sort, Dijkstra and union-find
+order: 16
 ---
 === lesson: graph-representation | Representing graphs, DFS and BFS
 ## Adjacency list
@@ -58,7 +61,7 @@ For grids of 10⁵+ cells, use the iterative version or BFS; recursion depth wil
 
 ## Counting components
 
-```python
+```pyrun
 def count_components(n, edges):
     graph = [[] for _ in range(n)]
     for u, v in edges:
@@ -77,6 +80,9 @@ def count_components(n, edges):
                         seen[v] = True
                         st.append(v)
     return count
+
+# try it
+print(count_components(5, [[0, 1], [1, 2], [3, 4]]))
 ```
 
 ## Multi-source BFS
@@ -117,6 +123,7 @@ def num_islands(grid):
                             st.append((ni, nj))
     return count
 :::
+
 
 ::: exercise rotting-oranges | Rotting oranges (LeetCode 994)
 `oranges_rotting(grid)` returns the minutes until no fresh orange (`1`) remains, where each minute rotten oranges (`2`) rot their 4 neighbours. Return `-1` if some orange never rots. Use multi-source BFS.
@@ -164,7 +171,7 @@ Queue every rotten orange first, count fresh ones, then BFS level by level, coun
 
 Repeatedly take nodes with no remaining prerequisites. If you can't take all n, there's a cycle.
 
-```python
+```pyrun
 from collections import deque
 
 def topo_sort(n, edges):          # edge (u, v): u must come before v
@@ -183,13 +190,16 @@ def topo_sort(n, edges):          # edge (u, v): u must come before v
             if indeg[v] == 0:
                 q.append(v)
     return order if len(order) == n else []     # [] means a cycle
+
+# try it
+print(topo_sort(4, [(0, 1), (0, 2), (1, 3), (2, 3)]))
 ```
 
 Course Schedule I and II, Alien Dictionary, and "find eventual safe states" (on the reversed graph) are this algorithm.
 
 ## Cycle detection with DFS colours (directed graphs)
 
-```python
+```pyrun
 def has_cycle(n, graph):
     WHITE, GREY, BLACK = 0, 1, 2      # unvisited, on the current path, finished
     color = [WHITE] * n
@@ -203,6 +213,9 @@ def has_cycle(n, graph):
         color[u] = BLACK
         return False
     return any(color[u] == WHITE and dfs(u) for u in range(n))
+
+# try it
+print(has_cycle(3, [[1], [2], [0]]), has_cycle(3, [[1], [2], []]))
 ```
 
 ## Undirected cycles
@@ -252,7 +265,7 @@ Kahn's algorithm with a min-heap instead of a deque. Note the edge direction: `[
 
 Non-negative weights. Use "lazy deletion": push duplicates, and skip popped entries that are stale.
 
-```python
+```pyrun
 import heapq
 
 def dijkstra(n, graph, src):          # graph[u] = [(v, w), ...]
@@ -269,6 +282,10 @@ def dijkstra(n, graph, src):          # graph[u] = [(v, w), ...]
                 dist[v] = nd
                 heapq.heappush(h, (nd, v))
     return dist
+
+# try it
+graph = [[(1, 4), (2, 1)], [(3, 1)], [(1, 2), (3, 5)], []]
+print(dijkstra(4, graph, 0))
 ```
 
 O((V + E) log V). Variants: Network Delay Time (max of dist), Path With Minimum Effort (the "distance" is the max edge so far), Cheapest Flights Within K Stops (state is `(cost, node, stops)`, and it's often easier as Bellman-Ford/BFS by levels).
@@ -277,7 +294,7 @@ O((V + E) log V). Variants: Network Delay Time (max of dist), Path With Minimum 
 
 Answers "are these two in the same group?" in near O(1), and merges groups. Path compression plus union by size:
 
-```python
+```pyrun
 class DSU:
     def __init__(self, n):
         self.parent = list(range(n))
@@ -298,6 +315,11 @@ class DSU:
         self.parent[rb] = ra
         self.size[ra] += self.size[rb]
         return True
+
+# try it
+d = DSU(5)
+d.union(0, 1); d.union(1, 2)
+print(d.find(2) == d.find(0), d.find(3) == d.find(0), d.union(0, 2))
 ```
 
 The iterative `find` avoids recursion-depth problems. Uses: number of provinces, redundant connection, accounts merge, Kruskal's MST (sort edges by weight, union if not already joined), making a network connected.
@@ -336,6 +358,7 @@ def network_delay(times, n, k):
     ans = max(dist[1:])
     return -1 if ans == float('inf') else ans
 :::
+
 
 ::: exercise redundant-connection | Redundant connection (LeetCode 684)
 A tree on nodes `1..n` had one extra edge added. `redundant(edges)` returns the edge that can be removed to leave a tree; if several could, return the one that appears last in the input. Use union-find.

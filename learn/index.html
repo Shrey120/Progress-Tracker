@@ -4,38 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prep Notebook</title>
-<meta name="description" content="Python for DSA and interview prep lessons with runnable exercises.">
+<meta name="description" content="Python for DSA and interview prep, from basics to advanced, with code you can run and step through.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="vendor/codemirror/codemirror.css">
 <link rel="stylesheet" href="styles.css">
+<script>try { const t = localStorage.getItem('prep-notebook.theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 </head>
 <body>
-<div class="app">
-  <aside class="sidebar" id="sidebar" aria-label="Course contents">
-    <div class="brand">
-      <a href="#/" class="brand-name">Prep Notebook</a>
-      <button class="icon-btn only-mobile" id="closeNav" aria-label="Close contents">✕</button>
-    </div>
-    <label class="search">
-      <span class="visually-hidden">Search lessons</span>
-      <input id="search" type="search" placeholder="Search lessons">
-    </label>
-    <nav id="nav"></nav>
-    <div class="side-foot">
-      <a href="https://shrey120.github.io/Progress-Tracker/" target="_blank" rel="noopener">Open tracker</a>
-      <button class="link-btn" id="backupBtn">Backup progress</button>
-    </div>
-  </aside>
-  <main class="main" id="main">
-    <header class="topbar only-mobile">
-      <button class="icon-btn" id="openNav" aria-label="Open contents">☰</button>
-      <span class="topbar-title" id="topTitle">Prep Notebook</span>
-    </header>
-    <div id="view" class="view"></div>
-  </main>
-</div>
+<header class="top">
+  <a href="#/" class="logo"><span aria-hidden="true">🐍</span> Prep Notebook</a>
+  <nav class="top-nav" aria-label="Main">
+    <a href="#/" data-nav="home">Learn</a>
+    <a href="#/revise" data-nav="revise">Revise <span class="pill" id="reviseCount" hidden></span></a>
+    <a href="https://shrey120.github.io/Progress-Tracker/" target="_blank" rel="noopener">Tracker</a>
+  </nav>
+  <div class="top-tools">
+    <button class="icon-btn" id="searchBtn" aria-label="Search lessons" title="Search (/)">⌕</button>
+    <button class="icon-btn" id="themeBtn" aria-label="Switch light or dark theme">◐</button>
+    <button class="icon-btn" id="backupBtn" aria-label="Backup progress" title="Backup progress">⤓</button>
+  </div>
+</header>
+<main id="view" class="view"></main>
+
+<dialog id="searchDlg" class="search-dlg">
+  <div class="search-box">
+    <input id="searchInput" type="search" placeholder="Search every lesson…" aria-label="Search lessons" autocomplete="off">
+    <ul id="searchResults" class="search-results"></ul>
+  </div>
+</dialog>
 
 <dialog id="backupDlg">
   <form method="dialog" class="dlg">
@@ -53,6 +52,8 @@
 
 <script src="vendor/codemirror/codemirror.js"></script>
 <script src="vendor/codemirror/python.js"></script>
+<script src="vendor/codemirror/javascript.js"></script>
+<script src="vendor/codemirror/sql.js"></script>
 <script src="vendor/codemirror/matchbrackets.js"></script>
 <script src="vendor/codemirror/runmode.js"></script>
 <script src="vendor/marked.min.js"></script>

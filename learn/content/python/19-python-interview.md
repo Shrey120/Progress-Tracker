@@ -2,7 +2,10 @@
 course: python
 module: python-interview
 title: Gotchas and Python interview questions
-order: 14
+level: Advanced
+icon: 🎤
+tagline: The traps that cost points, and the theory questions
+order: 19
 ---
 === lesson: gotchas | The gotchas that cost points
 A checklist to reread before an interview or OA.
@@ -83,10 +86,13 @@ The Global Interpreter Lock lets only one thread run Python bytecode at a time i
 
 A function with `yield` returns a generator: a lazy iterator that resumes where it left off each time you ask for the next value. Memory stays O(1) regardless of how many values it produces.
 
-```python
+```pyrun
 def chunks(xs, k):
     for i in range(0, len(xs), k):
         yield xs[i:i + k]
+
+# try it
+print(list(chunks([1, 2, 3, 4, 5], 2)))
 ```
 
 ## Decorators
@@ -156,6 +162,7 @@ def window_sums(nums, k):
         s += nums[i] - nums[i - k]
         yield s
 :::
+
 
 ::: exercise write-decorator | Write a memoising decorator
 Write `memo`, a decorator that caches a function's results by its positional arguments (like a minimal `functools.cache`). The tests count how many times the wrapped function body actually runs.

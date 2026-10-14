@@ -3,17 +3,35 @@
   "id": "python",
   "title": "Python for DSA",
   "blurb": "Everything in Python you need to solve the Striver sheet and LeetCode comfortably: the language, the built-ins that matter, their costs, and the patterns written the Python way.",
-  "modules": []
+  "modules": [],
+  "short": "Python for DSA",
+  "heroText": "From your first print() to graphs and DP. Every concept is a short slide, every example runs, and you can step through code line by line to watch each variable change.",
+  "levels": [
+   {
+    "id": "Beginner",
+    "color": "green",
+    "blurb": "Start here, even if it's been years"
+   },
+   {
+    "id": "Intermediate",
+    "color": "yellow",
+    "blurb": "The tools real solutions use"
+   },
+   {
+    "id": "Advanced",
+    "color": "pink",
+    "blurb": "DSA patterns, written the Python way"
+   }
+  ]
  },
  {
   "id": "prep",
   "title": "Interview prep",
-  "blurb": "The 339 non-DSA topics from your tracker, grouped by how much they decide an interview. Lessons are being written in order: high leverage first.",
+  "blurb": "Every non-DSA topic from your tracker, explained from basics to what interviewers actually ask.",
   "modules": [
    {
     "id": "javascript-core",
     "title": "JavaScript core",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "closures",
@@ -105,12 +123,14 @@
       "title": "Garbage collection",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🟨",
+    "tagline": "Closures, the event loop, this, promises and the rest of the JS round"
    },
    {
     "id": "typescript",
     "title": "TypeScript",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "generics-constraints",
@@ -162,12 +182,14 @@
       "title": "Conditional & mapped types",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🔷",
+    "tagline": "Generics, unions, narrowing and the types interviewers probe"
    },
    {
     "id": "react",
     "title": "React",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "hooks-rules-closures-in-hooks",
@@ -284,12 +306,14 @@
       "title": "Render props & HOCs",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "⚛️",
+    "tagline": "Hooks, rendering, state and the performance questions"
    },
    {
     "id": "next-js-and-rendering",
     "title": "Next.js and rendering",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "ssr-ssg-isr-csr-trade-offs-and-when-to-pick-which",
@@ -366,12 +390,14 @@
       "title": "Image & font optimization",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "▲",
+    "tagline": "SSR, SSG, ISR, server components and caching"
    },
    {
     "id": "sql-and-postgres",
     "title": "SQL and Postgres",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "joins",
@@ -488,12 +514,14 @@
       "title": "Triggers",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🐘",
+    "tagline": "Joins, indexes, transactions and query plans"
    },
    {
     "id": "api-design",
     "title": "API design",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "rest-resource-modeling",
@@ -575,12 +603,14 @@
       "title": "Subscriptions",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🔌",
+    "tagline": "REST and GraphQL design, pagination, versioning"
    },
    {
     "id": "auth-and-web-security",
     "title": "Auth and web security",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "jwt-structure-signing-expiry-refresh-flows",
@@ -667,12 +697,14 @@
       "title": "Dependency & supply-chain risk",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🔐",
+    "tagline": "Sessions, JWTs, OAuth, XSS, CSRF and CORS"
    },
    {
     "id": "testing",
     "title": "Testing",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "unit-vs-integration-vs-e2e",
@@ -744,12 +776,14 @@
       "title": "Load testing basics",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🧪",
+    "tagline": "What to test, and how, from unit to end-to-end"
    },
    {
     "id": "behavioural-and-remote",
     "title": "Behavioural and remote",
-    "group": "High leverage",
     "lessons": [
      {
       "id": "star-method",
@@ -816,12 +850,14 @@
       "title": "Conflict escalation stories",
       "stars": 1
      }
-    ]
+    ],
+    "level": "High leverage",
+    "icon": "🗣️",
+    "tagline": "STAR stories and remote-work answers"
    },
    {
     "id": "node-and-backend",
     "title": "Node and backend",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "node-event-loop-phases",
@@ -908,12 +944,14 @@
       "title": "Buffers",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🟩",
+    "tagline": "The Node event loop, middleware, jobs and errors"
    },
    {
     "id": "system-design",
     "title": "System design",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "requirements-gathering-scoping",
@@ -1055,12 +1093,14 @@
       "title": "Service discovery",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🏗️",
+    "tagline": "Scaling, queues, rate limiters and classic designs"
    },
    {
     "id": "caching",
     "title": "Caching",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "http-caching-headers-cache-control-etag",
@@ -1117,12 +1157,14 @@
       "title": "Write-through & write-behind",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "⚡",
+    "tagline": "HTTP caching, Redis, invalidation and stampedes"
    },
    {
     "id": "performance",
     "title": "Performance",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "core-web-vitals-lcp-inp-cls",
@@ -1204,12 +1246,14 @@
       "title": "Edge caching",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🚀",
+    "tagline": "Web Vitals, bundles, rendering and query speed"
    },
    {
     "id": "browser-and-networking",
     "title": "Browser and networking",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "http-methods-status-codes",
@@ -1291,12 +1335,14 @@
       "title": "Web Workers",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🌐",
+    "tagline": "HTTP, CORS, the DOM, storage and real-time"
    },
    {
     "id": "html-and-css",
     "title": "HTML and CSS",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "flexbox",
@@ -1373,12 +1419,14 @@
       "title": "Critical CSS",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🎨",
+    "tagline": "Layout, the cascade, responsive design, Tailwind"
    },
    {
     "id": "docker-ci-cd-and-cloud",
     "title": "Docker, CI/CD and cloud",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "docker-images-layers-multi-stage-builds",
@@ -1430,12 +1478,14 @@
       "title": "Blue-green & canary deployments",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🐳",
+    "tagline": "Images, pipelines, deploys and the cloud basics"
    },
    {
     "id": "git-and-workflow",
     "title": "Git and workflow",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "merge-vs-rebase",
@@ -1487,12 +1537,14 @@
       "title": "Monorepo vs polyrepo",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🌿",
+    "tagline": "Rebase, merge, conflicts and team workflow"
    },
    {
     "id": "design-and-engineering-practice",
     "title": "Design and engineering practice",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "solid-applied-single-responsibility",
@@ -1579,12 +1631,14 @@
       "title": "Clean architecture as a formal thing",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🧩",
+    "tagline": "SOLID, patterns, refactoring and code review"
    },
    {
     "id": "ai-application-layer",
     "title": "AI application layer",
-    "group": "Mid leverage",
     "lessons": [
      {
       "id": "llm-api-integration",
@@ -1651,12 +1705,14 @@
       "title": "AI-assisted coding workflow & reviewing AI output",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Mid leverage",
+    "icon": "🤖",
+    "tagline": "LLM APIs, RAG, embeddings and tool calling"
    },
    {
     "id": "cs-fundamentals",
     "title": "CS fundamentals",
-    "group": "Lower leverage",
     "lessons": [
      {
       "id": "processes-vs-threads",
@@ -1708,12 +1764,14 @@
       "title": "OSI model",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Lower leverage",
+    "icon": "🧠",
+    "tagline": "Processes, threads, concurrency and encoding"
    },
    {
     "id": "nosql",
     "title": "NoSQL",
-    "group": "Lower leverage",
     "lessons": [
      {
       "id": "document-modeling",
@@ -1745,12 +1803,14 @@
       "title": "Vector databases",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Lower leverage",
+    "icon": "🍃",
+    "tagline": "Document modelling and when not to use NoSQL"
    },
    {
     "id": "frontend-system-design",
     "title": "Frontend system design",
-    "group": "Lower leverage",
     "lessons": [
      {
       "id": "component-api-design",
@@ -1817,12 +1877,14 @@
       "title": "Design a file uploader",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Lower leverage",
+    "icon": "🖼️",
+    "tagline": "Designing feeds, tables, autocomplete and chat UIs"
    },
    {
     "id": "accessibility",
     "title": "Accessibility",
-    "group": "Lower leverage",
     "lessons": [
      {
       "id": "semantic-markup",
@@ -1864,7 +1926,29 @@
       "title": "Reduced motion",
       "stars": 1
      }
-    ]
+    ],
+    "level": "Lower leverage",
+    "icon": "♿",
+    "tagline": "Semantics, keyboard, focus and ARIA"
+   }
+  ],
+  "short": "Interview prep",
+  "heroText": "Every non-DSA topic from your tracker, grouped by how much it decides an interview. Inside each topic, lessons go from basics to the hard follow-ups, with sample answers you can say out loud.",
+  "levels": [
+   {
+    "id": "High leverage",
+    "color": "yellow",
+    "blurb": "Decides most interviews. Do these first"
+   },
+   {
+    "id": "Mid leverage",
+    "color": "blue",
+    "blurb": "Will come up; needs a real answer"
+   },
+   {
+    "id": "Lower leverage",
+    "color": "violet",
+    "blurb": "Recognise and reason about it live"
    }
   ]
  }

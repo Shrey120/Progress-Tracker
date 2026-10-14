@@ -2,26 +2,47 @@
 course: python
 module: linked-lists-trees
 title: Linked lists and trees
-order: 11
+level: Advanced
+icon: 🌳
+tagline: Pointer moves, traversals and BSTs
+order: 15
 ---
 === lesson: linked-list-patterns | Linked list patterns
 Every linked list problem is pointer bookkeeping. Draw it, then write it. Python's multiple assignment keeps most of them to a few lines.
 
 ## Reverse
 
-```python
+```pyrun
 def reverse(head):
     prev = None
     while head:
         head.next, prev, head = prev, head, head.next
     return prev
+
+# try it
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+
+def build(vals):
+    head = None
+    for v in reversed(vals):
+        head = ListNode(v, head)
+    return head
+
+def show(h):
+    out = []
+    while h:
+        out.append(h.val); h = h.next
+    return out
+print(show(reverse(build([1, 2, 3, 4]))))
 ```
 
 That single line works because the right side is evaluated first. If it reads as too clever in an interview, write the four-line version with a `nxt` temp.
 
 ## Fast and slow pointers
 
-```python
+```pyrun
 def middle(head):                  # second middle for even length
     slow = fast = head
     while fast and fast.next:
@@ -35,13 +56,31 @@ def has_cycle(head):
         if slow is fast:           # identity, not ==
             return True
     return False
+
+# try it
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+
+def build(vals):
+    head = None
+    for v in reversed(vals):
+        head = ListNode(v, head)
+    return head
+
+def show(h):
+    out = []
+    while h:
+        out.append(h.val); h = h.next
+    return out
+print(middle(build([1, 2, 3, 4, 5])).val, has_cycle(build([1, 2, 3])))
 ```
 
 To find where the cycle starts (Floyd): after they meet, move one pointer back to `head` and step both one at a time; they meet at the cycle's start.
 
 ## Merge two sorted lists
 
-```python
+```pyrun
 def merge(a, b):
     dummy = tail = ListNode()
     while a and b:
@@ -52,6 +91,24 @@ def merge(a, b):
         tail = tail.next
     tail.next = a or b
     return dummy.next
+
+# try it
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val, self.next = val, next
+
+def build(vals):
+    head = None
+    for v in reversed(vals):
+        head = ListNode(v, head)
+    return head
+
+def show(h):
+    out = []
+    while h:
+        out.append(h.val); h = h.next
+    return out
+print(show(merge(build([1, 3, 5]), build([2, 4]))))
 ```
 
 ## Remove the n-th node from the end
@@ -118,6 +175,7 @@ def reverse(head):
     return prev
 :::
 
+
 ::: exercise remove-nth | Remove N-th node from end (LeetCode 19)
 `remove_nth_from_end(head, n)` removes the n-th node from the end in one pass and returns the head.
 
@@ -180,7 +238,7 @@ Start both pointers at a dummy, move `fast` n steps, then move both until `fast.
 === lesson: tree-traversals | Binary tree traversals
 ## Recursive DFS
 
-```python
+```pyrun
 def inorder(root):
     res = []
     def go(node):
@@ -191,13 +249,21 @@ def inorder(root):
         go(node.right)
     go(root)
     return res
+
+# try it
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6, None, TreeNode(7)))
+print(inorder(root))
 ```
 
 ## Iterative DFS with a stack
 
 Needed when the tree can be deep (a skewed tree of 10⁵ nodes breaks the recursion limit), and a common follow-up question.
 
-```python
+```pyrun
 def preorder(root):
     res, st = [], [root] if root else []
     while st:
@@ -217,13 +283,21 @@ def inorder_iter(root):
         res.append(cur.val)
         cur = cur.right
     return res
+
+# try it
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6, None, TreeNode(7)))
+print(preorder(root), inorder_iter(root))
 ```
 
 Postorder iteratively: do a modified preorder (node, right, left) and reverse the result.
 
 ## BFS: level order
 
-```python
+```pyrun
 from collections import deque
 
 def level_order(root):
@@ -239,6 +313,14 @@ def level_order(root):
             if node.right: q.append(node.right)
         res.append(level)
     return res
+
+# try it
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6, None, TreeNode(7)))
+print(level_order(root))
 ```
 
 Right side view, zigzag, average of levels, and max width all start from this loop.
@@ -338,6 +420,7 @@ def level_order(root):
     return res
 :::
 
+
 ::: exercise inorder-iter | Iterative inorder (LeetCode 94)
 `inorder(root)` returns the inorder traversal **without recursion**. The last test is a 50,000-node left-skewed tree, which overflows a recursive version.
 
@@ -375,6 +458,7 @@ def inorder(root):
 --- hint
 Push nodes while going left; when you can't go further, pop, record, and step right.
 :::
+
 
 ::: exercise diameter | Diameter of a binary tree (LeetCode 543)
 `diameter(root)` returns the number of **edges** on the longest path between any two nodes.
@@ -416,7 +500,7 @@ In a BST, every value in a node's left subtree is smaller and every value in its
 
 ## Search and insert
 
-```python
+```pyrun
 def search(root, x):
     while root and root.val != x:
         root = root.left if x < root.val else root.right
@@ -430,19 +514,36 @@ def insert(root, x):
     else:
         root.right = insert(root.right, x)
     return root
+
+# try it
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6, None, TreeNode(7)))
+insert(root, 5)
+print(search(root, 5).val, search(root, 8))
 ```
 
 ## Validate with bounds
 
 Checking only `left.val < node.val < right.val` is wrong; a value deep in the left subtree can still be too big. Carry the allowed range down:
 
-```python
+```pyrun
 def is_valid_bst(root, lo=float('-inf'), hi=float('inf')):
     if not root:
         return True
     if not (lo < root.val < hi):
         return False
     return is_valid_bst(root.left, lo, root.val) and is_valid_bst(root.right, root.val, hi)
+
+# try it
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val, self.left, self.right = val, left, right
+
+root = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6, None, TreeNode(7)))
+print(is_valid_bst(root))
 ```
 
 ## LCA in a BST
@@ -483,6 +584,7 @@ def is_valid_bst(root, lo=float('-inf'), hi=float('inf')):
 --- hint
 The third test has a 3 in the right subtree of 5. Pass `(low, high)` bounds down the recursion.
 :::
+
 
 ::: exercise kth-smallest | Kth smallest in a BST (LeetCode 230)
 `kth_smallest(root, k)` returns the k-th smallest value (1-indexed). Stop as soon as you've found it.

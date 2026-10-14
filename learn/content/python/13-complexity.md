@@ -1,8 +1,11 @@
 ---
 course: python
 module: complexity
-title: Complexity and speed in Python
-order: 9
+title: Big-O and speed in Python
+level: Advanced
+icon: ⏱️
+tagline: What every operation costs, and how to make Python fast
+order: 13
 ---
 === lesson: big-o-table | The cost of every built-in you use
 Python hides loops inside innocent-looking calls. This table is the one to keep in your head. Averages for hash structures; n is the container size.

@@ -2,14 +2,17 @@
 course: python
 module: array-patterns
 title: Array and string patterns
-order: 10
+level: Advanced
+icon: 🎯
+tagline: Two pointers, sliding window, binary search, stacks
+order: 14
 ---
 === lesson: two-pointers | Two pointers
 Two indexes that move toward each other, or in the same direction at different speeds. They turn many O(n²) pair searches into O(n).
 
 ## Opposite ends (sorted input)
 
-```python
+```pyrun
 def pair_with_sum(nums, target):        # nums sorted
     i, j = 0, len(nums) - 1
     while i < j:
@@ -21,13 +24,16 @@ def pair_with_sum(nums, target):        # nums sorted
         else:
             j -= 1          # need a smaller sum
     return [-1, -1]
+
+# try it
+print(pair_with_sum([1, 3, 4, 6, 9], 10))
 ```
 
 ## Same direction: read/write pointers
 
 One pointer reads every element; the other marks where the next kept element is written. Used for "remove duplicates", "move zeroes", "remove element".
 
-```python
+```pyrun
 def dedupe_sorted(nums):
     w = 0
     for x in nums:
@@ -35,13 +41,18 @@ def dedupe_sorted(nums):
             nums[w] = x
             w += 1
     return w            # new length
+
+# try it
+nums = [1, 1, 2, 3, 3, 3]
+k = dedupe_sorted(nums)
+print(k, nums[:k])
 ```
 
 ## 3Sum pattern
 
 Sort, fix one element, two-pointer the rest, and skip duplicates at each level:
 
-```python
+```pyrun
 def three_sum(nums):
     nums.sort()
     res = []
@@ -62,6 +73,9 @@ def three_sum(nums):
                     lo += 1
                 hi -= 1
     return res
+
+# try it
+print(three_sum([-1, 0, 1, 2, -1, -4]))
 ```
 
 ::: exercise three-sum | 3Sum (LeetCode 15)
@@ -98,6 +112,7 @@ def three_sum(nums):
     return res
 :::
 
+
 ::: exercise container-water | Container with most water (LeetCode 11)
 `max_area(height)` returns the most water two lines can hold: `min(h[i], h[j]) * (j - i)`. O(n) with two pointers.
 
@@ -127,7 +142,7 @@ A window `[left, right]` that grows on the right and shrinks on the left, keepin
 
 ## Variable-size template
 
-```python
+```pyrun
 def longest_window(s):
     left = 0
     state = {}            # whatever describes the window
@@ -142,6 +157,9 @@ def longest_window(s):
         # 3. the window is valid: record the answer
         best = max(best, right - left + 1)
     return best
+
+# try it
+print(longest_window('abcabcbb'))
 ```
 
 That's "Longest substring without repeating characters". Change step 2's condition and you get most window problems:
@@ -188,6 +206,7 @@ def length_of_longest(s):
     return best
 :::
 
+
 ::: exercise min-window | Minimum size subarray sum (LeetCode 209)
 `min_sub_len(target, nums)` returns the length of the shortest contiguous subarray of positive integers whose sum is at least `target`, or 0 if none.
 
@@ -213,6 +232,7 @@ def min_sub_len(target, nums):
 --- hint
 Shortest-valid windows: record the answer **inside** the shrinking loop.
 :::
+
 
 ::: exercise char-replacement | Longest repeating character replacement (LeetCode 424)
 `character_replacement(s, k)` returns the length of the longest substring you can make of one repeated letter by changing at most `k` characters. `s` is uppercase.
@@ -244,7 +264,7 @@ A window is valid when `window length - count of its most frequent letter <= k`.
 === lesson: binary-search | Binary search templates
 Off-by-one errors in binary search come from mixing conventions. Pick one template and use it everywhere. This one finds the **first index where a condition becomes true**:
 
-```python
+```pyrun
 def first_true(lo, hi, ok):        # search in [lo, hi); ok is False...False True...True
     while lo < hi:
         mid = (lo + hi) // 2
@@ -253,6 +273,10 @@ def first_true(lo, hi, ok):        # search in [lo, hi); ok is False...False Tru
         else:
             lo = mid + 1           # mid is definitely not
     return lo                      # == hi if nothing is True
+
+# try it
+nums = [1, 3, 5, 7, 9]
+print(first_true(0, len(nums), lambda i: nums[i] >= 6))
 ```
 
 Every binary search problem becomes "what's the monotonic condition?":
@@ -269,11 +293,23 @@ Every binary search problem becomes "what's the monotonic condition?":
 
 When the answer is a number in a range and "can we do it with value v?" is monotonic, search over v. Koko Eating Bananas, Capacity to Ship Packages, Split Array Largest Sum, Aggressive Cows, Book Allocation all have this shape:
 
-```python
+```pyrun
 def min_eating_speed(piles, h):
     def ok(speed):
         return sum((p + speed - 1) // speed for p in piles) <= h
     return first_true(1, max(piles) + 1, ok)
+
+# try it
+def first_true(lo, hi, ok):
+    while lo < hi:
+        mid = (lo + hi) // 2
+        if ok(mid):
+            hi = mid
+        else:
+            lo = mid + 1
+    return lo
+
+print(min_eating_speed([3, 6, 7, 11], 8))
 ```
 
 `bisect` already implements the sorted-array cases; this template handles the rest.
@@ -322,6 +358,7 @@ def min_speed(piles, h):
 `ok(speed)`: total hours `sum(ceil(p / speed))` is at most `h`. Find the first speed where that's true.
 :::
 
+
 ::: exercise rotated-min | Minimum in rotated sorted array (LeetCode 153)
 `find_min(nums)` returns the minimum of a sorted array of distinct values that was rotated, in O(log n).
 
@@ -355,7 +392,7 @@ A plain list is the stack. Two families of problems:
 
 Push openers, pop on closers:
 
-```python
+```pyrun
 def is_valid(s):
     pairs = {")": "(", "]": "[", "}": "{"}
     st = []
@@ -366,13 +403,16 @@ def is_valid(s):
         else:
             st.append(ch)
     return not st
+
+# try it
+print(is_valid('({[]})'), is_valid('(]'))
 ```
 
 ## Monotonic stack: next greater / smaller element
 
 Keep a stack of indexes whose values are decreasing. When a bigger value arrives, it's the "next greater element" for everything it pops:
 
-```python
+```pyrun
 def next_greater(nums):
     res = [-1] * len(nums)
     st = []                           # indexes, values decreasing
@@ -381,6 +421,9 @@ def next_greater(nums):
             res[st.pop()] = x
         st.append(i)
     return res
+
+# try it
+print(next_greater([2, 1, 2, 4, 3]))
 ```
 
 Each index is pushed and popped once: O(n). Variations:
@@ -417,6 +460,7 @@ def is_valid(s):
     return not st
 :::
 
+
 ::: exercise daily-temps | Daily temperatures (LeetCode 739)
 `daily_temperatures(t)` returns, for each day, how many days you wait for a warmer one (0 if never). O(n) with a monotonic stack.
 
@@ -438,6 +482,7 @@ def daily_temperatures(t):
         st.append(i)
     return res
 :::
+
 
 ::: exercise largest-rect | Largest rectangle in histogram (LeetCode 84)
 `largest_rectangle(heights)` returns the area of the largest rectangle in the histogram. O(n) with a stack of increasing heights.

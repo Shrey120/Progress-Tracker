@@ -1,17 +1,20 @@
 ---
 course: python
-module: functions
-title: Functions and recursion
-order: 6
+module: recursion
+title: Scope, recursion and memoization
+level: Intermediate
+icon: 🌀
+tagline: Functions that call themselves, and caching their results
+order: 10
 ---
-=== lesson: function-basics | Functions, arguments and scope
-```python
+=== lesson: function-basics | Arguments, scope and lambdas
+```pyrun
 def area(w, h=1):          # h has a default
     return w * h
 
-area(3)          # 3
-area(3, 4)       # 12
-area(h=4, w=3)   # keyword arguments, any order
+print(area(3))   # 3
+print(area(3, 4))  # 12
+print(area(h=4, w=3))  # keyword arguments, any order
 ```
 
 A function without `return` (or with a bare `return`) returns `None`. Returning several values returns a tuple: `return lo, hi`.
@@ -105,6 +108,7 @@ def collect(x, acc=None):
     return acc
 :::
 
+
 ::: exercise nonlocal-counter | A counter with nonlocal
 `make_counter()` returns a function. Each call of that function returns the next integer, starting at 1. Two counters must be independent.
 
@@ -152,12 +156,15 @@ A Python function call costs far more than in C++. Recursive solutions that pass
 
 Write the base case first, then trust the recursive call on a smaller input:
 
-```python
+```pyrun
 def power(x, n):           # x ** n in O(log n) multiplications
     if n == 0:
         return 1
     half = power(x, n // 2)
     return half * half * (x if n % 2 else 1)
+
+# try it
+print(power(2, 10))
 ```
 
 ## Avoid slicing in recursion
@@ -220,6 +227,7 @@ def fast_pow(x, n):
     return half * half * (x if n % 2 else 1)
 :::
 
+
 ::: exercise subsets | Subsets (LeetCode 78)
 `subsets(nums)` returns every subset of the distinct numbers. Generate them with recursion that chooses "take" before "skip" at each index, so the output order is fixed: for `[1, 2]` it is `[[1, 2], [1], [2], []]`.
 
@@ -254,7 +262,7 @@ At index `i`: append `nums[i]`, recurse, pop it, recurse again. At `i == len(num
 === lesson: memoization | Memoization with @cache
 Top-down DP in Python is a recursive function plus a cache. `functools.cache` (3.9+) or `lru_cache(None)` remembers results by arguments:
 
-```python
+```pyrun
 from functools import cache
 
 @cache
@@ -263,7 +271,7 @@ def fib(n):
         return n
     return fib(n - 1) + fib(n - 2)
 
-fib(200)   # instant
+print(fib(200))  # instant
 ```
 
 Rules for it to work:
@@ -290,7 +298,7 @@ class Solution:
 
 Interviewers sometimes ask you not to use the decorator. The manual version is a dict:
 
-```python
+```pyrun
 def climb(n):
     memo = {}
     def go(i):
@@ -301,6 +309,9 @@ def climb(n):
         memo[i] = go(i - 1) + go(i - 2)
         return memo[i]
     return go(n)
+
+# try it
+print(climb(10))
 ```
 
 The DP module later turns these into tables.
@@ -329,6 +340,7 @@ def climb(n):
         return go(i - 1) + go(i - 2)
     return go(n)
 :::
+
 
 ::: exercise grid-paths-obstacles | Unique paths with obstacles (LeetCode 63)
 `paths(grid)` counts paths from the top-left to the bottom-right moving only right or down, where cells with `1` are blocked. Use `@cache` on `(r, c)`.
