@@ -22,15 +22,15 @@ intro paragraph occupied the row where its title should have been. Every other s
 matches its official count exactly. Add the missing one using the "Add a problem" row
 inside any topic.
 
-**Python for DSA** — 19 topics, 51 lessons, matching the Learn site, at the start of the DSA track.
+**Python for DSA** — 19 topics, 53 lessons, matching the Learn site, at the start of the DSA track.
 
-**Interview prep** — 3 sections, 26 topics, 401 items, grouped by how much they actually
+**Interview prep** — 3 sections, 26 topics, 402 items, grouped by how much they actually
 decide an interview outcome:
 
 - **High leverage** (10 topics, 169 items) — JavaScript core, TypeScript, React, Next.js
   and rendering, SQL and Postgres, API design, auth and web security, testing,
   behavioural and remote, job search and offers (resume, referrals, CTC, negotiation).
-- **Mid leverage** (12 topics, 192 items) — Node and backend, system design, caching,
+- **Mid leverage** (12 topics, 193 items) — Node and backend, system design, caching,
   performance, browser and networking, HTML and CSS, Docker/CI-CD/cloud, Git and
   workflow, design and engineering practice, AI application layer, machine coding round,
   low-level design.
@@ -88,8 +88,8 @@ Where the estimates come from:
 - **Interview prep**: 20 / 35 / 50 minutes for Easy / Medium / Hard: reading the lesson plus
   practising the answer out loud until you can give it cold.
 
-Totals at the default budget: DSA track about 384 hours (Python 31 + A2Z 353), interview prep about
-222 hours (High leverage about 94). At 80 + 40 minutes a day the DSA track takes about 325 days and
+Totals at the default budget: DSA track about 385 hours (Python 32 + A2Z 353), interview prep about
+223 hours (High leverage about 94). At 80 + 40 minutes a day the DSA track takes about 325 days and
 prep about 345: roughly 11 months for everything, with both tracks finishing at about the same time.
 
 Inside a topic, items are spread across its days in proportion to their minutes, so a run of long

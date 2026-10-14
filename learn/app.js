@@ -11,7 +11,7 @@
   // ---------------- state ----------------
   const state = load();
   function load() {
-    const empty = { done: {}, seen: {}, slide: {}, revise: {}, solved: {}, code: {}, last: null, track: null };
+    const empty = { done: {}, seen: {}, slide: {}, revise: {}, solved: {}, code: {}, journal: {}, drill: {}, drillStats: {}, last: null, track: null };
     try {
       const s = JSON.parse(localStorage.getItem(KEY));
       if (s && typeof s === 'object') return { ...empty, ...s };
@@ -289,6 +289,8 @@
     const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
     document.querySelectorAll('.top-nav a[data-nav]').forEach((a) => a.classList.remove('active'));
     updatePill();
+    view.onclick = null; view.onsubmit = null;
+    if (parts[0] === 'patterns') return renderPatterns(parts);
     if (parts[0] === 'revise') { $('[data-nav=revise]').classList.add('active'); return renderRevise(); }
     if (parts[0] === 't' && modByKey[`${parts[1]}/${parts[2]}`]) {
       const m = modByKey[`${parts[1]}/${parts[2]}`];
@@ -301,7 +303,7 @@
     renderHome();
   }
   function go(hash, replace) { if (replace) { history.replaceState(null, '', hash); route(); } else location.hash = hash; }
-  function updatePill() { const n = dueCount(); const p = $('#reviseCount'); p.hidden = !n; p.textContent = n; }
+  function updatePill() { const n = dueCount() + journalDue().length; const p = $('#reviseCount'); p.hidden = !n; p.textContent = n; }
 
   // ---------------- home ----------------
   function renderHome() {
@@ -512,11 +514,243 @@
     return box;
   }
 
+  // ---------------- patterns: guide, drill, journal, recall ----------------
+  const PATTERNS = window.PATTERNS || [], DRILLS = window.DRILLS || [];
+  const patById = Object.fromEntries(PATTERNS.map((p) => [p.id, p]));
+  const drillById = Object.fromEntries(DRILLS.map((d) => [d.id, d]));
+  const DRILL_DAYS = [0, 1, 3, 7, 21];
+  const TRACKER_URL = 'https://shrey120.github.io/Progress-Tracker/';
+  const inlineCode = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
+  const lcLink = (title) => `https://leetcode.com/problemset/?search=${encodeURIComponent(title)}`;
+  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  function jDue(j) {
+    const days = REVIEW_DAYS[Math.min(j.n || 0, REVIEW_DAYS.length - 1)];
+    const dueAt = (j.last || j.added) + days * 864e5;
+    return { due: Date.now() >= dueAt, dueAt };
+  }
+  const journalDue = () => Object.entries(state.journal).filter(([, j]) => jDue(j).due).sort((a, b) => jDue(a[1]).dueAt - jDue(b[1]).dueAt);
+  const daysUntil = (t) => Math.max(1, Math.ceil((t - Date.now()) / 864e5));
+  function trackerSolved() {          // the tracker lives on the same origin, so its saved plan is readable here
+    try {
+      const t = JSON.parse(localStorage.getItem('prep-tracker-v3'));
+      if (!t || !Array.isArray(t.modules)) return null;
+      return t.modules.filter((m) => m.track === 'dsa' && m.section !== 'Python for DSA')
+        .flatMap((m) => (m.items || []).filter((i) => i.status === 'done')
+          .map((i) => ({ key: 't:' + i.id, title: String(i.title).replace(/^★+\s*/, ''), topic: `${m.section} · ${m.name}`, diff: i.difficulty || '', doneAt: i.doneAt || '' })))
+        .sort((a, b) => String(b.doneAt).localeCompare(String(a.doneAt)));
+    } catch (e) { return null; }
+  }
+  const patOptions = (sel) => `<option value="">Pick the pattern…</option>${PATTERNS.map((p) => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}<option value="other" ${sel === 'other' ? 'selected' : ''}>Something else</option>`;
+  const patName = (id) => (patById[id] ? patById[id].name : 'Other');
+  const patTag = (id) => `<span class="tag" style="--c:${colorVar(patById[id] ? patById[id].color : 'blue')}">${esc(patName(id))}</span>`;
+
+  function patternsHead(tab) {
+    const due = journalDue().length;
+    const tabs = [['', 'Guide'], ['drill', 'Drill'], ['journal', 'Journal'], ['recall', 'Recall' + (due ? ` <span class="pill">${due}</span>` : '')]];
+    return `<div class="page-h"><h1>Patterns</h1><p>Knowing an algorithm and seeing that a new problem needs it are separate skills. The drill trains the seeing; the journal keeps what each solved problem taught you and quizzes you on it later.</p></div>
+      <nav class="pt-tabs" aria-label="Patterns sections">${tabs.map(([id, label]) => `<a href="#/patterns${id ? '/' + id : ''}"${tab === id ? ' aria-current="page"' : ''}>${label}</a>`).join('')}</nav>`;
+  }
+
+  function renderPatterns(parts) {
+    document.title = 'Patterns · Prep Notebook'; delete view.dataset.topic;
+    $('[data-nav=patterns]').classList.add('active');
+    const tab = parts[1] || '';
+    if (tab === 'drill') renderDrill();
+    else if (tab === 'journal') renderJournal(parts[2] || '');
+    else if (tab === 'recall') renderRecall();
+    else renderPatternGuide();
+  }
+
+  function renderPatternGuide() {
+    const dueN = journalDue().length;
+    const solved = trackerSolved() || [];
+    const waiting = solved.filter((s) => !state.journal[s.key]).length;
+    let h = patternsHead('');
+    h += `<div class="pt-steps">
+      <a class="pt-step" href="#/python/python-interview/spotting-the-pattern/0"><b>Learn the signals</b><span>The checklist for judging any new problem, in one lesson.</span></a>
+      <a class="pt-step" href="#/patterns/drill"><b>Drill</b><span>${DRILLS.length} problems, no section titles. Name the pattern, then see the giveaway.</span></a>
+      <a class="pt-step" href="#/patterns/journal"><b>Journal</b><span>${waiting ? `${waiting} solved problem${waiting > 1 ? 's' : ''} waiting for a one-line write-up.` : 'One line per solved problem: the pattern, the giveaway, the trick.'}</span></a>
+      <a class="pt-step" href="#/patterns/recall"><b>Recall</b><span>${dueN ? `${dueN} problem${dueN > 1 ? 's' : ''} due today.` : 'Your write-ups come back after 1, 3, 7, 14, 30 and 60 days.'}</span></a>
+    </div>`;
+    h += `<div class="section-h" style="--c:var(--yellow)"><h2>Cheat sheet</h2><p>Reach for each pattern when you see these signals.</p></div><div class="cards">`;
+    PATTERNS.forEach((p) => {
+      const mine = Object.values(state.journal).filter((j) => j.pattern === p.id).length;
+      const s = state.drillStats[p.id];
+      h += `<div class="card pt-card" style="--c:${colorVar(p.color)}"><h3>${esc(p.name)}</h3><ul>${p.when.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>
+        <div class="meta"><span>${esc(p.cost)}</span>${s && s.t ? `<span>Drill: ${s.r}/${s.t}</span>` : ''}</div>
+        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<a href="#/patterns/journal/${p.id}">${mine} in your journal</a>` : ''}</div></div>`;
+    });
+    h += '</div>';
+    view.innerHTML = h; window.scrollTo(0, 0);
+  }
+
+  // ---- drill: unlabeled problems, spaced by a simple Leitner box ----
+  let drill = null;
+  function newDrill() {
+    const now = Date.now(); const st = state.drill;
+    const due = DRILLS.filter((d) => st[d.id] && st[d.id].due <= now).sort((a, b) => st[a.id].due - st[b.id].due);
+    const fresh = shuffle(DRILLS.filter((d) => !st[d.id]));
+    const later = DRILLS.filter((d) => st[d.id] && st[d.id].due > now).sort((a, b) => st[a.id].due - st[b.id].due);
+    drill = { q: shuffle([...due, ...fresh, ...later].slice(0, 10).map((d) => d.id)), i: 0, pick: null, right: 0, answered: 0, missed: [], requeued: {} };
+  }
+  function renderDrill() {
+    if (!drill) newDrill();
+    let h = patternsHead('drill');
+    if (drill.i >= drill.q.length) {
+      const pct = Math.round((drill.right / Math.max(1, drill.answered)) * 100);
+      const weak = [...new Set(drill.missed)];
+      const seen = Object.keys(state.drill).length;
+      h += `<div class="panel drill"><div class="big-num">${drill.right}/${drill.answered}<small>${pct}% right first time this round · ${seen} of ${DRILLS.length} problems seen</small></div>`;
+      if (weak.length) h += `<p>Worth another look:</p><div class="pt-links">${weak.map((id) => `<a href="#/${patById[id].lesson}/0">${esc(patById[id].name)}</a>`).join('')}</div>`;
+      h += `<p class="muted">Problems you missed come back first next round; ones you got right return after 1, 3, 7, then 21 days.</p><button class="btn" data-act="again">Start another round</button></div>`;
+    } else {
+      const d = drillById[drill.q[drill.i]];
+      const ok = drill.pick && (drill.pick === d.a || (d.alt || []).includes(drill.pick));
+      h += `<div class="panel drill"><div class="drill-top muted"><span>Problem ${drill.i + 1} of ${drill.q.length}</span><span>${drill.right} right</span></div>
+        <p class="drill-q">${inlineCode(d.text)}</p><p class="muted">Which pattern would you reach for?</p>
+        <div class="chips" role="group" aria-label="Patterns">${PATTERNS.map((p) => {
+          let cls = '';
+          if (drill.pick) { if (p.id === d.a) cls = 'right'; else if (p.id === drill.pick) cls = ok ? 'right' : 'wrong'; else if ((d.alt || []).includes(p.id)) cls = 'alt'; }
+          return `<button class="chip ${cls}" data-pick="${p.id}" ${drill.pick ? 'disabled' : ''}>${esc(p.name)}</button>`;
+        }).join('')}</div>`;
+      if (drill.pick) {
+        const alts = (d.alt || []).map(patName);
+        const head = ok ? (drill.pick === d.a ? 'Right.' : `That works too; the usual approach is ${esc(patName(d.a))}.`) : `Not quite: this is ${esc(patName(d.a))}.`;
+        h += `<div class="verdict-box ${ok ? 'ok' : 'bad'}" role="status"><b>${head}</b> ${inlineCode(d.why)}
+          ${alts.length ? `<div class="muted">Also workable: ${esc(alts.join(', '))}.</div>` : ''}
+          <div class="muted">This is <a href="${lcLink(d.name)}" target="_blank" rel="noopener">${esc(d.name)}</a> on LeetCode · <a href="#/${patById[d.a].lesson}/0">${esc(patName(d.a))} template</a></div></div>
+          <div class="drill-next"><button class="btn" data-act="next">${drill.i + 1 < drill.q.length ? 'Next problem' : 'See results'}</button></div>`;
+      }
+      h += '</div>';
+    }
+    view.innerHTML = h;
+    view.onclick = (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.pick && !drill.pick) {
+        const d = drillById[drill.q[drill.i]]; drill.pick = b.dataset.pick;
+        const ok = drill.pick === d.a || (d.alt || []).includes(drill.pick);
+        const first = !drill.requeued[d.id];
+        if (first) { drill.answered++; if (ok) drill.right++; }
+        const prev = state.drill[d.id] || { box: 0 };
+        const box = ok ? Math.min(prev.box + 1, DRILL_DAYS.length - 1) : 0;
+        state.drill[d.id] = { box, due: Date.now() + DRILL_DAYS[box] * 864e5 };
+        if (first) { const s = state.drillStats[d.a] || { r: 0, t: 0 }; s.t++; if (ok) s.r++; state.drillStats[d.a] = s; }
+        if (!ok) { drill.missed.push(d.a); if (!drill.requeued[d.id]) { drill.requeued[d.id] = true; drill.q.push(d.id); } }
+        save(); renderDrill(); const n = $('[data-act=next]'); if (n) n.focus();
+      }
+      if (b.dataset.act === 'next') { drill.i++; drill.pick = null; renderDrill(); window.scrollTo(0, 0); }
+      if (b.dataset.act === 'again') { newDrill(); renderDrill(); }
+    };
+  }
+
+  // ---- journal: one line per solved problem ----
+  let openEntry = null; let delArmed = null;
+  function entryForm(key, j, isNew) {
+    return `<form class="pt-form" data-key="${esc(key)}">
+      ${isNew ? `<label>Problem<input name="title" required placeholder="e.g. Koko Eating Bananas" value=""></label>` : ''}
+      <label>Pattern<select name="pattern" required>${patOptions(j.pattern)}</select></label>
+      <label>The giveaway and the trick, in your own words<textarea name="note" rows="2" required placeholder="e.g. 'minimum speed such that…' → binary search on the speed; feasibility = sum(ceil(p / k)) ≤ h">${esc(j.note || '')}</textarea></label>
+      <div class="pt-form-actions"><button class="btn small" type="submit">Save</button><button class="btn small ghost" type="button" data-act="cancel">Cancel</button></div></form>`;
+  }
+  function renderJournal(filter) {
+    const solved = trackerSolved();
+    const pending = (solved || []).filter((s) => !state.journal[s.key]);
+    const entries = Object.entries(state.journal).sort((a, b) => b[1].added - a[1].added);
+    const used = [...new Set(entries.map(([, j]) => j.pattern))];
+    let h = patternsHead('journal');
+    if (solved === null) h += `<div class="panel pt-note">No tracker progress found in this browser yet. Problems you mark done in the <a href="${TRACKER_URL}" target="_blank" rel="noopener">tracker</a> show up here automatically. You can also add any problem by hand.</div>`;
+    if (pending.length) {
+      h += `<div class="section-h" style="--c:var(--yellow)"><h2>Waiting for a write-up</h2><p>${pending.length} solved in the tracker</p></div><div class="rev-list">`;
+      pending.slice(0, 40).forEach((s) => {
+        h += `<div class="pt-row"><div><a href="${lcLink(s.title)}" target="_blank" rel="noopener">${esc(s.title)}</a><small>${esc(s.topic)}${s.diff ? ' · ' + esc(s.diff) : ''}</small></div>
+          ${openEntry === s.key ? entryForm(s.key, {}, false) : `<button class="btn small" data-act="write" data-key="${esc(s.key)}">Write it up</button>`}</div>`;
+      });
+      if (pending.length > 40) h += `<p class="muted">Showing the 40 most recent.</p>`;
+      h += '</div>';
+    }
+    h += `<div class="section-h" style="--c:var(--blue)"><h2>Your journal</h2><p>${entries.length} problem${entries.length === 1 ? '' : 's'}</p></div>`;
+    h += openEntry === 'new' ? `<div class="panel">${entryForm('new', {}, true)}</div>` : `<button class="btn small ghost" data-act="new">+ Add a problem by hand</button>`;
+    if (used.length > 1) h += `<div class="chips pt-filter">${[['', 'All'], ...used.map((id) => [id, patName(id)])].map(([id, n]) => `<a class="chip ${filter === id ? 'right' : ''}" href="#/patterns/journal${id ? '/' + id : ''}">${esc(n)}</a>`).join('')}</div>`;
+    const shown = entries.filter(([, j]) => !filter || j.pattern === filter);
+    if (!entries.length) h += `<div class="empty"><div class="big">✎</div><p>Nothing written up yet. After your next problem, add one line: which pattern, what gave it away, and the trick that made it work.</p></div>`;
+    h += '<div class="rev-list">';
+    shown.forEach(([k, j]) => {
+      const d = jDue(j);
+      h += `<div class="pt-entry">${openEntry === k ? `<b>${esc(j.title)}</b>${entryForm(k, j, false)}` : `
+        <div class="pt-entry-h"><a href="${lcLink(j.title)}" target="_blank" rel="noopener">${esc(j.title)}</a>${patTag(j.pattern)}</div>
+        <p>${esc(j.note)}</p>
+        <div class="pt-entry-f"><small>${esc(j.topic || 'Added by hand')} · recalled ${j.n || 0}× · ${d.due ? '<span class="due">due now</span>' : `next recall in ${daysUntil(d.dueAt)} day(s)`}</small>
+          <span><button class="btn small ghost" data-act="edit" data-key="${esc(k)}">Edit</button> <button class="btn small ghost" data-act="del" data-key="${esc(k)}">${delArmed === k ? 'Really delete?' : 'Delete'}</button></span></div>`}</div>`;
+    });
+    h += '</div>';
+    view.innerHTML = h;
+    const pendingByKey = Object.fromEntries((solved || []).map((s) => [s.key, s]));
+    view.onclick = (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      const act = b.dataset.act, key = b.dataset.key;
+      if (act === 'write' || act === 'edit') { openEntry = key; delArmed = null; renderJournal(filter); const f = $(`form[data-key="${CSS.escape(key)}"] select`); if (f) f.focus(); }
+      if (act === 'new') { openEntry = 'new'; renderJournal(filter); $('form[data-key=new] input').focus(); }
+      if (act === 'cancel') { openEntry = null; renderJournal(filter); }
+      if (act === 'del') {
+        if (delArmed === key) { delete state.journal[key]; delArmed = null; save(); updatePill(); } else delArmed = key;
+        renderJournal(filter);
+      }
+    };
+    view.onsubmit = (e) => {
+      e.preventDefault();
+      const f = e.target; const key = f.dataset.key; const data = new FormData(f);
+      const pattern = data.get('pattern'), note = String(data.get('note') || '').trim();
+      if (!pattern || !note) return;
+      if (key === 'new') {
+        const title = String(data.get('title') || '').trim(); if (!title) return;
+        state.journal['m:' + Date.now().toString(36)] = { title, topic: '', pattern, note, added: Date.now(), last: null, n: 0 };
+      } else {
+        const old = state.journal[key]; const src = pendingByKey[key] || {};
+        state.journal[key] = old ? { ...old, pattern, note } : { title: src.title, topic: src.topic, pattern, note, added: Date.now(), last: null, n: 0 };
+      }
+      openEntry = null; save(); updatePill(); renderJournal(filter);
+    };
+    window.scrollTo(0, 0);
+  }
+
+  // ---- recall: the write-ups come back on a spaced schedule ----
+  let recallShown = false;
+  function renderRecall() {
+    const due = journalDue();
+    let h = patternsHead('recall');
+    if (!due.length) {
+      const all = Object.values(state.journal);
+      const next = all.length ? Math.min(...all.map((j) => jDue(j).dueAt)) : 0;
+      h += `<div class="empty"><div class="big">✓</div><p>${all.length ? `Nothing due. The next problem comes back in ${daysUntil(next)} day(s).` : 'Your journal is empty. Write up a solved problem and it comes back here the next day.'}</p><a class="btn ghost" href="#/patterns/${all.length ? 'drill' : 'journal'}">${all.length ? 'Do a drill round instead' : 'Open the journal'}</a></div>`;
+      view.innerHTML = h; view.onclick = null; return;
+    }
+    const [, j] = due[0];
+    h += `<div class="panel recall"><div class="drill-top muted"><span>${due.length} due</span><span>Recalled ${j.n || 0}× before</span></div>
+      <h2 class="recall-t">${esc(j.title)}</h2><p class="muted">${esc(j.topic || 'Added by hand')}</p>
+      <p>Before you look: which pattern, and what's the trick? Say it out loud, or better, <a href="${lcLink(j.title)}" target="_blank" rel="noopener">re-solve it from a blank editor</a>.</p>`;
+    if (!recallShown) h += `<button class="btn" data-act="show">Show my note</button>`;
+    else h += `<div class="verdict-box">${patTag(j.pattern)}<p>${esc(j.note)}</p></div>
+      <div class="pt-form-actions"><button class="btn" data-act="got">I remembered it</button><button class="btn ghost" data-act="miss">I'd forgotten</button></div>
+      <p class="muted">Remembered pushes it further out (1, 3, 7, 14, 30, 60 days). Forgotten brings it back tomorrow.</p>`;
+    h += '</div>';
+    view.innerHTML = h;
+    view.onclick = (e) => {
+      const b = e.target.closest('button'); if (!b) return;
+      if (b.dataset.act === 'show') { recallShown = true; renderRecall(); }
+      if (b.dataset.act === 'got' || b.dataset.act === 'miss') {
+        j.n = b.dataset.act === 'got' ? (j.n || 0) + 1 : 0; j.last = Date.now();
+        recallShown = false; save(); updatePill(); renderRecall();
+      }
+    };
+  }
+
   // ---------------- revise page ----------------
   function renderRevise() {
     document.title = 'Revise · Prep Notebook'; delete view.dataset.topic;
     const keys = Object.keys(state.revise).filter((k) => byKey[k]).sort((a, b) => dueInfo(a).dueAt - dueInfo(b).dueAt);
     let h = `<div class="page-h"><h1>Revise</h1><p>Lessons you marked for another look. Each time you revise one, the next reminder moves further out: 1, 3, 7, 14, 30, then 60 days.</p></div>`;
+    const pd = journalDue().length;
+    if (pd) h += `<div class="panel pt-note"><b>${pd} solved problem${pd > 1 ? 's' : ''} due for recall.</b> <a href="#/patterns/recall">Recall them now</a></div>`;
     if (!keys.length) h += `<div class="empty"><div class="big">↻</div><p>Nothing here yet. Press <b>Revise later</b> on any lesson to add it.</p></div>`;
     else {
       h += '<div class="rev-list">';

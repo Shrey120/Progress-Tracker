@@ -513,3 +513,92 @@ Two small components that test timers, cleanup and accurate time.
 - Pause/resume preserving remaining time; prevent double starts.
 - Progress bar semantics: `role="progressbar"` with `aria-valuenow`, or the native `<progress>` element.
 - Extensions: multiple concurrent timers, a progress bar that animates sequentially through a queue, server-synchronised countdowns (sale ends at a server timestamp).
+
+=== lesson: take-home-assignments | Take-home assignments
+A **take-home assignment** is a small project you build on your own time: an API, a small React or Next.js app, or both. Remote-first companies, startups and many foreign employers use them instead of (or as well as) live coding. A review call usually follows, where you walk through your code and extend it live.
+
+They're usually sized at 2–6 hours, sometimes with a few days to submit.
+
+## Before you start
+
+- **Ask questions by email.** Ambiguous requirements are often on purpose; a short, clear list of questions is itself part of the assessment.
+- **Agree the time budget.** If they say "about 4 hours", aim for that; reviewers notice both rushed and 30-hour submissions.
+- **Use the stack you're fastest in**, unless they require one. For you: Next.js, TypeScript, Postgres or SQLite.
+- **Write down the core requirements** and finish all of them before any extras.
+
+## What reviewers check
+
+| Area | What they look for |
+|---|---|
+| It runs | Clone, install, run in three commands or fewer; works first try |
+| Requirements | Every stated requirement done and working |
+| Structure | Clear folders, small functions, no 400-line components |
+| Types and errors | TypeScript without `any`; loading, empty and error states handled |
+| Tests | A few meaningful tests on the core logic |
+| Git history | Small commits with clear messages, not one "final" commit |
+| README | Setup, decisions, trade-offs, what's missing |
+
+A submission that doesn't run is usually rejected without a closer look.
+
+## The README matters most
+
+Reviewers often read the README before the code. A template:
+
+```md
+# Task tracker API
+
+## Run it
+cp .env.example .env
+npm install
+npm run dev        # http://localhost:3000, seeded with demo data
+npm test
+
+## What's done
+- CRUD for tasks with validation (zod), pagination and filtering by status
+- Postgres via Prisma; migrations and a seed script
+
+## Decisions and trade-offs
+- Offset pagination: simple and fine at this size; I'd switch to cursors for large tables.
+- No auth: out of scope per the brief; the user id comes from a header.
+
+## With more time
+- Rate limiting, request logging, an OpenAPI spec
+
+## Time spent
+About 5 hours.
+```
+
+## Scope: depth over breadth
+
+- Do the core requirements properly before adding anything.
+- One or two thoughtful extras (tests, deployment, accessibility, a seed script) beat five half-finished ones.
+- Don't over-engineer: no microservices, no Redux, no Kubernetes for a three-screen app. Mention what you'd add at scale in the README instead.
+
+## Git, secrets and deployment
+
+- Commit as you go with messages like `feat: add search with debounce` or `test: cover overdue filter`. Reviewers read the history to see how you work.
+- Never commit secrets. Add `.env.example` with placeholder values.
+- A live link (Vercel, Render) with seed data saves the reviewer time and makes you look finished.
+
+## Using AI tools
+
+Many companies allow AI assistants for take-homes; check the brief. If you use them:
+
+- Be ready to explain and change every line in the review call.
+- Mention it in the README if the company asks.
+- Never submit code you can't defend: the follow-up call is designed to catch exactly that.
+
+## The review call
+
+Expect:
+
+- "Walk me through the structure." (Have a two-minute tour ready.)
+- "Why did you choose X over Y?" (Your README trade-offs are your answers.)
+- "How would this scale to a million users?"
+- "Add this small feature now", live, in your own code.
+
+Re-read your code the night before. It's easy to forget your own decisions within a week.
+
+## When to push back
+
+An unpaid assignment that takes several days, or looks like real product work for their roadmap, is a warning sign. It's fine to ask how long it should take, or to ask whether a past project could replace it.

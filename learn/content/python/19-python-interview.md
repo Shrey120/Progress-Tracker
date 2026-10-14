@@ -184,3 +184,227 @@ def memo(fn):
 --- hint
 Keep a dict in the closure, keyed by the `args` tuple.
 :::
+
+=== lesson: spotting-the-pattern | Spotting the pattern in a new problem
+On the Striver sheet the section title tells you the pattern before you read the problem. In an interview nobody tells you. Recognising the pattern is a separate skill from coding it, and you train it separately.
+
+Three things build it:
+
+1. **Knowing the signals**: the words, input shapes and constraints that point to each pattern (this lesson).
+2. **Unlabeled, mixed practice**: guessing the pattern from a problem statement alone. The [pattern drill](#/patterns/drill) does exactly this.
+3. **Recalling your own insight later**: writing one line per solved problem and being quizzed on it after 1, 3, 7 days. That's the [problem journal](#/patterns/journal).
+
+## Read the constraints first
+
+The input size tells you the complexity the interviewer expects, which rules most patterns in or out before you think about the problem.
+
+| Largest `n` | Target complexity | Usually means |
+|---|---|---|
+| ≤ 12 | O(n!) | permutations, backtracking |
+| ≤ 20–25 | O(2ⁿ) | subsets, backtracking, bitmask DP |
+| ≤ 500 | O(n³) | triple loops, interval DP |
+| ≤ 5 000 | O(n²) | 2D DP, all pairs |
+| ≤ 10⁵ – 10⁶ | O(n log n) or O(n) | sorting, heap, binary search, two pointers, sliding window, hashing, prefix sums |
+| values up to 10⁹, n small | O(log V) | binary search on the answer, maths |
+
+Python runs roughly 10⁷ simple operations per second, so O(n²) with n = 10⁵ (10¹⁰ steps) will time out.
+
+## Signals in the input
+
+| You see | Think |
+|---|---|
+| sorted array (or "can be sorted") | two pointers, binary search |
+| contiguous **subarray / substring** | sliding window (all non-negative), prefix sums + dict (negatives) |
+| intervals, meetings, ranges | sort by start, then sweep or merge; heap of end times |
+| linked list | fast/slow pointers, dummy head, reverse in place |
+| binary tree | recursive DFS returning a value; BFS for levels |
+| grid of cells | it's a graph: BFS/DFS from cells, 4 neighbours |
+| prerequisites, "before/after", build order | topological sort |
+| edges with weights | Dijkstra (non-negative weights) |
+| stream of numbers, "so far" | heap, running state |
+
+## Signals in the question
+
+| The question asks for | Think |
+|---|---|
+| all subsets / permutations / combinations / ways to place | backtracking |
+| number of ways, min cost, max profit, "can you reach" with choices at each step | dynamic programming |
+| k-th largest, top k, k closest | heap of size k |
+| next greater / smaller, span, histogram | monotonic stack |
+| shortest path, fewest steps, unweighted | BFS |
+| minimum X such that a condition holds (or maximum) | binary search on the answer |
+| groups, connected, "are these joined", merging accounts | union-find or DFS components |
+| pair / triple summing to a target | dict of seen values, or sort + two pointers |
+| count subarrays with sum (or XOR) equal to k | prefix sums + dict |
+| seen before, duplicates, frequency, anagram | hash map / Counter / set |
+| single number, power of two, toggling | bit manipulation |
+| locally best choice works (earliest end, largest first) | greedy, usually after sorting |
+
+## When nothing jumps out: start from brute force
+
+Write the brute force, then ask **what work is repeated**. The repeated work names the pattern:
+
+- looking the same thing up again and again → **hash map**
+- re-adding the same range of numbers → **prefix sums**
+- re-scanning a window that only moved by one → **sliding window**
+- solving the same subproblem twice → **memoization / DP**
+- re-sorting or re-scanning for the max each step → **heap**
+- trying every option, most of them hopeless → **backtracking with pruning**
+
+```pyrun
+from collections import Counter
+
+def count_brute(nums, k):            # O(n²): re-adds the same ranges
+    n = len(nums); c = 0
+    for i in range(n):
+        s = 0
+        for j in range(i, n):
+            s += nums[j]
+            c += s == k
+    return c
+
+def count_fast(nums, k):             # O(n): prefix sums remember the repeated work
+    seen = Counter({0: 1}); total = c = 0
+    for x in nums:
+        total += x
+        c += seen[total - k]          # an earlier prefix of total-k means the gap sums to k
+        seen[total] += 1
+    return c
+
+nums = [3, 4, -7, 3, 1, 3, 1, -4, -2, -2]
+print(count_brute(nums, 7), count_fast(nums, 7))
+```
+
+## A checklist for any new problem
+
+Go through these in order; most problems are decided by the third question.
+
+1. **What's `n`?** That fixes the target complexity.
+2. **What's the input shape?** Array, string, tree, grid, graph, intervals, linked list.
+3. **What does it ask for?** All of something (backtracking), count/optimum with choices (DP), k-th/top (heap), shortest (BFS), "minimum such that" (binary search on answer).
+4. **Is it sorted, or does sorting help?** Then two pointers, binary search, or greedy.
+5. **Brute force, then find the repeated work.**
+
+Say these out loud in an interview. Interviewers want to hear this reasoning, not just the final pattern.
+
+## Make it stick
+
+The routine that turns solved problems into recognition:
+
+1. Try for 20–30 minutes. Struggling first is what makes the answer memorable.
+2. If stuck, read only the **approach** of a good community solution, then close it and write the code yourself.
+3. Write **one line** in your own words: the pattern, the giveaway, the trick. "Prefix sums + dict, because negatives break the window; seed `{0: 1}`."
+4. Re-solve from a blank editor after a few days. If you can't, you remembered the code, not the idea.
+5. Once a week, do a **mixed** set with no section titles.
+
+The [Patterns page](#/patterns) runs steps 3–5 for you: the journal pulls your solved problems from the tracker, and the drill mixes problems from every topic.
+
+=== lesson: dsa-interview-round | How to run a DSA interview round
+In a live coding round, interviewers score more than whether you reach the answer. They score how you think, how you communicate, how clean your code is, and whether you test it. Candidates who solve the problem in silence often score lower than ones who reach a slightly worse solution while explaining every step.
+
+A 45-minute round usually splits like this:
+
+| Minutes | Step |
+|---|---|
+| 0–5 | Clarify the problem and examples |
+| 5–12 | Brute force, then the optimised approach, agreed with the interviewer |
+| 12–32 | Code |
+| 32–40 | Dry run and edge cases |
+| 40–45 | Complexity, follow-ups, your questions |
+
+## 1. Clarify before you think
+
+Restate the problem in your own words, then ask:
+
+- How big is the input? (That sets the target complexity.)
+- Can values be negative, zero, duplicated? Is the input sorted?
+- Can the input be empty? What should I return then?
+- Return indices or values? What if there are several answers, or none?
+
+Write one normal example and one edge example down. Five minutes here saves you from solving the wrong problem, which is the most common way to fail a round.
+
+## 2. Brute force out loud
+
+Say the obvious solution and its complexity, even if it's slow: "I could check every pair, that's O(n²). With n up to 10⁵ that's too slow, so let me look for something better."
+
+This proves you can always deliver something, and gives you a starting point. Don't code it unless the interviewer asks or you're stuck.
+
+## 3. Optimise and agree
+
+Find the repeated work in the brute force (see *Spotting the pattern*), name the pattern and the new complexity, then check with the interviewer: "I'll keep a dict of values I've seen, so each lookup is O(1) and the whole thing is O(n) time, O(n) space. Does that sound good?"
+
+Only start coding once they agree. If they push you towards something else, they're giving you a hint; take it.
+
+## 4. Code cleanly while talking
+
+- Use clear names (`left`, `window_sum`, `seen`), not `a`, `b`, `t`.
+- Pull fiddly parts into small helpers (`neighbours(r, c)`), even if you write them last.
+- Narrate decisions, not keystrokes: "I'm shrinking the window while it's invalid".
+- If you're stuck, say what you're stuck on. Silence is the one thing that always costs points.
+- Use Python idioms you know well (`Counter`, `enumerate`, `heapq`); don't experiment with ones you don't.
+
+## 5. Test it yourself, before they ask
+
+First a **dry run**: walk your example through the code by hand, saying the variables' values aloud. Most bugs show up here. Then list edge cases and check each one:
+
+```pyrun
+def two_sum(nums, target):
+    seen = {}                       # value -> index
+    for i, x in enumerate(nums):
+        if target - x in seen:
+            return [seen[target - x], i]
+        seen[x] = i
+    return []
+
+tests = [
+    ([2, 7, 11, 15], 9, [0, 1]),    # the given example
+    ([3, 3], 6, [0, 1]),            # duplicates
+    ([-1, -2, -3], -5, [1, 2]),     # negatives
+    ([5], 5, []),                   # one element
+    ([], 0, []),                    # empty
+]
+for nums, t, want in tests:
+    got = two_sum(nums, t)
+    print("ok " if got == want else "BAD", nums, t, got)
+```
+
+Typical edge cases: empty, one element, all the same, negatives, already sorted or reversed, the answer at the very start or end, and the largest input (does it fit the time limit?).
+
+## 6. Complexity and follow-ups
+
+State time and space at the end, and why: "O(n) time, one pass; O(n) space for the dict."
+
+Be ready for the usual follow-ups:
+
+- What if the input is a **stream** too large for memory?
+- What if it's **sorted**? (Often: two pointers, O(1) space.)
+- Can you do it in **O(1) extra space**?
+- What if it ran across many machines?
+
+## When you're stuck
+
+Phrases that keep you moving and show your thinking:
+
+- "Let me try a smaller example by hand."
+- "What if the array were sorted? Would that help?"
+- "The slow part is finding X each time. Is there a structure that gives me X fast?"
+- "I'm deciding between a heap and sorting; the heap wins because k is small."
+
+Asking for a hint is fine and common: "I think the bottleneck is here; am I looking in the right place?" Taking a hint costs far less than ten minutes of silence.
+
+## Online assessments are different
+
+HackerRank, CodeSignal and similar tests have no interviewer, so only passing test cases counts:
+
+- Read every question first and start with the one you're surest about.
+- Check how input is given; some tests make you read stdin yourself (see *Reading input in online assessments*).
+- A brute force that passes 60% of cases beats an elegant solution that doesn't compile. Submit the simple version first, then optimise.
+- Watch the clock per question, not just the total.
+
+## Practise the format, not just the problems
+
+Solving on LeetCode trains the problem-solving part. The talking part needs its own practice:
+
+- Once a week, solve a problem out loud with a 45-minute timer, as if someone were listening.
+- Record yourself once; you'll hear the long silences.
+- Do a few mock interviews with a friend or a free platform before your real ones.

@@ -1942,6 +1942,11 @@
       "stars": 3
      },
      {
+      "id": "take-home-assignments",
+      "title": "Take-home assignments",
+      "stars": 3
+     },
+     {
       "id": "build-a-star-rating-component",
       "title": "Build a star rating component",
       "stars": 2
