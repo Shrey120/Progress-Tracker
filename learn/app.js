@@ -74,7 +74,7 @@
 
   // ---------------- markdown + code ----------------
   marked.setOptions({ gfm: true, breaks: false });
-  const MODES = { python: 'python', py: 'python', pyrun: 'python', js: 'javascript', javascript: 'javascript', jsrun: 'javascript', ts: 'text/typescript', typescript: 'text/typescript', tsx: 'text/typescript-jsx', jsx: 'text/jsx', sql: 'text/x-sql', sqlrun: 'text/x-sql', json: 'application/json', bash: null, sh: null, text: null, '': 'python' };
+  const MODES = { python: 'python', py: 'python', pyrun: 'python', js: 'javascript', javascript: 'javascript', jsrun: 'javascript', ts: 'text/typescript', typescript: 'text/typescript', tsx: 'text/typescript-jsx', jsx: 'text/jsx', sql: 'text/x-sql', sqlrun: 'text/x-sql', html: 'htmlmixed', htmlrun: 'htmlmixed', css: 'css', json: 'application/json', bash: null, sh: null, text: null, '': 'python' };
   function highlight(el, lang) {
     const mode = MODES[lang] !== undefined ? MODES[lang] : null;
     const src = el.textContent;
@@ -90,6 +90,7 @@
       const src = el.textContent.replace(/\n$/, '');
       highlight(el, lang);
       if (lang === 'pyrun' || lang === 'jsrun' || lang === 'sqlrun') makeRunnable(el.parentElement, src, { pyrun: 'python', jsrun: 'js', sqlrun: 'sql' }[lang]);
+      if (lang === 'htmlrun') makePreview(el.parentElement, src);
     });
     div.querySelectorAll('a[href^="http"]').forEach((a) => { a.target = '_blank'; a.rel = 'noopener'; });
     return div;
@@ -192,6 +193,30 @@
       } catch (err) { out.hidden = false; out.className = 'run-out err'; out.textContent = loadMsg(err); stepBtn.textContent = 'Step through'; }
       stepBtn.disabled = false;
     };
+  }
+
+  // ---------------- live HTML/CSS preview ----------------
+  function makePreview(pre, src) {
+    const wrap = document.createElement('div'); wrap.className = 'runnable';
+    pre.replaceWith(wrap); wrap.appendChild(pre);
+    const bar = document.createElement('div'); bar.className = 'run-bar';
+    bar.innerHTML = '<button class="btn small ghost" data-edit>Edit</button><button class="btn small" data-apply hidden>▶ Update preview</button><span class="lang">html + css · live preview</span>';
+    wrap.appendChild(bar);
+    const frame = document.createElement('iframe');
+    frame.className = 'preview'; frame.setAttribute('sandbox', 'allow-scripts'); frame.title = 'Preview';
+    const doc = (code) => `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font:15px/1.5 system-ui,sans-serif;margin:12px;color:#1b2033;background:#fff}</style>${code}`;
+    frame.srcdoc = doc(src);
+    wrap.appendChild(frame);
+    let ta = null;
+    bar.addEventListener('click', (e) => {
+      if (e.target.closest('[data-edit]')) {
+        if (ta) return;
+        ta = document.createElement('textarea'); ta.className = 'preview-edit'; ta.value = src; ta.spellcheck = false;
+        ta.rows = Math.min(18, src.split('\n').length + 1);
+        pre.replaceWith(ta); $('[data-apply]', bar).hidden = false; e.target.hidden = true; ta.focus();
+      }
+      if (e.target.closest('[data-apply]') && ta) frame.srcdoc = doc(ta.value);
+    });
   }
 
   // ---------------- step-through visualizer ----------------
