@@ -89,6 +89,11 @@
       "stars": 3
      },
      {
+      "id": "output-based-questions-practice",
+      "title": "Output-based questions practice",
+      "stars": 3
+     },
+     {
       "id": "prototypes-the-prototype-chain",
       "title": "Prototypes & the prototype chain",
       "stars": 2
@@ -906,6 +911,60 @@
     "tagline": "STAR stories and remote-work answers"
    },
    {
+    "id": "job-search-and-offers",
+    "title": "Job search and offers",
+    "level": "High leverage",
+    "icon": "💼",
+    "tagline": "Interview loops, resume, referrals, CTC and negotiation",
+    "lessons": [
+     {
+      "id": "how-product-company-interview-loops-work",
+      "title": "How product company interview loops work",
+      "stars": 3
+     },
+     {
+      "id": "resume-for-product-and-remote-roles",
+      "title": "Resume for product and remote roles",
+      "stars": 3
+     },
+     {
+      "id": "where-to-find-remote-and-high-paying-roles",
+      "title": "Where to find remote and high-paying roles",
+      "stars": 3
+     },
+     {
+      "id": "understanding-ctc-fixed-variable-esops-joining-bonus",
+      "title": "Understanding CTC: fixed, variable, ESOPs, joining bonus",
+      "stars": 3
+     },
+     {
+      "id": "negotiating-an-offer",
+      "title": "Negotiating an offer",
+      "stars": 3
+     },
+     {
+      "id": "referrals-and-outreach",
+      "title": "Referrals and outreach",
+      "stars": 2
+     },
+     {
+      "id": "portfolio-and-proof-of-work",
+      "title": "Portfolio and proof of work",
+      "stars": 2
+     },
+     {
+      "id": "interview-practice-and-mock-interviews",
+      "title": "Interview practice and mock interviews",
+      "stars": 2
+     },
+     {
+      "id": "notice-period-and-resignation",
+      "title": "Notice period and resignation",
+      "stars": 1
+     }
+    ]
+   },
+   {
     "id": "node-and-backend",
     "title": "Node and backend",
     "lessons": [
@@ -1119,6 +1178,16 @@
       "stars": 2
      },
      {
+      "id": "saga-and-outbox-patterns",
+      "title": "Saga and outbox patterns",
+      "stars": 2
+     },
+     {
+      "id": "kafka-vs-rabbitmq-vs-sqs",
+      "title": "Kafka vs RabbitMQ vs SQS",
+      "stars": 2
+     },
+     {
       "id": "cap-theorem",
       "title": "CAP theorem",
       "stars": 1
@@ -1141,6 +1210,11 @@
      {
       "id": "service-discovery",
       "title": "Service discovery",
+      "stars": 1
+     },
+     {
+      "id": "cqrs-and-event-sourcing",
+      "title": "CQRS and event sourcing",
       "stars": 1
      }
     ],
@@ -1836,6 +1910,129 @@
     "tagline": "LLM APIs, RAG, embeddings and tool calling"
    },
    {
+    "id": "machine-coding-round",
+    "title": "Machine coding round",
+    "level": "Mid leverage",
+    "icon": "⌨️",
+    "tagline": "Build working UI features in 60–90 minutes",
+    "lessons": [
+     {
+      "id": "how-machine-coding-rounds-work-and-how-to-approach-them",
+      "title": "How machine coding rounds work and how to approach them",
+      "stars": 3
+     },
+     {
+      "id": "build-a-todo-app-with-filters",
+      "title": "Build a todo app with filters",
+      "stars": 3
+     },
+     {
+      "id": "build-autocomplete-with-debounce",
+      "title": "Build autocomplete with debounce",
+      "stars": 3
+     },
+     {
+      "id": "build-nested-comments",
+      "title": "Build nested comments",
+      "stars": 3
+     },
+     {
+      "id": "build-infinite-scroll-and-pagination",
+      "title": "Build infinite scroll and pagination",
+      "stars": 3
+     },
+     {
+      "id": "build-a-star-rating-component",
+      "title": "Build a star rating component",
+      "stars": 2
+     },
+     {
+      "id": "build-tabs-and-an-accordion",
+      "title": "Build tabs and an accordion",
+      "stars": 2
+     },
+     {
+      "id": "build-a-file-explorer-tree",
+      "title": "Build a file explorer tree",
+      "stars": 2
+     },
+     {
+      "id": "build-a-form-with-validation",
+      "title": "Build a form with validation",
+      "stars": 2
+     },
+     {
+      "id": "build-an-otp-input",
+      "title": "Build an OTP input",
+      "stars": 2
+     },
+     {
+      "id": "build-a-progress-bar-and-countdown-timer",
+      "title": "Build a progress bar and countdown timer",
+      "stars": 2
+     }
+    ]
+   },
+   {
+    "id": "low-level-design",
+    "title": "Low-level design",
+    "level": "Mid leverage",
+    "icon": "📐",
+    "tagline": "OOP, classes and the classic LLD problems",
+    "lessons": [
+     {
+      "id": "oop-pillars",
+      "title": "OOP pillars",
+      "stars": 3
+     },
+     {
+      "id": "how-to-approach-an-lld-round",
+      "title": "How to approach an LLD round",
+      "stars": 3
+     },
+     {
+      "id": "design-a-parking-lot",
+      "title": "Design a parking lot",
+      "stars": 3
+     },
+     {
+      "id": "design-an-lru-cache-class",
+      "title": "Design an LRU cache class",
+      "stars": 3
+     },
+     {
+      "id": "composition-over-inheritance",
+      "title": "Composition over inheritance",
+      "stars": 2
+     },
+     {
+      "id": "design-splitwise-expense-sharing",
+      "title": "Design Splitwise (expense sharing)",
+      "stars": 2
+     },
+     {
+      "id": "design-a-rate-limiter-class",
+      "title": "Design a rate limiter class",
+      "stars": 2
+     },
+     {
+      "id": "design-bookmyshow-seat-booking",
+      "title": "Design BookMyShow seat booking",
+      "stars": 2
+     },
+     {
+      "id": "design-an-elevator-system",
+      "title": "Design an elevator system",
+      "stars": 1
+     },
+     {
+      "id": "uml-class-diagrams-basics",
+      "title": "UML class diagrams basics",
+      "stars": 1
+     }
+    ]
+   },
+   {
     "id": "cs-fundamentals",
     "title": "CS fundamentals",
     "lessons": [
@@ -1865,6 +2062,16 @@
       "stars": 2
      },
      {
+      "id": "mutex-vs-semaphore",
+      "title": "Mutex vs semaphore",
+      "stars": 2
+     },
+     {
+      "id": "virtual-memory-and-paging",
+      "title": "Virtual memory and paging",
+      "stars": 2
+     },
+     {
       "id": "deadlocks",
       "title": "Deadlocks",
       "stars": 1
@@ -1887,6 +2094,11 @@
      {
       "id": "osi-model",
       "title": "OSI model",
+      "stars": 1
+     },
+     {
+      "id": "cpu-scheduling",
+      "title": "CPU scheduling",
       "stars": 1
      }
     ],

@@ -203,7 +203,7 @@
     bar.innerHTML = '<button class="btn small ghost" data-edit>Edit</button><button class="btn small" data-apply hidden>▶ Update preview</button><span class="lang">html + css · live preview</span>';
     wrap.appendChild(bar);
     const frame = document.createElement('iframe');
-    frame.className = 'preview'; frame.setAttribute('sandbox', 'allow-scripts'); frame.title = 'Preview';
+    frame.className = 'preview'; frame.setAttribute('sandbox', 'allow-scripts allow-modals allow-forms'); frame.title = 'Preview';
     const doc = (code) => `<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><style>body{font:15px/1.5 system-ui,sans-serif;margin:12px;color:#1b2033;background:#fff}</style>${code}`;
     frame.srcdoc = doc(src);
     wrap.appendChild(frame);

@@ -926,3 +926,131 @@ Most objects die young, so V8 splits the heap:
 > **"How does garbage collection work in JS?"** Mark-and-sweep from roots: reachable objects are kept, everything else is freed, so circular references aren't a problem. V8 adds generations, because most objects die young, and does most of the work incrementally to keep pauses short.
 
 Reference counting (the older approach) can't free cycles; that's the classic contrast to mention.
+
+=== lesson: output-based-questions-practice | Output-based questions practice
+"What does this print?" questions are a staple of frontend and full-stack interviews, especially at Indian product companies. They test the lessons in this topic all at once. For each one: **predict the output first**, say why out loud, then press Run.
+
+## Hoisting and the TDZ
+
+```jsrun
+console.log(a);
+var a = 1;
+function show() { console.log(b); let b = 2; }
+try { show(); } catch (e) { console.log(e.name); }
+console.log(typeof hoisted, typeof notHoisted);
+function hoisted() {}
+var notHoisted = () => {};
+```
+
+<details><summary>Explanation</summary>
+
+`var a` is hoisted as `undefined`. `b` is in its temporal dead zone, so a `ReferenceError`. Function declarations are hoisted with their body (`function`), but `notHoisted` is a `var` still holding `undefined` at that point.
+
+</details>
+
+## Closures in loops
+
+```jsrun
+const fns = [];
+for (var i = 0; i < 3; i++) fns.push(() => i);
+const fns2 = [];
+for (let j = 0; j < 3; j++) fns2.push(() => j);
+console.log(fns.map(f => f()), fns2.map(f => f()));
+```
+
+<details><summary>Explanation</summary>
+
+One shared `var i` (3 after the loop) vs a new `let j` per iteration.
+
+</details>
+
+## this
+
+```jsrun
+const obj = {
+  name: "obj",
+  regular() { return this?.name; },
+  arrow: () => typeof this,
+  nested() { return [1].map(function () { return this?.name; })[0]; },
+  nestedArrow() { return [1].map(() => this.name)[0]; },
+};
+const detached = obj.regular;
+console.log(obj.regular(), detached(), obj.nested(), obj.nestedArrow());
+```
+
+<details><summary>Explanation</summary>
+
+`obj.regular()` → "obj". `detached()` loses its object → `undefined`. The `function` callback inside `map` gets no `this` → `undefined`; the arrow inherits `nestedArrow`'s `this` → "obj".
+
+</details>
+
+## Event loop ordering
+
+```jsrun
+console.log(1);
+setTimeout(() => console.log(2), 0);
+Promise.resolve().then(() => console.log(3));
+(async () => { console.log(4); await null; console.log(5); })();
+queueMicrotask(() => console.log(6));
+console.log(7);
+```
+
+<details><summary>Explanation</summary>
+
+Synchronous first: 1, 4 (an async function runs synchronously until its first `await`), 7. Then microtasks in the order they were queued: 3, 5, 6. Then the timer: 2. Output: 1 4 7 3 5 6 2.
+
+</details>
+
+## Coercion
+
+```jsrun
+console.log([] + [], [] + {}, 1 + "2", "3" - 1, true + true, [] == false, null == 0, null >= 0, NaN === NaN);
+console.log(typeof NaN, typeof null, typeof [], 0.1 + 0.2 === 0.3, [10, 9, 1].sort());
+```
+
+<details><summary>Explanation</summary>
+
+`"" "[object Object]" "12" 2 2 true false true false`. `null >= 0` is true because relational comparison converts null to 0, but `null == 0` is false because `==` treats null specially. Then `number object object false [1, 10, 9]`: the default `sort` compares as **strings**; use `sort((a, b) => a - b)`.
+
+</details>
+
+## References and copies
+
+```jsrun
+const a = { n: 1, inner: { m: 1 } };
+const b = a;
+const c = { ...a };
+b.n = 2; c.n = 3; c.inner.m = 99;
+console.log(a.n, a.inner.m, b === a, c === a, c.inner === a.inner);
+function mutate(o) { o.n = 10; o = { n: 20 }; }
+mutate(a);
+console.log(a.n);
+```
+
+<details><summary>Explanation</summary>
+
+`b` is the same object (so `a.n` becomes 2); the spread copy is shallow, so `inner` is shared and `a.inner.m` is 99. Output: `2 99 true false true`. Inside `mutate`, changing `o.n` affects the caller's object, but reassigning `o` doesn't: `10`.
+
+</details>
+
+## Promises and errors
+
+```jsrun
+Promise.reject(new Error("boom"))
+  .then(() => console.log("A"))
+  .catch(e => { console.log("B", e.message); return "recovered"; })
+  .then(v => console.log("C", v))
+  .finally(() => console.log("D"));
+const p = new Promise(resolve => { console.log("E"); resolve("F"); console.log("G"); });
+p.then(console.log);
+```
+
+<details><summary>Explanation</summary>
+
+The executor runs synchronously: E, G. Then microtasks. `p` is already resolved, so its `.then` runs in the first round: F. The rejection has to pass through the skipped `.then(A)` first (one microtask hop), so `.catch` runs a round later: B boom, then C recovered, then D. Output: E G F B boom C recovered D. Counting microtask "hops" like this is exactly what these questions test.
+
+</details>
+
+## Tips for these questions
+
+Narrate the rule you're applying ("this is a microtask, so it runs before the timer"), not just the answer. If unsure, reason step by step through the call stack and queues; interviewers give credit for correct reasoning even if you slip on one detail.

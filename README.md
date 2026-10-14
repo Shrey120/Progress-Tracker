@@ -24,16 +24,17 @@ inside any topic.
 
 **Python for DSA** — 19 topics, 51 lessons, matching the Learn site, at the start of the DSA track.
 
-**Interview prep** — 3 sections, 23 topics, 364 items, grouped by how much they actually
+**Interview prep** — 3 sections, 26 topics, 401 items, grouped by how much they actually
 decide an interview outcome:
 
-- **High leverage** (9 topics, 149 items) — JavaScript core, TypeScript, React, Next.js
+- **High leverage** (10 topics, 169 items) — JavaScript core, TypeScript, React, Next.js
   and rendering, SQL and Postgres, API design, auth and web security, testing,
-  behavioural and remote.
-- **Mid leverage** (10 topics, 153 items) — Node and backend, system design, caching,
+  behavioural and remote, job search and offers (resume, referrals, CTC, negotiation).
+- **Mid leverage** (12 topics, 192 items) — Node and backend, system design, caching,
   performance, browser and networking, HTML and CSS, Docker/CI-CD/cloud, Git and
-  workflow, design and engineering practice, AI application layer.
-- **Lower leverage** (4 topics, 37 items) — CS fundamentals, NoSQL, frontend system
+  workflow, design and engineering practice, AI application layer, machine coding round,
+  low-level design.
+- **Lower leverage** (4 topics, 40 items) — CS fundamentals, NoSQL, frontend system
   design, accessibility.
 
 Every item carries a priority tier:
@@ -88,8 +89,8 @@ Where the estimates come from:
   practising the answer out loud until you can give it cold.
 
 Totals at the default budget: DSA track about 384 hours (Python 31 + A2Z 353), interview prep about
-201 hours (High leverage about 89). At 80 + 40 minutes a day, each track takes about 310–325 days:
-roughly 10–11 months for everything, with both tracks finishing at about the same time.
+222 hours (High leverage about 94). At 80 + 40 minutes a day the DSA track takes about 325 days and
+prep about 345: roughly 11 months for everything, with both tracks finishing at about the same time.
 
 Inside a topic, items are spread across its days in proportion to their minutes, so a run of long
 items takes more calendar than a run of short ones. `-` and `+` still add or remove days by hand.
