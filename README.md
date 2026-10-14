@@ -114,6 +114,14 @@ JSX is compiled ahead of time to plain `React.createElement` calls, so there is 
 and no build step — the page only pulls React and ReactDOM from unpkg.com. It needs a
 connection on first load and says so plainly if the CDN is blocked, rather than showing a
 blank screen.
+## LeetCode links
+
+Every A2Z problem title that matches a LeetCode problem links straight to it (274 of 473). Titles
+are unchanged; the mapping lives in `LC` next to the plan data, keyed by exact title, and was
+checked against LeetCode's full problem list. 16 of them need LeetCode Premium and say so. The
+rest carry a tag: **Not on LeetCode** (142 problems that live on GfG, Coding Ninjas or TUF) or
+**Concept** (57 theory and algorithm lessons). Problems you add yourself show no tag.
+
 ## Learn
 
 `learn/` is a separate lesson site (Python for DSA, then the interview-prep topics) with
