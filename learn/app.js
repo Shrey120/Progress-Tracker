@@ -492,17 +492,27 @@
 
   // ---------------- patterns: one guide page (notes live on the tracker's problems) ----------------
   const PATTERNS = window.PATTERNS || [], PROBLEMS = window.DRILLS || [];
+  // [the slow inner loop, move, time before → after, extra space before → after, catch]
   const MOVES = [
-    ['searching for a value ("is target − x here?")', 'hash set / dict', 'O(n²) → O(n)', 'O(n) space'],
-    ['searching in sorted data', 'binary search', 'O(n) → O(log n) per lookup', 'needs sorted input'],
-    ['re-adding the same range', 'prefix sums', 'O(n) → O(1) per range', 'O(n) space'],
-    ['rescanning a window that moved by one', 'sliding window', 'O(n·k) → O(n)', 'none'],
-    ['trying all pairs in sorted data', 'two pointers', 'O(n²) → O(n)', 'a sort first'],
-    ['finding the max or min again each step', 'heap / monotonic deque', 'O(n) → O(log n) per step', 'O(k) space'],
-    ['scanning back for the previous greater or smaller', 'monotonic stack', 'O(n²) → O(n)', 'O(n) space'],
-    ['solving the same subproblem again', 'memoization / DP', 'exponential → polynomial', 'O(states) space'],
-    ['trying every possible answer value', 'binary search on the answer', 'O(V) → O(log V) checks', 'a monotonic check'],
-    ['exploring choices that can\'t work', 'pruning, sorting first', 'cuts branches early', 'none'],
+    ['searching for a value ("is target − x here?")', 'hash set / dict', 'O(n²) → O(n)', 'O(1) → O(n)', 'none, if memory is fine'],
+    ['searching in sorted data, one element at a time', 'binary search', 'O(n) → O(log n) per lookup', 'O(1) → O(1)', 'data must be sorted; sorting once costs O(n log n)'],
+    ['re-adding the same range for each query', 'prefix sums', 'O(n) → O(1) per query', 'O(1) → O(n)', 'the array must not change between queries'],
+    ['rescanning a window that only moved by one', 'sliding window', 'O(n·k) → O(n)', 'O(1) → O(1) or O(k) for counts', 'growing the window must only ever make it "more" (e.g. no negatives)'],
+    ['trying all pairs in sorted data', 'two pointers', 'O(n²) → O(n)', 'O(1) → O(1)', 'data must be sorted'],
+    ['finding the max or min again at each step', 'heap', 'O(n) → O(log n) per step', 'O(1) → O(k)', 'gives only the top; the rest isn\'t sorted'],
+    ['scanning back for the previous greater or smaller', 'monotonic stack', 'O(n²) → O(n)', 'O(1) → O(n)', 'none'],
+    ['solving the same subproblem again', 'memoization / DP', 'O(2ⁿ) → O(states × choices)', 'O(n) stack → O(states)', 'space can often be cut back down (see below)'],
+    ['trying every possible answer value', 'binary search on the answer', 'O(V · check) → O(log V · check)', 'unchanged', 'the check must flip from false to true only once'],
+    ['exploring choices that can\'t lead anywhere', 'pruning, sorting first', 'cuts whole branches', 'unchanged', 'still exponential in the worst case'],
+  ];
+  // [what uses the memory, replace it with, extra space before → after, catch]
+  const SPACE_MOVES = [
+    ['a full DP table where each row reads only the previous row', 'two rows, or a few variables', 'O(n·m) → O(m), or O(n) → O(1)', 'you lose the table, so you can\'t rebuild the path'],
+    ['a set to find a duplicate or missing value in 1..n', 'mark positions in the array (negate), or XOR', 'O(n) → O(1)', 'changes the input; ask first'],
+    ['a copy of the array to filter or compact it', 'read and write pointers in the same array', 'O(n) → O(1)', 'changes the input'],
+    ['a visited set on a grid', 'mark visited cells in the grid itself', 'O(m·n) → O(1) extra', 'changes the input'],
+    ['a list of up to 64 true/false flags', 'the bits of one integer', 'O(n) → O(1)', 'only for small n'],
+    ['a recursion stack on a tree', 'an explicit loop, or Morris traversal', 'O(h) → O(1)', 'Morris temporarily rewires the tree'],
   ];
   function trackerPatternCounts() {    // the tracker lives on the same origin, so its saved notes are readable here
     const c = {};
@@ -534,10 +544,20 @@
       <li><b>Point at the innermost loop.</b> What is it doing again and again that an earlier pass already knew?</li>
       <li><b>Make the move</b> that removes that work, then repeat. At the time floor, ask whether space can shrink.</li>
     </ol>
-    <div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>If the inner loop is…</th><th>Move</th><th>Typical gain</th><th>Costs</th></tr></thead><tbody>
-      ${MOVES.map(([w, m, g, c]) => `<tr><td>${esc(w)}</td><td><b>${esc(m)}</b></td><td class="mono">${esc(g)}</td><td class="muted">${esc(c)}</td></tr>`).join('')}
+    <div class="pt-explain">
+      <div><b>Time complexity</b><p>How the number of steps grows as the input grows. O(n²) on 10⁵ items is 10¹⁰ steps, far too slow; O(n) is 10⁵. This is what the constraints limit.</p></div>
+      <div><b>Space complexity</b><p>The <i>extra</i> memory your solution uses on top of the input (the output usually doesn't count). A dict of n items is O(n); a few variables are O(1); recursion n levels deep is O(n) on the call stack.</p></div>
+      <div><b>The trade</b><p>Most speed-ups store something so it isn't recomputed: they buy time with space. Always state both: "O(n) time, O(n) space for the dict." See <a href="#/python/complexity/big-o-table/0">Big-O and speed in Python</a> for what each operation costs.</p></div>
+    </div>
+    <h3 class="pt-sub">Making it faster</h3>
+    <div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>If the slow inner loop is…</th><th>Move</th><th>Time</th><th>Extra space</th><th>Catch</th></tr></thead><tbody>
+      ${MOVES.map(([w, m, t, sp, c]) => `<tr><td>${esc(w)}</td><td><b>${esc(m)}</b></td><td class="mono">${esc(t)}</td><td class="mono">${esc(sp)}</td><td class="muted">${esc(c)}</td></tr>`).join('')}
     </tbody></table></div>
-    <p class="pt-hint">Worked examples (maximum subarray, Two Sum, climbing stairs, k-th largest) with runnable timings, and how to cut space once time is optimal: <a href="${lesson}">From brute force to optimal</a>.</p>`;
+    <h3 class="pt-sub">Using less memory, once time is as good as it gets</h3>
+    <div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>If the memory goes on…</th><th>Replace it with</th><th>Extra space</th><th>Catch</th></tr></thead><tbody>
+      ${SPACE_MOVES.map(([w, m, sp, c]) => `<tr><td>${esc(w)}</td><td><b>${esc(m)}</b></td><td class="mono">${esc(sp)}</td><td class="muted">${esc(c)}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="pt-hint">Time never gets worse with these, and interviewers often ask for them as a follow-up: "Can you do it in O(1) space?" Worked examples with runnable timings: <a href="${lesson}">From brute force to optimal</a>.</p>`;
     h += `<div class="section-h" id="pt-cheat" style="--c:var(--yellow)"><h2>Cheat sheet</h2><p>${PATTERNS.length} patterns: the signals, the brute force each one replaces, and problems to practise on.</p></div><div class="cards pt-cards">`;
     PATTERNS.forEach((p) => {
       const mine = counts[p.id] || 0;

@@ -122,6 +122,13 @@ checked against LeetCode's full problem list. 16 of them need LeetCode Premium a
 rest carry a tag: **Not on LeetCode** (142 problems that live on GfG, Coding Ninjas or TUF) or
 **Concept** (57 theory and algorithm lessons). Problems you add yourself show no tag.
 
+## Links to lessons and problems
+
+Every Python-for-DSA and interview-prep item opens its lesson on the Learn site; every A2Z problem
+that exists on LeetCode opens it there. The lesson map (`LEARN`, keyed by `topic|title`) is
+generated together with the plan data, and generation fails if any Learn lesson has no tracker
+item, so the two can't drift apart and every lesson is timed.
+
 ## Notes, links and revision
 
 Every problem and topic row has small buttons next to the remove ×:
