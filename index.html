@@ -199,14 +199,16 @@
   .diff.Hard{background:var(--red-soft);color:var(--red)}
   .icon{font-size:15px;color:var(--text-3);flex:none;width:22px;height:22px;line-height:1;border-radius:6px;display:inline-grid;place-items:center}
   .icon:hover{color:var(--red);background:var(--bg-2)}
-  .note-btn,.link-btn,.rev-btn{font-size:14px;opacity:.5;transition:opacity .15s}
-  .item:hover .note-btn,.item:hover .link-btn,.item:hover .rev-btn,
-  .note-btn:focus-visible,.link-btn:focus-visible,.rev-btn:focus-visible,
-  .note-btn.on,.link-btn.on,.rev-btn.on{opacity:1}
-  .note-btn:hover,.link-btn:hover,.rev-btn:hover{color:var(--text)}
-  .note-btn.on{color:var(--yellow)}
-  .link-btn.on{filter:saturate(1.2)}
-  .rev-btn.on{color:var(--pink)}
+  .item-actions{display:inline-flex;gap:4px;flex:none}
+  .act{width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;flex:none;
+       border:1px solid var(--line);background:var(--bg-2);color:var(--text-3);
+       transition:color .15s,border-color .15s,background .15s}
+  .act:hover{color:var(--text);border-color:var(--line-2);background:var(--bg-3)}
+  .act svg{display:block}
+  .rev-btn.on{color:var(--pink);background:var(--pink-soft);border-color:color-mix(in srgb,var(--pink) 45%,transparent)}
+  .note-btn.on{color:var(--yellow);background:var(--yellow-soft);border-color:color-mix(in srgb,var(--yellow) 45%,transparent)}
+  .link-btn.on{color:var(--blue);background:var(--blue-soft);border-color:color-mix(in srgb,var(--blue) 45%,transparent)}
+  .del-btn:hover{color:var(--red);background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
   .note-pat{display:inline-block;font-size:12px;font-weight:700;padding:1px 10px;margin:2px 0 10px;border-radius:99px;color:var(--yellow);background:var(--yellow-soft)}
   .note-modal{max-width:720px}
   .note-mod{font-size:13px;color:var(--text-3);margin-bottom:2px}
@@ -345,6 +347,9 @@
     .tabsrow{flex-direction:column;align-items:stretch;gap:0} .tabsrow .btn{display:none}
     .search{min-width:0;flex:1 1 100%;margin-left:0}
     .item{padding-left:16px} .addrow{padding-left:16px}
+    .item-title{flex-basis:calc(100% - 32px)} .item .diff{margin-left:30px} .item-actions{margin-left:auto}
+    .mod-head{flex-wrap:wrap;row-gap:6px} .mod-name{flex:1 1 0;min-width:0} .caret{order:1} .mod-dates{order:2;flex-basis:100%;padding-left:30px}
+    .sec-head{padding:14px 16px} .sec-name{font-size:16.5px}
     .note-hint{display:none} .note-actions .btn{flex:1}
     .mod-dates .num{font-size:12px}
   }
@@ -611,6 +616,18 @@ function NoteModal({ item, mod, onSave, onClose }) {
           e("button", { className: "btn solid", onClick: save, disabled: !text.trim() && !item.note }, "Save note"),
           e("button", { className: "btn ghost", onClick: cancel }, "Cancel"),
           e("span", { className: "note-hint" }, "Ctrl + Enter saves")))));
+}
+
+/* small line icons in one style (24×24 grid, 2px strokes) */
+const ICONS = {
+  revise: ['M3 12a9 9 0 1 0 2.6-6.4L3 8', 'M3 3v5h5'],
+  note: ['M12 20h9', 'M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z'],
+  link: ['M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7', 'M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7'],
+  close: ['M18 6 6 18', 'M6 6l12 12']
+};
+function Icon({ name }) {
+  return React.createElement("svg", { viewBox: "0 0 24 24", width: 15, height: 15, fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", focusable: "false" },
+    ICONS[name].map((d, k) => React.createElement("path", { key: k, d })));
 }
 
 /* built-in LeetCode link for an A2Z problem, if there is one */
@@ -1025,28 +1042,31 @@ function TopicRow({
       className: "item-due num"
     }, due < t ? 'was ' + fShort(due) : fShort(due)), i.difficulty && /*#__PURE__*/React.createElement("span", {
       className: 'diff ' + i.difficulty
-    }, i.difficulty), /*#__PURE__*/React.createElement("button", {
-      className: 'icon rev-btn' + (i.rev ? ' on' : ''),
+    }, i.difficulty), /*#__PURE__*/React.createElement("span", {
+      className: "item-actions"
+    }, /*#__PURE__*/React.createElement("button", {
+      className: 'act rev-btn' + (i.rev ? ' on' : ''),
       title: i.rev ? 'In your revision list. Click to take it out' : 'Add to revision',
       "aria-label": (i.rev ? 'Remove from revision: ' : 'Add to revision: ') + i.title,
       "aria-pressed": !!i.rev,
       onClick: () => toggleRev(m.id, i.id)
-    }, "\u21BB"), /*#__PURE__*/React.createElement("button", {
-      className: 'icon note-btn' + (i.note ? ' on' : ''),
+    }, /*#__PURE__*/React.createElement(Icon, { name: "revise" })), /*#__PURE__*/React.createElement("button", {
+      className: 'act note-btn' + (i.note ? ' on' : ''),
       title: i.note ? 'Edit your note' : 'Write a note',
       "aria-label": (i.note ? 'Edit note for ' : 'Write a note for ') + i.title,
       "aria-haspopup": "dialog",
       onClick: () => openNote(m.id, i.id)
-    }, "\u270E"), /*#__PURE__*/React.createElement("button", {
-      className: 'icon link-btn' + (i.link ? ' on' : ''),
+    }, /*#__PURE__*/React.createElement(Icon, { name: "note" })), /*#__PURE__*/React.createElement("button", {
+      className: 'act link-btn' + (i.link ? ' on' : ''),
       title: i.link ? 'Change your link' : 'Add or change the link',
       "aria-label": 'Edit link for ' + i.title,
       onClick: () => editLink(m.id, i.id)
-    }, "\uD83D\uDD17"), /*#__PURE__*/React.createElement("button", {
-      className: "icon",
+    }, /*#__PURE__*/React.createElement(Icon, { name: "link" })), /*#__PURE__*/React.createElement("button", {
+      className: "act del-btn",
       title: "Remove this problem",
+      "aria-label": 'Remove ' + i.title,
       onClick: () => delItem(m.id, i.id)
-    }, "×"));
+    }, /*#__PURE__*/React.createElement(Icon, { name: "close" }))));
   }), /*#__PURE__*/React.createElement("div", {
     className: "addrow"
   }, /*#__PURE__*/React.createElement("input", {
@@ -1516,7 +1536,7 @@ function RevisionView({
   const cols = [['dsa', 'DSA'], ['prep', 'Interview prep']];
   return e("div", null, e("div", { className: "rev-head" },
     e("div", null, e("b", { className: "num" }, all.length), " marked for revision", doneToday > 0 && e("span", { className: "rev-today" }, " · ", doneToday, " revised today")),
-    e("div", { className: "rev-hint" }, "Press ↻ next to any problem or topic in Module view to add it here. The ones you revised longest ago come first.")),
+    e("div", { className: "rev-hint" }, "Use the revision button next to any problem or topic in Module view to add it here. The ones you revised longest ago come first.")),
     e("div", { className: "revgrid" }, cols.map(([k, label]) => {
       const list = all.filter(i => i.mod.track === k);
       return e("div", { key: k, className: 'col r' + k },

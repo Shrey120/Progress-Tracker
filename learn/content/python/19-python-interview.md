@@ -191,7 +191,7 @@ On the Striver sheet the section title tells you the pattern before you read the
 Three things build it:
 
 1. **Knowing the signals**: the words, input shapes and constraints that point to each pattern (this lesson).
-2. **Unlabeled, mixed practice**: guessing the pattern from a problem statement alone. The [pattern drill](#/patterns/drill) does exactly this.
+2. **Unlabeled, mixed practice**: deciding on the pattern from the problem statement alone. On LeetCode, leave the **Topics** section closed until you've had a real attempt; the tags give the answer away.
 3. **Keeping your own insight**: writing one line per solved problem, in your own words, and re-reading it when you revise. Press ✎ next to the problem in the [tracker](../) to write it.
 
 ## Read the constraints first
@@ -297,7 +297,227 @@ The routine that turns solved problems into recognition:
 4. Re-solve from a blank editor after a few days. If you can't, you remembered the code, not the idea.
 5. Once a week, do a **mixed** set with no section titles.
 
-The tracker handles steps 3 and 4: ✎ on a problem stores your one line, and ↻ puts it in the Revision tab with that note beside it. For step 5, the [Drill](#/patterns/drill) on the Patterns page mixes problems from every topic.
+The tracker handles steps 3 and 4: ✎ on a problem stores your one line, and ↻ puts it in the Revision tab with that note beside it. For step 5, pick a few problems from different topics on the [Patterns page](#/patterns) and solve them with the Topics tags hidden.
+
+=== lesson: brute-force-to-optimal | From brute force to optimal
+LeetCode editorials show Approach 1, 2, 3, each one faster or leaner than the last. Interviewers want to watch you climb that ladder yourself: say the brute force, then improve it step by step, explaining what each step buys.
+
+Getting good at it is mostly practice, but it isn't guesswork. There's a short list of **moves**, and each one removes one specific kind of wasted work. Once you can spot the waste, you know which move to make.
+
+The method, in four steps:
+
+1. Know the target: what complexity do the constraints allow?
+2. Write the brute force and say its cost.
+3. Find the repeated work in it.
+4. Apply the move that removes that work. Repeat until you hit the target.
+
+## Step 1: know where you're going
+
+Two limits tell you when to stop.
+
+**The constraints.** `n ≤ 10⁵` means you need O(n log n) or better; `n ≤ 500` means O(n³) is fine (see the table in *Spotting the pattern*). If your brute force already fits, you're done on time.
+
+**The best conceivable runtime.** Any solution has to at least read the input, so O(n) for an array or O(rows × cols) for a grid. And it has to write the output: listing all subsets is O(2ⁿ) no matter what.
+
+If you're already at that floor for time, the only thing left to improve is **space**.
+
+## Step 2: the brute force, and its cost
+
+The brute force tries every candidate answer directly. Recognise its shape and you know its cost:
+
+| Shape | Cost |
+|---|---|
+| Every pair `(i, j)` | O(n²) |
+| Every subarray, summing each one | O(n²) × O(n) = O(n³) |
+| Every subset or every choice, recursively | O(2ⁿ) |
+| Every permutation | O(n!) |
+| For each element, scan the rest | O(n²) |
+
+Say it out loud in the interview, even if you won't code it: "Brute force checks every pair, O(n²) time, O(1) space."
+
+## Step 3: find the repeated work
+
+Point at the innermost loop and ask what it does on each pass:
+
+- Is it **looking for** something you could look up directly?
+- Is it **recomputing** something an earlier pass already knew?
+- Is it **rescanning** data that barely changed?
+- Is it **exploring** options that can't possibly work?
+
+The answer names the move.
+
+## Step 4: the moves
+
+| The inner loop is… | Move | Typical gain | What it costs |
+|---|---|---|---|
+| searching for a value ("is `target − x` here?") | hash set / dict | O(n²) → O(n) | O(n) space |
+| searching in sorted data | binary search | O(n) → O(log n) per lookup | input must be sorted |
+| re-adding the same range | prefix sums | O(n) → O(1) per range | O(n) space |
+| rescanning a window that moved by one | sliding window | O(n·k) → O(n) | none |
+| trying all pairs in sorted data | two pointers | O(n²) → O(n) | a sort, O(n log n) |
+| finding the max/min again each step | heap or monotonic deque | O(n) → O(log n) or O(1) per step | O(k) space |
+| scanning back for the previous greater/smaller | monotonic stack | O(n²) → O(n) | O(n) space |
+| solving the same subproblem again | memoization / DP | exponential → polynomial | O(states) space |
+| exploring choices that can't work | pruning, sort first | cuts branches early | none |
+| trying every answer value | binary search on the answer | O(V) → O(log V) checks | needs a monotonic check |
+
+Most optimisations trade **space for time**: you store something so you don't recompute it.
+
+## Saving space
+
+When time is already at the floor, the follow-up is usually "can you do it in less memory?" These are the usual answers:
+
+| Using | Replace with | Space |
+|---|---|---|
+| a full DP table where each row needs only the previous one | two rows, or a few variables | O(n²) → O(n), or O(n) → O(1) |
+| a set to find a duplicate or missing value in `1..n` | mark positions in place (negate), or XOR | O(n) → O(1) |
+| a copy of the array | read and write pointers in the same array | O(n) → O(1) |
+| a visited set on a grid | mark the grid cells themselves | O(m·n) → O(1) extra |
+| a list of booleans for ≤ 64 flags | bits of one integer | O(n) → O(1) |
+| a recursion stack on a tree | iteration, or Morris traversal | O(h) → O(1) |
+
+Ask before modifying the input: "Is it OK if I change the array in place?"
+
+## Ladder 1: maximum subarray sum
+
+Three rungs, each removing one layer of repeated work:
+
+```pyrun
+import random, time
+nums = [random.randint(-50, 50) for _ in range(300)]
+
+def cubic(a):                 # every subarray, summed from scratch: O(n³)
+    best = a[0]
+    for i in range(len(a)):
+        for j in range(i, len(a)):
+            best = max(best, sum(a[i:j + 1]))
+    return best
+
+def quadratic(a):             # keep a running sum instead of re-adding: O(n²)
+    best = a[0]
+    for i in range(len(a)):
+        s = 0
+        for j in range(i, len(a)):
+            s += a[j]
+            best = max(best, s)
+    return best
+
+def linear(a):                # Kadane: a negative running sum never helps, so drop it: O(n)
+    best = cur = a[0]
+    for x in a[1:]:
+        cur = max(x, cur + x)
+        best = max(best, cur)
+    return best
+
+for f in (cubic, quadratic, linear):
+    t = time.perf_counter(); r = f(nums)
+    print(f"{f.__name__:9} {r:5}  {1000 * (time.perf_counter() - t):8.2f} ms")
+```
+
+The move from O(n³) to O(n²): `sum(a[i:j+1])` re-adds everything the previous `j` already added. The move to O(n): any start point whose running sum went negative can never beat starting fresh.
+
+## Ladder 2: Two Sum, and why "optimal" depends on what you value
+
+```pyrun
+def brute(nums, t):           # O(n²) time, O(1) space
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == t:
+                return [i, j]
+
+def sort_two_pointers(nums, t):   # O(n log n) time, O(n) space for the index pairs
+    order = sorted(range(len(nums)), key=nums.__getitem__)
+    lo, hi = 0, len(nums) - 1
+    while lo < hi:
+        s = nums[order[lo]] + nums[order[hi]]
+        if s == t: return sorted([order[lo], order[hi]])
+        if s < t: lo += 1
+        else: hi -= 1
+
+def one_pass_dict(nums, t):   # O(n) time, O(n) space
+    seen = {}
+    for i, x in enumerate(nums):
+        if t - x in seen:
+            return [seen[t - x], i]
+        seen[x] = i
+
+nums = [11, 2, 15, 7, 3]
+print(brute(nums, 9), sort_two_pointers(nums, 9), one_pass_dict(nums, 9))
+```
+
+The dict is fastest, but if the input were **already sorted** and memory were tight, two pointers would win with O(n) time and O(1) space. Say this kind of trade-off out loud; it's exactly what interviewers listen for.
+
+## Ladder 3: climbing stairs, the space ladder
+
+Same answer four times; each rung keeps less in memory:
+
+```pyrun
+from functools import cache
+calls = 0
+def plain(n):                 # O(2ⁿ) time: solves the same n again and again
+    global calls; calls += 1
+    return 1 if n <= 1 else plain(n - 1) + plain(n - 2)
+
+@cache
+def memo(n):                  # O(n) time, O(n) space for the cache + stack
+    return 1 if n <= 1 else memo(n - 1) + memo(n - 2)
+
+def table(n):                 # O(n) time, O(n) space, no recursion
+    dp = [1, 1] + [0] * (n - 1)
+    for i in range(2, n + 1):
+        dp[i] = dp[i - 1] + dp[i - 2]
+    return dp[n]
+
+def two_vars(n):              # O(n) time, O(1) space: only the last two values matter
+    a, b = 1, 1
+    for _ in range(n - 1):
+        a, b = b, a + b
+    return b
+
+print(plain(25), "plain recursion made", calls, "calls")
+print(memo(25), table(25), two_vars(25))
+```
+
+The move to the last rung: `dp[i]` only ever reads `dp[i-1]` and `dp[i-2]`, so the rest of the table is dead weight.
+
+## Ladder 4: k-th largest
+
+```pyrun
+import heapq, random
+nums = [random.randint(1, 10_000) for _ in range(10_000)]
+k = 10
+
+by_sorting = sorted(nums, reverse=True)[k - 1]   # O(n log n): orders everything, needs only k
+
+heap = []                                         # O(n log k), O(k) space: keep only the k largest
+for x in nums:
+    heapq.heappush(heap, x)
+    if len(heap) > k:
+        heapq.heappop(heap)
+by_heap = heap[0]
+
+print(by_sorting, by_heap)
+```
+
+The waste in sorting: it puts all n elements in order when you only care about the top k. A third rung exists, **quickselect**, with O(n) average time. Know that it exists and what it does (partition like quicksort, then recurse into one side only); you rarely need to code it.
+
+## How do you know you're done?
+
+- You've reached the **best conceivable runtime** (you can't avoid reading the input).
+- You've met what the **constraints** require.
+- The interviewer moves on, or asks about space instead of time.
+
+You're never expected to beat the best approach in the LeetCode editorial. If you reach it and can explain each rung, that's a strong answer.
+
+## Turning this into a habit
+
+On every problem you solve:
+
+1. Before coding, say the brute force and its complexity.
+2. After it's accepted, read **all** the approaches in the editorial or the top solutions, not just the fastest.
+3. In the problem's tracker note (✎), record the ladder and the move for each rung, e.g. "brute O(n²) pairs → dict of seen values O(n), O(n) space".
+
+After a few dozen problems the moves start to show up on their own: you see a nested loop searching for a value and your hand reaches for a dict before you've finished thinking. That instinct only comes from repetition, but naming the move every time is what makes the repetition count.
 
 === lesson: dsa-interview-round | How to run a DSA interview round
 In a live coding round, interviewers score more than whether you reach the answer. They score how you think, how you communicate, how clean your code is, and whether you test it. Candidates who solve the problem in silence often score lower than ones who reach a slightly worse solution while explaining every step.

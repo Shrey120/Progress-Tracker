@@ -490,14 +490,20 @@
     return box;
   }
 
-  // ---------------- patterns: guide and drill (notes live on the tracker's problems) ----------------
-  const PATTERNS = window.PATTERNS || [], DRILLS = window.DRILLS || [];
-  const patById = Object.fromEntries(PATTERNS.map((p) => [p.id, p]));
-  const drillById = Object.fromEntries(DRILLS.map((d) => [d.id, d]));
-  const DRILL_DAYS = [0, 1, 3, 7, 21];
-  const inlineCode = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
-  const lcLink = (title) => `https://leetcode.com/problemset/?search=${encodeURIComponent(title)}`;
-  const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  // ---------------- patterns: one guide page (notes live on the tracker's problems) ----------------
+  const PATTERNS = window.PATTERNS || [], PROBLEMS = window.DRILLS || [];
+  const MOVES = [
+    ['searching for a value ("is target − x here?")', 'hash set / dict', 'O(n²) → O(n)', 'O(n) space'],
+    ['searching in sorted data', 'binary search', 'O(n) → O(log n) per lookup', 'needs sorted input'],
+    ['re-adding the same range', 'prefix sums', 'O(n) → O(1) per range', 'O(n) space'],
+    ['rescanning a window that moved by one', 'sliding window', 'O(n·k) → O(n)', 'none'],
+    ['trying all pairs in sorted data', 'two pointers', 'O(n²) → O(n)', 'a sort first'],
+    ['finding the max or min again each step', 'heap / monotonic deque', 'O(n) → O(log n) per step', 'O(k) space'],
+    ['scanning back for the previous greater or smaller', 'monotonic stack', 'O(n²) → O(n)', 'O(n) space'],
+    ['solving the same subproblem again', 'memoization / DP', 'exponential → polynomial', 'O(states) space'],
+    ['trying every possible answer value', 'binary search on the answer', 'O(V) → O(log V) checks', 'a monotonic check'],
+    ['exploring choices that can\'t work', 'pruning, sorting first', 'cuts branches early', 'none'],
+  ];
   function trackerPatternCounts() {    // the tracker lives on the same origin, so its saved notes are readable here
     const c = {};
     try {
@@ -506,101 +512,45 @@
     } catch (e) {}
     return c;
   }
-  const patName = (id) => (patById[id] ? patById[id].name : 'Other');
+  const lcHref = (p) => `https://leetcode.com/problems/${p.slug}/`;
+  const diffColor = { Easy: 'green', Medium: 'yellow', Hard: 'red' };
 
-  function patternsHead(tab) {
-    const tabs = [['', 'Guide'], ['drill', 'Drill']];
-    return `<div class="page-h"><h1>Patterns</h1><p>Knowing an algorithm isn't the same as seeing that a new problem needs it. This page trains the seeing.</p></div>
-      <nav class="pt-tabs" aria-label="Patterns sections">${tabs.map(([id, label]) => `<a href="#/patterns${id ? '/' + id : ''}"${tab === id ? ' aria-current="page"' : ''}>${label}</a>`).join('')}</nav>`;
-  }
-
-  function renderPatterns(parts) {
+  function renderPatterns() {
     document.title = 'Patterns · Prep Notebook'; delete view.dataset.topic;
     $('[data-nav=patterns]').classList.add('active');
-    const tab = parts[1] || '';
-    if (tab === 'drill') renderDrill();
-    else renderPatternGuide();
-  }
-
-  function renderPatternGuide() {
     const counts = trackerPatternCounts();
-    let h = patternsHead('');
-    h += `<div class="section-h" style="--c:var(--green)"><h2>How to use it</h2><p>Three habits, at three moments.</p></div>
+    const lesson = '#/python/python-interview/brute-force-to-optimal/0';
+    let h = `<div class="page-h"><h1>Patterns</h1><p>Which technique a problem needs, and how to get from your first working solution to the best one.</p></div>`;
+    h += `<div class="section-h" style="--c:var(--green)"><h2>How to use it</h2><p>Three moments in every problem.</p></div>
     <div class="pt-steps">
-      <a class="pt-step" href="#/patterns"><b>When you're stuck on a problem</b><span>Look through the cheat sheet below. Find the signal that matches what the problem says, then open that pattern's template lesson.</span></a>
-      <a class="pt-step" href="../"><b>After every problem you solve</b><span>In the tracker, press ✎ next to the problem and write one line: which pattern, what gave it away, the trick.</span></a>
-      <a class="pt-step" href="#/patterns/drill"><b>Once a week, 15 minutes</b><span>Do a Drill round: 10 short problems from every topic mixed together. You only name the pattern; no coding.</span></a>
-    </div>
-    <p class="muted pt-hint">New to this? The lesson <a href="#/python/python-interview/spotting-the-pattern/0">Spotting the pattern</a> explains the method. To revise a problem later, press ↻ next to it in the tracker; it shows up in the Revision tab with your note.</p>`;
-    h += `<div class="section-h" style="--c:var(--yellow)"><h2>Cheat sheet</h2><p>Reach for each pattern when you see these signals.</p></div><div class="cards">`;
+      <a class="pt-step" href="#pt-cheat"><b>Reading a new problem</b><span>Match what it says against the signals on the cards below. Keep LeetCode's Topics tags closed until you've had a real attempt.</span></a>
+      <a class="pt-step" href="#pt-moves"><b>Your solution works but is slow</b><span>Find the work it repeats, then use the moves table to remove it. Repeat until you reach what the constraints need.</span></a>
+      <a class="pt-step" href="../"><b>After it's accepted</b><span>Read every approach in the editorial, then press ✎ on the problem in the tracker and write the ladder: brute force → the move → final complexity.</span></a>
+    </div>`;
+    h += `<div class="section-h" id="pt-moves" style="--c:var(--blue)"><h2>From brute force to optimal</h2><p>Each move removes one kind of repeated work.</p></div>
+    <ol class="pt-method">
+      <li><b>Know the target.</b> The constraints set it: n ≤ 10⁵ needs O(n log n) or better. You can't beat reading the input, O(n).</li>
+      <li><b>Say the brute force and its cost.</b> Every pair is O(n²), every subarray summed is O(n³), every subset is O(2ⁿ).</li>
+      <li><b>Point at the innermost loop.</b> What is it doing again and again that an earlier pass already knew?</li>
+      <li><b>Make the move</b> that removes that work, then repeat. At the time floor, ask whether space can shrink.</li>
+    </ol>
+    <div class="pt-table-wrap"><table class="pt-table"><thead><tr><th>If the inner loop is…</th><th>Move</th><th>Typical gain</th><th>Costs</th></tr></thead><tbody>
+      ${MOVES.map(([w, m, g, c]) => `<tr><td>${esc(w)}</td><td><b>${esc(m)}</b></td><td class="mono">${esc(g)}</td><td class="muted">${esc(c)}</td></tr>`).join('')}
+    </tbody></table></div>
+    <p class="pt-hint">Worked examples (maximum subarray, Two Sum, climbing stairs, k-th largest) with runnable timings, and how to cut space once time is optimal: <a href="${lesson}">From brute force to optimal</a>.</p>`;
+    h += `<div class="section-h" id="pt-cheat" style="--c:var(--yellow)"><h2>Cheat sheet</h2><p>${PATTERNS.length} patterns: the signals, the brute force each one replaces, and problems to practise on.</p></div><div class="cards pt-cards">`;
     PATTERNS.forEach((p) => {
       const mine = counts[p.id] || 0;
-      const s = state.drillStats[p.id];
-      h += `<div class="card pt-card" style="--c:${colorVar(p.color)}"><h3>${esc(p.name)}</h3><ul>${p.when.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>
-        <div class="meta"><span>${esc(p.cost)}</span>${s && s.t ? `<span>Drill: ${s.r}/${s.t}</span>` : ''}</div>
-        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<span class="muted">${mine} of your notes</span>` : ''}</div></div>`;
+      const probs = PROBLEMS.filter((d) => d.a === p.id && d.slug);
+      h += `<article class="card pt-card" style="--c:${colorVar(p.color)}"><h3>${esc(p.name)}</h3>
+        <div class="pt-label">Reach for it when</div><ul>${p.when.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>
+        ${p.ladder ? `<div class="pt-label">From brute force</div><p class="pt-ladder">${esc(p.ladder)}</p>` : ''}
+        ${probs.length ? `<div class="pt-label">Practise on</div><ul class="pt-probs">${probs.map((d) => `<li><a href="${lcHref(d)}" target="_blank" rel="noopener">${esc(d.name)}</a><span class="tag" style="--c:var(--${diffColor[d.diff] || 'blue'})">${esc(d.diff)}</span>${d.prem ? '<span class="tag" style="--c:var(--yellow)">Premium</span>' : ''}</li>`).join('')}</ul>` : ''}
+        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<span class="muted">${mine} of your notes</span>` : ''}<span class="muted pt-cost">${esc(p.cost)}</span></div></article>`;
     });
     h += '</div>';
     view.innerHTML = h; window.scrollTo(0, 0);
-  }
-
-  // ---- drill: unlabeled problems, spaced by a simple Leitner box ----
-  let drill = null;
-  function newDrill() {
-    const now = Date.now(); const st = state.drill;
-    const due = DRILLS.filter((d) => st[d.id] && st[d.id].due <= now).sort((a, b) => st[a.id].due - st[b.id].due);
-    const fresh = shuffle(DRILLS.filter((d) => !st[d.id]));
-    const later = DRILLS.filter((d) => st[d.id] && st[d.id].due > now).sort((a, b) => st[a.id].due - st[b.id].due);
-    drill = { q: shuffle([...due, ...fresh, ...later].slice(0, 10).map((d) => d.id)), i: 0, pick: null, right: 0, answered: 0, missed: [], requeued: {} };
-  }
-  function renderDrill() {
-    if (!drill) newDrill();
-    let h = patternsHead('drill');
-    if (drill.i >= drill.q.length) {
-      const pct = Math.round((drill.right / Math.max(1, drill.answered)) * 100);
-      const weak = [...new Set(drill.missed)];
-      const seen = Object.keys(state.drill).length;
-      h += `<div class="panel drill"><div class="big-num">${drill.right}/${drill.answered}<small>${pct}% right first time this round · ${seen} of ${DRILLS.length} problems seen</small></div>`;
-      if (weak.length) h += `<p>Worth another look:</p><div class="pt-links">${weak.map((id) => `<a href="#/${patById[id].lesson}/0">${esc(patById[id].name)}</a>`).join('')}</div>`;
-      h += `<p class="muted">Problems you missed come back first next round; ones you got right return after 1, 3, 7, then 21 days.</p><button class="btn" data-act="again">Start another round</button></div>`;
-    } else {
-      const d = drillById[drill.q[drill.i]];
-      const ok = drill.pick && (drill.pick === d.a || (d.alt || []).includes(drill.pick));
-      h += `<div class="panel drill"><div class="drill-top muted"><span>Problem ${drill.i + 1} of ${drill.q.length}</span><span>${drill.right} right</span></div>
-        <p class="drill-q">${inlineCode(d.text)}</p><p class="muted">Which pattern would you reach for?</p>
-        <div class="chips" role="group" aria-label="Patterns">${PATTERNS.map((p) => {
-          let cls = '';
-          if (drill.pick) { if (p.id === d.a) cls = 'right'; else if (p.id === drill.pick) cls = ok ? 'right' : 'wrong'; else if ((d.alt || []).includes(p.id)) cls = 'alt'; }
-          return `<button class="chip ${cls}" data-pick="${p.id}" ${drill.pick ? 'disabled' : ''}>${esc(p.name)}</button>`;
-        }).join('')}</div>`;
-      if (drill.pick) {
-        const alts = (d.alt || []).map(patName);
-        const head = ok ? (drill.pick === d.a ? 'Right.' : `That works too; the usual approach is ${esc(patName(d.a))}.`) : `Not quite: this is ${esc(patName(d.a))}.`;
-        h += `<div class="verdict-box ${ok ? 'ok' : 'bad'}" role="status"><b>${head}</b> ${inlineCode(d.why)}
-          ${alts.length ? `<div class="muted">Also workable: ${esc(alts.join(', '))}.</div>` : ''}
-          <div class="muted">This is <a href="${lcLink(d.name)}" target="_blank" rel="noopener">${esc(d.name)}</a> on LeetCode · <a href="#/${patById[d.a].lesson}/0">${esc(patName(d.a))} template</a></div></div>
-          <div class="drill-next"><button class="btn" data-act="next">${drill.i + 1 < drill.q.length ? 'Next problem' : 'See results'}</button></div>`;
-      }
-      h += '</div>';
-    }
-    view.innerHTML = h;
-    view.onclick = (e) => {
-      const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.pick && !drill.pick) {
-        const d = drillById[drill.q[drill.i]]; drill.pick = b.dataset.pick;
-        const ok = drill.pick === d.a || (d.alt || []).includes(drill.pick);
-        const first = !drill.requeued[d.id];
-        if (first) { drill.answered++; if (ok) drill.right++; }
-        const prev = state.drill[d.id] || { box: 0 };
-        const box = ok ? Math.min(prev.box + 1, DRILL_DAYS.length - 1) : 0;
-        state.drill[d.id] = { box, due: Date.now() + DRILL_DAYS[box] * 864e5 };
-        if (first) { const s = state.drillStats[d.a] || { r: 0, t: 0 }; s.t++; if (ok) s.r++; state.drillStats[d.a] = s; }
-        if (!ok) { drill.missed.push(d.a); if (!drill.requeued[d.id]) { drill.requeued[d.id] = true; drill.q.push(d.id); } }
-        save(); renderDrill(); const n = $('[data-act=next]'); if (n) n.focus();
-      }
-      if (b.dataset.act === 'next') { drill.i++; drill.pick = null; renderDrill(); window.scrollTo(0, 0); }
-      if (b.dataset.act === 'again') { newDrill(); renderDrill(); }
-    };
+    view.querySelectorAll('a[href^="#pt-"]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); document.getElementById(a.getAttribute('href').slice(1)).scrollIntoView({ behavior: 'smooth' }); }));
   }
 
   // ---------------- search ----------------

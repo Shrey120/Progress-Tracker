@@ -5,7 +5,8 @@ Prep Tracker. A static site with no build step at deploy time; Python runs in th
 Pyodide inside a web worker.
 
 The **Patterns** page (`#/patterns`, data in `patterns.js`) trains problem recognition: a cheat
-sheet of signals per pattern and an unlabeled drill of short problem descriptions. The tracker
+guide: how to go from brute force to optimal (method + moves table), then a card per pattern with
+its signals, the brute force it replaces, and classic LeetCode problems to practise on. The tracker
 loads the same `patterns.js` for the pattern picker in its per-problem notes.
 
 Notes and revision live in the tracker (✎ and ↻ on any problem or topic), not here.
