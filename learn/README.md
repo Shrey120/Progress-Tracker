@@ -5,10 +5,12 @@ Prep Tracker. A static site with no build step at deploy time; Python runs in th
 Pyodide inside a web worker.
 
 The **Patterns** page (`#/patterns`, data in `patterns.js`) trains problem recognition: a cheat
-sheet of signals per pattern, an unlabeled drill of short problem descriptions with spaced repeats,
-and a journal. The journal reads DSA problems marked done in the tracker (same origin, key
-`prep-tracker-v3`), stores a one-line pattern + insight per problem, and brings each back for
-recall after 1, 3, 7, 14, 30 and 60 days.
+sheet of signals per pattern, an unlabeled drill of short problem descriptions, and Notes. Notes
+reads DSA problems marked done in the tracker (same origin, key `prep-tracker-v3`) and stores a
+one-line pattern + insight per problem in `prep-notebook.v2` under `journal`, keyed `t:<item id>`.
+The tracker's Revision tab shows that note next to each problem marked for revision.
+
+Revision itself lives in the tracker (↻ on any problem or topic), not here.
 
 ## Run locally
 

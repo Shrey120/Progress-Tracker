@@ -4,7 +4,6 @@
   const COURSES = window.COURSES || [];
   const KEY = 'prep-notebook.v2';
   const RUN_LIMIT_MS = 8000;
-  const REVIEW_DAYS = [1, 3, 7, 14, 30, 60];
   const $ = (sel, el = document) => el.querySelector(sel);
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -64,14 +63,6 @@
   const isDone = (l) => !!state.done[l.key];
   function seenFrac(l) { const s = state.seen[l.key]; if (!s) return 0; return Math.min(1, (s + 1) / slidesOf(l).length); }
   function stats(ls) { const w = written(ls); const d = w.filter(isDone).length; return { total: w.length, done: d, pct: w.length ? Math.round((d / w.length) * 100) : 0 }; }
-  function dueInfo(key) {
-    const r = state.revise[key]; if (!r) return null;
-    const days = REVIEW_DAYS[Math.min(r.n || 0, REVIEW_DAYS.length - 1)];
-    const dueAt = (r.last || r.added) + days * 864e5;
-    return { due: Date.now() >= dueAt, dueAt, days };
-  }
-  const dueCount = () => Object.keys(state.revise).filter((k) => byKey[k] && dueInfo(k).due).length;
-
   // ---------------- markdown + code ----------------
   marked.setOptions({ gfm: true, breaks: false });
   const MODES = { python: 'python', py: 'python', pyrun: 'python', js: 'javascript', javascript: 'javascript', jsrun: 'javascript', ts: 'text/typescript', typescript: 'text/typescript', tsx: 'text/typescript-jsx', jsx: 'text/jsx', sql: 'text/x-sql', sqlrun: 'text/x-sql', html: 'htmlmixed', htmlrun: 'htmlmixed', css: 'css', json: 'application/json', bash: null, sh: null, text: null, '': 'python' };
@@ -288,10 +279,9 @@
   function route() {
     const parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean).map(decodeURIComponent);
     document.querySelectorAll('.top-nav a[data-nav]').forEach((a) => a.classList.remove('active'));
-    updatePill();
     view.onclick = null; view.onsubmit = null;
     if (parts[0] === 'patterns') return renderPatterns(parts);
-    if (parts[0] === 'revise') { $('[data-nav=revise]').classList.add('active'); return renderRevise(); }
+    if (parts[0] === 'revise') return go('#/', true);   // revision lives in the tracker now
     if (parts[0] === 't' && modByKey[`${parts[1]}/${parts[2]}`]) {
       const m = modByKey[`${parts[1]}/${parts[2]}`];
       const l = written(m.lessons).find((x) => !isDone(x)) || written(m.lessons)[0] || m.lessons[0];
@@ -303,7 +293,6 @@
     renderHome();
   }
   function go(hash, replace) { if (replace) { history.replaceState(null, '', hash); route(); } else location.hash = hash; }
-  function updatePill() { const n = dueCount() + journalDue().length; const p = $('#reviseCount'); p.hidden = !n; p.textContent = n; }
 
   // ---------------- home ----------------
   function renderHome() {
@@ -311,7 +300,6 @@
     const track = COURSES.find((c) => c.id === state.track) || COURSES[0];
     const last = state.last && byKey[state.last];
     const all = lessons;
-    const dueKeys = Object.keys(state.revise).filter((k) => byKey[k] && dueInfo(k).due);
     let h = `<section class="hero">
       <h1>Learn <span class="py">${track.id === 'python' ? 'Python' : 'interviews'}</span>,<br>one slide at a time.</h1>
       <p>${esc(track.heroText || track.blurb || '')}</p>
@@ -326,11 +314,6 @@
       h += `<div class="lb"><span>${esc(lv.id)}</span><div class="bar" style="--c:${colorVar(lv.color)}"><i style="width:${s.pct}%"></i></div><span class="n">${s.done}/${s.total}</span></div>`;
     });
     h += '</div></section>';
-    if (dueKeys.length) {
-      h += `<div class="section-h" style="--c:var(--pink)"><h2>Due for revision</h2><p>${dueKeys.length} lesson${dueKeys.length > 1 ? 's' : ''}</p><a class="pct" href="#/revise">See all</a></div><div class="strip">`;
-      dueKeys.slice(0, 8).forEach((k) => { const l = byKey[k]; h += `<a class="strip-card" href="#/${k}"><small>${esc(l.module.icon || '')} ${esc(l.module.title)}</small><b>${esc(l.title)}</b></a>`; });
-      h += '</div>';
-    }
     (track.levels || []).forEach((lv) => {
       const mods = track.modules.filter((m) => m.level === lv.id);
       if (!mods.length) return;
@@ -380,7 +363,7 @@
     list.innerHTML = m.lessons.map((x) => {
       if (!x.md) return `<a aria-disabled="true" style="opacity:.5"><span class="st"></span><span>${x.stars ? `<span class="stars">${'★'.repeat(x.stars)}</span> ` : ''}${esc(x.title)}</span><span></span></a>`;
       const cls = isDone(x) ? 'done' : (state.seen[x.key] != null ? 'seen' : '');
-      return `<a href="#/${x.key}" class="${x === l ? 'current' : ''}" ${x === l ? 'aria-current="page"' : ''}><span class="st ${cls}" style="--p:${Math.round(seenFrac(x) * 100)}%">${isDone(x) ? '✓' : ''}</span><span>${x.stars ? `<span class="stars">${'★'.repeat(x.stars)}</span> ` : ''}${esc(x.title)}</span>${state.revise[x.key] ? '<span class="flag" title="Marked for revision">↻</span>' : '<span></span>'}</a>`;
+      return `<a href="#/${x.key}" class="${x === l ? 'current' : ''}" ${x === l ? 'aria-current="page"' : ''}><span class="st ${cls}" style="--p:${Math.round(seenFrac(x) * 100)}%">${isDone(x) ? '✓' : ''}</span><span>${x.stars ? `<span class="stars">${'★'.repeat(x.stars)}</span> ` : ''}${esc(x.title)}</span><span></span></a>`;
     }).join('');
     const cur = $('.current', list); if (cur && !samePage) cur.scrollIntoView({ block: 'nearest', inline: 'nearest' });
 
@@ -396,7 +379,6 @@
       <div class="player-bot">
         <button class="btn ghost" data-act="prev" ${i === 0 ? 'disabled' : ''}>← Previous</button>
         <span class="grow"></span>
-        <button class="btn ghost ${state.revise[l.key] ? 'on-revise' : ''}" data-act="revise" aria-pressed="${!!state.revise[l.key]}">↻ ${state.revise[l.key] ? 'In revision' : 'Revise later'}</button>
         <button class="btn ghost ${isDone(l) ? 'on-done' : ''}" data-act="done" aria-pressed="${isDone(l)}">${isDone(l) ? '✓ Completed' : '○ Mark complete'}</button>
         <span class="grow"></span>
         ${i < slides.length - 1 ? `<button class="btn" data-act="next">Next →</button>` : nextLessonBtn(l)}
@@ -416,7 +398,6 @@
       if (act === 'prev') go(`#/${l.key}/${i - 1}`);
       if (act === 'next') go(`#/${l.key}/${i + 1}`);
       if (act === 'done' || act === 'finish-done') { state.done[l.key] ? delete state.done[l.key] : (state.done[l.key] = Date.now()); save(); renderTopic(l, i, act === 'done'); }
-      if (act === 'revise') { toggleRevise(l.key); renderTopic(l, i, !b.closest('.finish')); }
       if (act === 'nextlesson') { const n = nextLesson(l); if (!isDone(l)) { state.done[l.key] = Date.now(); save(); } go(n ? `#/${n.key}/0` : '#/'); }
     };
     if (keyHandler) document.removeEventListener('keydown', keyHandler);
@@ -433,18 +414,13 @@
     return all[all.indexOf(l) + 1] || null;
   }
   function nextLessonBtn(l) { const n = nextLesson(l); return `<button class="btn" data-act="nextlesson">${n ? (n.module === l.module ? 'Next lesson →' : 'Next topic →') : 'Finish →'}</button>`; }
-  function toggleRevise(key) {
-    if (state.revise[key]) delete state.revise[key]; else state.revise[key] = { added: Date.now(), last: Date.now(), n: 0 };
-    save(); updatePill();
-  }
   function renderFinish(l) {
     const d = document.createElement('div'); d.className = 'finish';
     const ex = l.exercises || []; const solved = ex.filter((e) => state.solved[e.key]).length;
     const n = nextLesson(l);
     d.innerHTML = `<div class="big">${isDone(l) ? '🎉' : '🏁'}</div><h2>${isDone(l) ? 'Lesson complete' : 'End of the lesson'}</h2>
       <p>${ex.length ? `You solved ${solved} of ${ex.length} practice problem${ex.length > 1 ? 's' : ''}. ` : ''}${n ? `Up next: <b>${esc(n.title)}</b>${n.module !== l.module ? ` in ${esc(n.module.title)}` : ''}.` : 'That was the last lesson in this track.'}</p>
-      <div class="row">${isDone(l) ? '' : '<button class="btn ghost" data-act="finish-done">○ Mark complete</button>'}
-      <button class="btn ghost ${state.revise[l.key] ? 'on-revise' : ''}" data-act="revise">↻ ${state.revise[l.key] ? 'In revision' : 'Add to revision'}</button></div>`;
+      <div class="row">${isDone(l) ? '' : '<button class="btn ghost" data-act="finish-done">○ Mark complete</button>'}</div>`;
     return d;
   }
 
@@ -514,7 +490,7 @@
     return box;
   }
 
-  // ---------------- patterns: guide, drill, journal, recall ----------------
+  // ---------------- patterns: guide, drill, notes ----------------
   const PATTERNS = window.PATTERNS || [], DRILLS = window.DRILLS || [];
   const patById = Object.fromEntries(PATTERNS.map((p) => [p.id, p]));
   const drillById = Object.fromEntries(DRILLS.map((d) => [d.id, d]));
@@ -523,20 +499,13 @@
   const inlineCode = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
   const lcLink = (title) => `https://leetcode.com/problemset/?search=${encodeURIComponent(title)}`;
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  function jDue(j) {
-    const days = REVIEW_DAYS[Math.min(j.n || 0, REVIEW_DAYS.length - 1)];
-    const dueAt = (j.last || j.added) + days * 864e5;
-    return { due: Date.now() >= dueAt, dueAt };
-  }
-  const journalDue = () => Object.entries(state.journal).filter(([, j]) => jDue(j).due).sort((a, b) => jDue(a[1]).dueAt - jDue(b[1]).dueAt);
-  const daysUntil = (t) => Math.max(1, Math.ceil((t - Date.now()) / 864e5));
   function trackerSolved() {          // the tracker lives on the same origin, so its saved plan is readable here
     try {
       const t = JSON.parse(localStorage.getItem('prep-tracker-v3'));
       if (!t || !Array.isArray(t.modules)) return null;
       return t.modules.filter((m) => m.track === 'dsa' && m.section !== 'Python for DSA')
         .flatMap((m) => (m.items || []).filter((i) => i.status === 'done')
-          .map((i) => ({ key: 't:' + i.id, title: String(i.title).replace(/^★+\s*/, ''), topic: `${m.section} · ${m.name}`, diff: i.difficulty || '', doneAt: i.doneAt || '' })))
+          .map((i) => ({ key: 't:' + i.id, title: String(i.title).replace(/^★+\s*/, ''), topic: `${m.section} · ${m.name}`, diff: i.difficulty || '', doneAt: i.doneAt || '', link: i.link || '' })))
         .sort((a, b) => String(b.doneAt).localeCompare(String(a.doneAt)));
     } catch (e) { return null; }
   }
@@ -545,9 +514,8 @@
   const patTag = (id) => `<span class="tag" style="--c:${colorVar(patById[id] ? patById[id].color : 'blue')}">${esc(patName(id))}</span>`;
 
   function patternsHead(tab) {
-    const due = journalDue().length;
-    const tabs = [['', 'Guide'], ['drill', 'Drill'], ['journal', 'Journal'], ['recall', 'Recall' + (due ? ` <span class="pill">${due}</span>` : '')]];
-    return `<div class="page-h"><h1>Patterns</h1><p>Knowing an algorithm and seeing that a new problem needs it are separate skills. The drill trains the seeing; the journal keeps what each solved problem taught you and quizzes you on it later.</p></div>
+    const tabs = [['', 'Guide'], ['drill', 'Drill'], ['notes', 'Notes']];
+    return `<div class="page-h"><h1>Patterns</h1><p>Knowing an algorithm isn't the same as seeing that a new problem needs it. This page trains the seeing.</p></div>
       <nav class="pt-tabs" aria-label="Patterns sections">${tabs.map(([id, label]) => `<a href="#/patterns${id ? '/' + id : ''}"${tab === id ? ' aria-current="page"' : ''}>${label}</a>`).join('')}</nav>`;
   }
 
@@ -556,29 +524,28 @@
     $('[data-nav=patterns]').classList.add('active');
     const tab = parts[1] || '';
     if (tab === 'drill') renderDrill();
-    else if (tab === 'journal') renderJournal(parts[2] || '');
-    else if (tab === 'recall') renderRecall();
+    else if (tab === 'notes' || tab === 'journal') renderJournal(parts[2] || '');
     else renderPatternGuide();
   }
 
   function renderPatternGuide() {
-    const dueN = journalDue().length;
     const solved = trackerSolved() || [];
     const waiting = solved.filter((s) => !state.journal[s.key]).length;
     let h = patternsHead('');
-    h += `<div class="pt-steps">
-      <a class="pt-step" href="#/python/python-interview/spotting-the-pattern/0"><b>Learn the signals</b><span>The checklist for judging any new problem, in one lesson.</span></a>
-      <a class="pt-step" href="#/patterns/drill"><b>Drill</b><span>${DRILLS.length} problems, no section titles. Name the pattern, then see the giveaway.</span></a>
-      <a class="pt-step" href="#/patterns/journal"><b>Journal</b><span>${waiting ? `${waiting} solved problem${waiting > 1 ? 's' : ''} waiting for a one-line write-up.` : 'One line per solved problem: the pattern, the giveaway, the trick.'}</span></a>
-      <a class="pt-step" href="#/patterns/recall"><b>Recall</b><span>${dueN ? `${dueN} problem${dueN > 1 ? 's' : ''} due today.` : 'Your write-ups come back after 1, 3, 7, 14, 30 and 60 days.'}</span></a>
-    </div>`;
+    h += `<div class="section-h" style="--c:var(--green)"><h2>How to use it</h2><p>Three habits, at three moments.</p></div>
+    <div class="pt-steps">
+      <a class="pt-step" href="#/patterns"><b>When you're stuck on a problem</b><span>Look through the cheat sheet below. Find the signal that matches what the problem says, then open that pattern's template lesson.</span></a>
+      <a class="pt-step" href="#/patterns/notes"><b>After every problem you solve</b><span>Open Notes and write one line: which pattern, what gave it away, the trick.${waiting ? ` <b>${waiting} solved problem${waiting > 1 ? 's' : ''} from your tracker ${waiting > 1 ? 'are' : 'is'} waiting.</b>` : ''}</span></a>
+      <a class="pt-step" href="#/patterns/drill"><b>Once a week, 15 minutes</b><span>Do a Drill round: 10 short problems from every topic mixed together. You only name the pattern; no coding.</span></a>
+    </div>
+    <p class="muted pt-hint">New to this? The lesson <a href="#/python/python-interview/spotting-the-pattern/0">Spotting the pattern</a> explains the method. To revise a problem later, press ↻ next to it in the tracker; your note shows up in the tracker's Revision tab.</p>`;
     h += `<div class="section-h" style="--c:var(--yellow)"><h2>Cheat sheet</h2><p>Reach for each pattern when you see these signals.</p></div><div class="cards">`;
     PATTERNS.forEach((p) => {
       const mine = Object.values(state.journal).filter((j) => j.pattern === p.id).length;
       const s = state.drillStats[p.id];
       h += `<div class="card pt-card" style="--c:${colorVar(p.color)}"><h3>${esc(p.name)}</h3><ul>${p.when.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>
         <div class="meta"><span>${esc(p.cost)}</span>${s && s.t ? `<span>Drill: ${s.r}/${s.t}</span>` : ''}</div>
-        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<a href="#/patterns/journal/${p.id}">${mine} in your journal</a>` : ''}</div></div>`;
+        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<a href="#/patterns/notes/${p.id}">${mine} in your notes</a>` : ''}</div></div>`;
     });
     h += '</div>';
     view.innerHTML = h; window.scrollTo(0, 0);
@@ -643,7 +610,7 @@
     };
   }
 
-  // ---- journal: one line per solved problem ----
+  // ---- notes: one line per solved problem ----
   let openEntry = null; let delArmed = null;
   function entryForm(key, j, isNew) {
     return `<form class="pt-form" data-key="${esc(key)}">
@@ -657,29 +624,28 @@
     const pending = (solved || []).filter((s) => !state.journal[s.key]);
     const entries = Object.entries(state.journal).sort((a, b) => b[1].added - a[1].added);
     const used = [...new Set(entries.map(([, j]) => j.pattern))];
-    let h = patternsHead('journal');
+    let h = patternsHead('notes');
     if (solved === null) h += `<div class="panel pt-note">No tracker progress found in this browser yet. Problems you mark done in the <a href="${TRACKER_URL}" target="_blank" rel="noopener">tracker</a> show up here automatically. You can also add any problem by hand.</div>`;
     if (pending.length) {
       h += `<div class="section-h" style="--c:var(--yellow)"><h2>Waiting for a write-up</h2><p>${pending.length} solved in the tracker</p></div><div class="rev-list">`;
       pending.slice(0, 40).forEach((s) => {
-        h += `<div class="pt-row"><div><a href="${lcLink(s.title)}" target="_blank" rel="noopener">${esc(s.title)}</a><small>${esc(s.topic)}${s.diff ? ' · ' + esc(s.diff) : ''}</small></div>
+        h += `<div class="pt-row"><div><a href="${esc(s.link || lcLink(s.title))}" target="_blank" rel="noopener">${esc(s.title)}</a><small>${esc(s.topic)}${s.diff ? ' · ' + esc(s.diff) : ''}</small></div>
           ${openEntry === s.key ? entryForm(s.key, {}, false) : `<button class="btn small" data-act="write" data-key="${esc(s.key)}">Write it up</button>`}</div>`;
       });
       if (pending.length > 40) h += `<p class="muted">Showing the 40 most recent.</p>`;
       h += '</div>';
     }
-    h += `<div class="section-h" style="--c:var(--blue)"><h2>Your journal</h2><p>${entries.length} problem${entries.length === 1 ? '' : 's'}</p></div>`;
+    h += `<div class="section-h" style="--c:var(--blue)"><h2>Your notes</h2><p>${entries.length} problem${entries.length === 1 ? '' : 's'}</p></div>`;
     h += openEntry === 'new' ? `<div class="panel">${entryForm('new', {}, true)}</div>` : `<button class="btn small ghost" data-act="new">+ Add a problem by hand</button>`;
-    if (used.length > 1) h += `<div class="chips pt-filter">${[['', 'All'], ...used.map((id) => [id, patName(id)])].map(([id, n]) => `<a class="chip ${filter === id ? 'right' : ''}" href="#/patterns/journal${id ? '/' + id : ''}">${esc(n)}</a>`).join('')}</div>`;
+    if (used.length > 1) h += `<div class="chips pt-filter">${[['', 'All'], ...used.map((id) => [id, patName(id)])].map(([id, n]) => `<a class="chip ${filter === id ? 'right' : ''}" href="#/patterns/notes${id ? '/' + id : ''}">${esc(n)}</a>`).join('')}</div>`;
     const shown = entries.filter(([, j]) => !filter || j.pattern === filter);
     if (!entries.length) h += `<div class="empty"><div class="big">✎</div><p>Nothing written up yet. After your next problem, add one line: which pattern, what gave it away, and the trick that made it work.</p></div>`;
     h += '<div class="rev-list">';
     shown.forEach(([k, j]) => {
-      const d = jDue(j);
       h += `<div class="pt-entry">${openEntry === k ? `<b>${esc(j.title)}</b>${entryForm(k, j, false)}` : `
-        <div class="pt-entry-h"><a href="${lcLink(j.title)}" target="_blank" rel="noopener">${esc(j.title)}</a>${patTag(j.pattern)}</div>
+        <div class="pt-entry-h"><a href="${esc(j.link || lcLink(j.title))}" target="_blank" rel="noopener">${esc(j.title)}</a>${patTag(j.pattern)}</div>
         <p>${esc(j.note)}</p>
-        <div class="pt-entry-f"><small>${esc(j.topic || 'Added by hand')} · recalled ${j.n || 0}× · ${d.due ? '<span class="due">due now</span>' : `next recall in ${daysUntil(d.dueAt)} day(s)`}</small>
+        <div class="pt-entry-f"><small>${esc(j.topic || 'Added by hand')}</small>
           <span><button class="btn small ghost" data-act="edit" data-key="${esc(k)}">Edit</button> <button class="btn small ghost" data-act="del" data-key="${esc(k)}">${delArmed === k ? 'Really delete?' : 'Delete'}</button></span></div>`}</div>`;
     });
     h += '</div>';
@@ -692,7 +658,7 @@
       if (act === 'new') { openEntry = 'new'; renderJournal(filter); $('form[data-key=new] input').focus(); }
       if (act === 'cancel') { openEntry = null; renderJournal(filter); }
       if (act === 'del') {
-        if (delArmed === key) { delete state.journal[key]; delArmed = null; save(); updatePill(); } else delArmed = key;
+        if (delArmed === key) { delete state.journal[key]; delArmed = null; save(); } else delArmed = key;
         renderJournal(filter);
       }
     };
@@ -706,65 +672,10 @@
         state.journal['m:' + Date.now().toString(36)] = { title, topic: '', pattern, note, added: Date.now(), last: null, n: 0 };
       } else {
         const old = state.journal[key]; const src = pendingByKey[key] || {};
-        state.journal[key] = old ? { ...old, pattern, note } : { title: src.title, topic: src.topic, pattern, note, added: Date.now(), last: null, n: 0 };
+        state.journal[key] = old ? { ...old, pattern, note } : { title: src.title, topic: src.topic, link: src.link || '', pattern, note, added: Date.now(), last: null, n: 0 };
       }
-      openEntry = null; save(); updatePill(); renderJournal(filter);
+      openEntry = null; save(); renderJournal(filter);
     };
-    window.scrollTo(0, 0);
-  }
-
-  // ---- recall: the write-ups come back on a spaced schedule ----
-  let recallShown = false;
-  function renderRecall() {
-    const due = journalDue();
-    let h = patternsHead('recall');
-    if (!due.length) {
-      const all = Object.values(state.journal);
-      const next = all.length ? Math.min(...all.map((j) => jDue(j).dueAt)) : 0;
-      h += `<div class="empty"><div class="big">✓</div><p>${all.length ? `Nothing due. The next problem comes back in ${daysUntil(next)} day(s).` : 'Your journal is empty. Write up a solved problem and it comes back here the next day.'}</p><a class="btn ghost" href="#/patterns/${all.length ? 'drill' : 'journal'}">${all.length ? 'Do a drill round instead' : 'Open the journal'}</a></div>`;
-      view.innerHTML = h; view.onclick = null; return;
-    }
-    const [, j] = due[0];
-    h += `<div class="panel recall"><div class="drill-top muted"><span>${due.length} due</span><span>Recalled ${j.n || 0}× before</span></div>
-      <h2 class="recall-t">${esc(j.title)}</h2><p class="muted">${esc(j.topic || 'Added by hand')}</p>
-      <p>Before you look: which pattern, and what's the trick? Say it out loud, or better, <a href="${lcLink(j.title)}" target="_blank" rel="noopener">re-solve it from a blank editor</a>.</p>`;
-    if (!recallShown) h += `<button class="btn" data-act="show">Show my note</button>`;
-    else h += `<div class="verdict-box">${patTag(j.pattern)}<p>${esc(j.note)}</p></div>
-      <div class="pt-form-actions"><button class="btn" data-act="got">I remembered it</button><button class="btn ghost" data-act="miss">I'd forgotten</button></div>
-      <p class="muted">Remembered pushes it further out (1, 3, 7, 14, 30, 60 days). Forgotten brings it back tomorrow.</p>`;
-    h += '</div>';
-    view.innerHTML = h;
-    view.onclick = (e) => {
-      const b = e.target.closest('button'); if (!b) return;
-      if (b.dataset.act === 'show') { recallShown = true; renderRecall(); }
-      if (b.dataset.act === 'got' || b.dataset.act === 'miss') {
-        j.n = b.dataset.act === 'got' ? (j.n || 0) + 1 : 0; j.last = Date.now();
-        recallShown = false; save(); updatePill(); renderRecall();
-      }
-    };
-  }
-
-  // ---------------- revise page ----------------
-  function renderRevise() {
-    document.title = 'Revise · Prep Notebook'; delete view.dataset.topic;
-    const keys = Object.keys(state.revise).filter((k) => byKey[k]).sort((a, b) => dueInfo(a).dueAt - dueInfo(b).dueAt);
-    let h = `<div class="page-h"><h1>Revise</h1><p>Lessons you marked for another look. Each time you revise one, the next reminder moves further out: 1, 3, 7, 14, 30, then 60 days.</p></div>`;
-    const pd = journalDue().length;
-    if (pd) h += `<div class="panel pt-note"><b>${pd} solved problem${pd > 1 ? 's' : ''} due for recall.</b> <a href="#/patterns/recall">Recall them now</a></div>`;
-    if (!keys.length) h += `<div class="empty"><div class="big">↻</div><p>Nothing here yet. Press <b>Revise later</b> on any lesson to add it.</p></div>`;
-    else {
-      h += '<div class="rev-list">';
-      keys.forEach((k) => {
-        const l = byKey[k]; const d = dueInfo(k); const r = state.revise[k];
-        const when = d.due ? '<span class="due">Due now</span>' : `Next in ${Math.ceil((d.dueAt - Date.now()) / 864e5)} day(s)`;
-        h += `<div class="rev"><span class="ic">${l.module.icon || '📘'}</span><div><a href="#/${k}/0">${esc(l.title)}</a><small>${esc(l.module.title)} · revised ${r.n || 0}× · ${when}</small></div>
-          <div class="rev-actions"><button class="btn small" data-rev="${esc(k)}">✓ Revised today</button><button class="btn small ghost" data-unrev="${esc(k)}">Remove</button></div></div>`;
-      });
-      h += '</div>';
-    }
-    view.innerHTML = h;
-    view.querySelectorAll('[data-rev]').forEach((b) => b.addEventListener('click', () => { const r = state.revise[b.dataset.rev]; r.n = (r.n || 0) + 1; r.last = Date.now(); save(); route(); }));
-    view.querySelectorAll('[data-unrev]').forEach((b) => b.addEventListener('click', () => { delete state.revise[b.dataset.unrev]; save(); route(); }));
     window.scrollTo(0, 0);
   }
 

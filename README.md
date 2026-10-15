@@ -122,6 +122,19 @@ checked against LeetCode's full problem list. 16 of them need LeetCode Premium a
 rest carry a tag: **Not on LeetCode** (142 problems that live on GfG, Coding Ninjas or TUF) or
 **Concept** (57 theory and algorithm lessons). Problems you add yourself show no tag.
 
+## Your own links and revision
+
+Every problem and topic row has two small buttons next to the remove ×:
+
+- **✎ link**: paste any URL (LeetCode, GfG, a video) and the title opens it. Your link wins over
+  the built-in LeetCode one; clear it to go back. Stored on the item as `link`.
+- **↻ revision**: adds the item to the **Revision** tab (the count shows on the tab). There, DSA
+  problems and interview-prep topics are listed separately, oldest-revised first, with
+  "Mark revised" (counts how many times and when) and "Remove". If you wrote a note for the problem
+  on the Learn site's Patterns → Notes page, it shows on the card. Stored on the item as `rev`.
+
+Both survive plan upgrades, backups and reloads.
+
 ## Learn
 
 `learn/` is a separate lesson site (Python for DSA, then the interview-prep topics) with
