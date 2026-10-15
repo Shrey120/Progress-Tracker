@@ -129,9 +129,10 @@ Every problem and topic row has small buttons next to the remove ×:
 - **↻ revision**: adds the item to the **Revision** tab (the count shows on the tab). DSA problems and
   interview-prep topics are listed separately, oldest-revised first, with "Mark revised" (counts
   how many times and when) and "Remove". Stored on the item as `rev`.
-- **✎ note**: one line in your own words (and, for DSA problems, which pattern it used). It shows
-  under the row and on the problem's Revision card. Stored as `note` and `pattern`. Notes written
-  earlier on the Learn site's Patterns page are moved onto their problems automatically.
+- **✎ note**: opens a dialog to write, read, edit or delete a note (and, for DSA problems, pick the
+  pattern it used). The ✎ turns yellow when a note exists; Revision cards have a "Read note" button.
+  Notes never expand the rows. Stored as `note` and `pattern`. Notes written earlier on the Learn
+  site's Patterns page are moved onto their problems automatically.
 - **🔗 link**: paste any URL (LeetCode, GfG, a video) and the title opens it. Your link wins over
   the built-in LeetCode one; clear it to go back. Stored as `link`.
 

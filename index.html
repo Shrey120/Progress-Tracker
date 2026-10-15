@@ -207,18 +207,24 @@
   .note-btn.on{color:var(--yellow)}
   .link-btn.on{filter:saturate(1.2)}
   .rev-btn.on{color:var(--pink)}
-  .item-note{flex-basis:100%;margin-left:30px;font-size:13.5px;color:var(--text-2);border-left:2px solid var(--yellow);padding:1px 0 1px 10px}
-  .note-pat,.rev-note .note-pat{display:inline-block;font-size:11.5px;font-weight:700;padding:0 8px;margin-right:8px;border-radius:99px;color:var(--yellow);background:var(--yellow-soft)}
-  .note-edit{flex:1 1 100%;margin:4px 0 6px 30px;display:grid;gap:8px}
-  .note-edit>*{max-width:640px}
-  .note-edit select,.note-edit textarea{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:14px}
-  .note-edit select{justify-self:start;max-width:100%}
-  .note-edit textarea{resize:vertical}
-  .note-actions{display:flex;gap:8px;flex-wrap:wrap}
-  .nbtn{font-size:13px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2)}
-  .nbtn:hover{border-color:var(--line-2)}
-  .nbtn.solid{background:var(--blue);border-color:var(--blue);color:#fff}
-  .nbtn.danger{color:var(--red);margin-left:auto}
+  .note-pat{display:inline-block;font-size:12px;font-weight:700;padding:1px 10px;margin:2px 0 10px;border-radius:99px;color:var(--yellow);background:var(--yellow-soft)}
+  .note-modal{max-width:720px}
+  .note-mod{font-size:13px;color:var(--text-3);margin-bottom:2px}
+  .note-modal h3{font-size:24px;letter-spacing:-.02em;margin-bottom:12px}
+  .note-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15.5px;line-height:1.65;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;max-height:55vh;overflow-y:auto;margin-bottom:16px}
+  .note-field{display:grid;gap:6px;font-size:13.5px;font-weight:600;color:var(--text-2);margin-bottom:14px}
+  .modal .note-field select,.modal .note-field textarea{margin-bottom:0;font-weight:400}
+  .modal .note-field textarea{font-family:var(--sans);font-size:15px;min-height:220px;line-height:1.6}
+  .note-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .note-actions .btn{min-width:110px}
+  .note-actions .btn:disabled{opacity:.5;cursor:default;filter:none}
+  .note-hint{font-size:12.5px;color:var(--text-3);margin-left:auto}
+  .nbtn{font-size:13px;font-weight:700;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2)}
+  .nbtn.danger{color:var(--red);border-color:transparent;margin-left:auto}
+  .nbtn.danger:hover{background:var(--red-soft)}
+  .note-chip{margin-left:auto;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid var(--line);color:var(--text-2)}
+  .note-chip.has{color:var(--yellow);background:var(--yellow-soft);border-color:transparent}
+  .note-chip:hover{border-color:var(--yellow)}
   .addrow{display:flex;gap:8px;padding:8px 14px 10px 40px}
   .addrow input{flex:1;background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:7px 11px;font-size:14px}
   .addrow select{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:14px}
@@ -230,7 +236,6 @@
   .rev-today{color:var(--green)}
   .rev-hint{font-size:13.5px;color:var(--text-3)}
   .revgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-  .rev-note{font-size:13.5px;color:var(--text-2);border-left:2px solid var(--yellow);padding:1px 0 1px 10px;margin:2px 0 10px}
 
   /* progress */
   .prog-top{display:grid;grid-template-columns:auto 1fr;gap:30px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:24px 26px;margin-bottom:18px;align-items:center}
@@ -339,7 +344,8 @@
     .top-nav{margin-left:0} .top-nav a{padding:6px 9px;font-size:14px}
     .tabsrow{flex-direction:column;align-items:stretch;gap:0} .tabsrow .btn{display:none}
     .search{min-width:0;flex:1 1 100%;margin-left:0}
-    .item{padding-left:16px} .item-note,.note-edit{margin-left:0} .addrow{padding-left:16px}
+    .item{padding-left:16px} .addrow{padding-left:16px}
+    .note-hint{display:none} .note-actions .btn{flex:1}
     .mod-dates .num{font-size:12px}
   }
   @media (max-width:560px){
@@ -568,27 +574,43 @@ function adoptLearnNotes(mods) {
 const PATTERNS = window.PATTERNS || [];
 const patternName = id => (PATTERNS.find(p => p.id === id) || {}).name || '';
 
-/* a small editor under a problem: which pattern, and one line on the trick */
-function NoteEditor({ item, track, onSave, onCancel }) {
+/* the note for one problem or topic, in its own dialog: read it, edit it, delete it */
+function NoteModal({ item, mod, onSave, onClose }) {
+  const e = React.createElement;
+  const [mode, setMode] = useState(item.note ? 'read' : 'edit');
   const [text, setText] = useState(item.note || '');
   const [pat, setPat] = useState(item.pattern || '');
-  const e = React.createElement;
-  const save = () => onSave(text.trim(), pat);
-  return e("div", { className: "note-edit" },
-    track === 'dsa' && PATTERNS.length > 0 && e("select", { value: pat, onChange: ev => setPat(ev.target.value), "aria-label": "Pattern" },
-      e("option", { value: "" }, "Pattern (optional)"), PATTERNS.map(p => e("option", { key: p.id, value: p.id }, p.name))),
-    e("textarea", { value: text, rows: 2, autoFocus: true, "aria-label": "Note",
-      placeholder: track === 'dsa' ? 'What gave the pattern away, and the trick that made it work' : 'What to remember about this topic',
-      onChange: ev => setText(ev.target.value), onKeyDown: ev => { if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) save(); if (ev.key === 'Escape') onCancel(); } }),
-    e("div", { className: "note-actions" },
-      e("button", { className: "nbtn solid", onClick: save }, "Save note"),
-      e("button", { className: "nbtn", onClick: onCancel }, "Cancel"),
-      item.note && e("button", { className: "nbtn danger", onClick: () => onSave('', '') }, "Delete note")));
-}
-function NoteLine({ item }) {
-  if (!item.note) return null;
-  const e = React.createElement;
-  return e("div", { className: "item-note" }, item.pattern && patternName(item.pattern) && e("span", { className: "note-pat" }, patternName(item.pattern)), item.note);
+  const [armed, setArmed] = useState(false);
+  const isDsa = mod.track === 'dsa';
+  const title = item.title.replace(/^★+\s*/, '');
+  const save = () => { onSave(text.trim(), pat); onClose(); };
+  const cancel = () => { if (item.note) { setText(item.note); setPat(item.pattern || ''); setMode('read'); } else onClose(); };
+  const onKey = ev => {
+    if (ev.key === 'Escape') { ev.preventDefault(); mode === 'edit' ? cancel() : onClose(); }
+    if (mode === 'edit' && ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) { ev.preventDefault(); save(); }
+  };
+  return e("div", { className: "scrim", onMouseDown: ev => { if (ev.target === ev.currentTarget) onClose(); } },
+    e("div", { className: "modal wide note-modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "note-title", onKeyDown: onKey },
+      e("div", { className: "note-mod" }, mod.section, " · ", mod.name),
+      e("h3", { id: "note-title" }, title),
+      mode === 'read' ? e(React.Fragment, null,
+        item.pattern && patternName(item.pattern) && e("span", { className: "note-pat" }, patternName(item.pattern)),
+        e("div", { className: "note-body", tabIndex: 0 }, item.note),
+        e("div", { className: "note-actions" },
+          e("button", { className: "btn solid", autoFocus: true, onClick: () => setMode('edit') }, "Edit note"),
+          e("button", { className: "btn ghost", onClick: onClose }, "Close"),
+          e("button", { className: "nbtn danger", onClick: () => { if (armed) { onSave('', ''); onClose(); } else setArmed(true); } }, armed ? 'Click again to delete' : 'Delete note')))
+      : e(React.Fragment, null,
+        isDsa && PATTERNS.length > 0 && e("label", { className: "note-field" }, "Pattern",
+          e("select", { value: pat, onChange: ev => setPat(ev.target.value) },
+            e("option", { value: "" }, "None picked"), PATTERNS.map(p => e("option", { key: p.id, value: p.id }, p.name)))),
+        e("label", { className: "note-field" }, isDsa ? "The giveaway and the trick, in your own words" : "What to remember",
+          e("textarea", { value: text, rows: 10, autoFocus: true, onChange: ev => setText(ev.target.value),
+            placeholder: isDsa ? "e.g. 'minimum speed such that…' → binary search on the answer.\nFeasibility check: sum(ceil(pile / k)) ≤ h. Edge case: k starts at 1." : "Key points, a definition, an example you want to remember" })),
+        e("div", { className: "note-actions" },
+          e("button", { className: "btn solid", onClick: save, disabled: !text.trim() && !item.note }, "Save note"),
+          e("button", { className: "btn ghost", onClick: cancel }, "Cancel"),
+          e("span", { className: "note-hint" }, "Ctrl + Enter saves")))));
 }
 
 /* built-in LeetCode link for an A2Z problem, if there is one */
@@ -920,7 +942,7 @@ function TopicRow({
   delItem,
   editLink,
   toggleRev,
-  setNote,
+  openNote,
   changeDays,
   askDays,
   forceOpen,
@@ -928,7 +950,6 @@ function TopicRow({
   jump
 }) {
   const [open, setOpen] = useState(false);
-  const [noteFor, setNoteFor] = useState(null);
   const [draft, setDraft] = useState({
     t: '',
     d: null
@@ -1014,8 +1035,8 @@ function TopicRow({
       className: 'icon note-btn' + (i.note ? ' on' : ''),
       title: i.note ? 'Edit your note' : 'Write a note',
       "aria-label": (i.note ? 'Edit note for ' : 'Write a note for ') + i.title,
-      "aria-expanded": noteFor === i.id,
-      onClick: () => setNoteFor(noteFor === i.id ? null : i.id)
+      "aria-haspopup": "dialog",
+      onClick: () => openNote(m.id, i.id)
     }, "\u270E"), /*#__PURE__*/React.createElement("button", {
       className: 'icon link-btn' + (i.link ? ' on' : ''),
       title: i.link ? 'Change your link' : 'Add or change the link',
@@ -1025,12 +1046,7 @@ function TopicRow({
       className: "icon",
       title: "Remove this problem",
       onClick: () => delItem(m.id, i.id)
-    }, "×"), noteFor === i.id ? /*#__PURE__*/React.createElement(NoteEditor, {
-      item: i,
-      track: m.track,
-      onSave: (note, pat) => { setNote(m.id, i.id, note, pat); setNoteFor(null); },
-      onCancel: () => setNoteFor(null)
-    }) : /*#__PURE__*/React.createElement(NoteLine, { item: i }));
+    }, "×"));
   }), /*#__PURE__*/React.createElement("div", {
     className: "addrow"
   }, /*#__PURE__*/React.createElement("input", {
@@ -1170,7 +1186,7 @@ function ModuleView(props) {
       delItem: props.delItem,
       editLink: props.editLink,
       toggleRev: props.toggleRev,
-      setNote: props.setNote,
+      openNote: props.openNote,
       changeDays: props.changeDays,
       askDays: props.askDays
     }))));
@@ -1486,6 +1502,7 @@ function BoardView({
 /* ---------- revision ---------- */
 function RevisionView({
   modules,
+  openNote,
   toggleRev,
   markRevised
 }) {
@@ -1511,8 +1528,8 @@ function RevisionView({
             return e("div", { key: i.id, className: "card" },
               e("div", { className: "card-mod" }, i.mod.section, " · ", i.mod.name),
               lcTitle(i, i.mod.track, 'card-title', 'div'),
-              i.note && e("div", { className: "rev-note" }, i.pattern && patternName(i.pattern) && e("span", { className: "note-pat" }, patternName(i.pattern)), i.note),
-              e("div", { className: "card-sub" }, e("span", null, i.rev.n ? 'Revised ' + i.rev.n + '×, last ' + ago(i.rev.last) : 'Not revised yet, added ' + ago(i.rev.at))),
+              e("div", { className: "card-sub" }, e("span", null, i.rev.n ? 'Revised ' + i.rev.n + '×, last ' + ago(i.rev.last) : 'Not revised yet, added ' + ago(i.rev.at)),
+                e("button", { className: 'note-chip' + (i.note ? ' has' : ''), "aria-haspopup": "dialog", onClick: () => openNote(i.mod.id, i.id) }, i.note ? '✎ Read note' : '✎ Add note')),
               e("div", { className: "card-foot" },
                 e("button", { className: 'pill ' + (today_ ? 'done' : 'progress'), disabled: today_, onClick: () => markRevised(i.mod.id, i.id) }, today_ ? '✓ Revised today' : 'Mark revised'),
                 e("button", { className: "linkish", onClick: () => toggleRev(i.mod.id, i.id) }, "Remove")));
@@ -1798,6 +1815,8 @@ function App() {
   const [askId, setAskId] = useState(null);
   const [showImport, setShowImport] = useState(false);
   const [showBackup, setShowBackup] = useState(false);
+  const [noteAt, setNoteAt] = useState(null);
+  const openNote = useCallback((modId, itemId) => setNoteAt({ modId, itemId }), []);
   useEffect(() => {
     (async () => {
       const s = await store.get();
@@ -2011,11 +2030,12 @@ function App() {
     delItem: delItem,
     editLink: editLink,
     toggleRev: toggleRev,
-    setNote: setNote,
+    openNote: openNote,
     changeDays: changeDays,
     askDays: setAskId
   }), view === 'Revision' && /*#__PURE__*/React.createElement(RevisionView, {
     modules: modules,
+    openNote: openNote,
     toggleRev: toggleRev,
     markRevised: markRevised
   }), view === 'Kanban Flow' && /*#__PURE__*/React.createElement(BoardView, {
@@ -2057,7 +2077,15 @@ function App() {
       changeDays(askId, n);
       setAskId(null);
     }
-  }), showImport && /*#__PURE__*/React.createElement(ImportModal, {
+  }), noteAt && (() => {
+    const m = modules.find(x => x.id === noteAt.modId);
+    const it = m && m.items.find(x => x.id === noteAt.itemId);
+    return it ? /*#__PURE__*/React.createElement(NoteModal, {
+      key: it.id, item: it, mod: m,
+      onSave: (note, pat) => setNote(m.id, it.id, note, pat),
+      onClose: () => setNoteAt(null)
+    }) : null;
+  })(), showImport && /*#__PURE__*/React.createElement(ImportModal, {
     onCancel: () => setShowImport(false),
     onDone: doImport
   }), showBackup && /*#__PURE__*/React.createElement(BackupModal, {
