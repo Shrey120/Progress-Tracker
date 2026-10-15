@@ -138,7 +138,11 @@ Every problem and topic row has small buttons next to the remove ×:
   how many times and when) and "Remove". Stored on the item as `rev`.
 - **✎ note**: opens a dialog to write, read, edit or delete a note (and, for DSA problems, pick the
   pattern it used). The ✎ turns yellow when a note exists; Revision cards have a "Read note" button.
-  Notes never expand the rows. Stored as `note` and `pattern`. Notes written earlier on the Learn
+  Notes never expand the rows. Stored as `note` and `pattern`.
+  Paste an Excalidraw selection (Ctrl+C in Excalidraw, Ctrl+V in the note) and it's stored as
+  Excalidraw data and drawn with Excalidraw's own renderer (`vendor/excalidraw`, loaded only when
+  a drawing is shown); "Copy for Excalidraw" puts it back on the clipboard to edit there. Pasted or
+  picked images are scaled to 1400 px and stored as WebP. Both live in the item's `media`. Notes written earlier on the Learn
   site's Patterns page are moved onto their problems automatically.
 - **🔗 link**: paste any URL (LeetCode, GfG, a video) and the title opens it. Your link wins over
   the built-in LeetCode one; clear it to go back. Stored as `link`.

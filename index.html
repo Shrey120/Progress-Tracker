@@ -213,7 +213,21 @@
   .note-modal{max-width:720px}
   .note-mod{font-size:13px;color:var(--text-3);margin-bottom:2px}
   .note-modal h3{font-size:24px;letter-spacing:-.02em;margin-bottom:12px}
-  .note-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15.5px;line-height:1.65;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;max-height:55vh;overflow-y:auto;margin-bottom:16px}
+  .note-modal{max-height:calc(100vh - 40px);display:flex;flex-direction:column}
+  .note-scroll{overflow-y:auto;min-height:0;flex:1 1 auto;margin:0 -6px 16px;padding:0 6px}
+  .note-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15.5px;line-height:1.65;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+  .media-list{display:grid;gap:12px}
+  .media{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+  .media img{display:block;max-width:100%;height:auto;margin:0 auto}
+  .media .drawing{padding:6px;text-align:center;min-height:60px}
+  .drawing-msg{font-size:13.5px;color:var(--text-3);padding:18px}
+  .media figcaption{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--text-3);background:var(--bg-2)}
+  .media figcaption span{margin-right:auto}
+  .paste-hint{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--text-3);margin:-4px 0 12px}
+  .paste-hint span{flex:1;min-width:200px}
+  .paste-hint .nbtn{cursor:pointer}
+  .paste-msg{font-size:13px;color:var(--green);margin:-6px 0 10px}
+  .storage-full{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:95;max-width:min(680px,calc(100vw - 32px));display:flex;gap:12px;align-items:center;background:var(--bg-2);border:1px solid var(--red);border-radius:12px;padding:12px 14px;font-size:14px;box-shadow:var(--shadow)}
   .note-field{display:grid;gap:6px;font-size:13.5px;font-weight:600;color:var(--text-2);margin-bottom:14px}
   .modal .note-field select,.modal .note-field textarea{margin-bottom:0;font-weight:400}
   .modal .note-field textarea{font-family:var(--sans);font-size:15px;min-height:220px;line-height:1.6}
@@ -223,6 +237,7 @@
   .note-hint{font-size:12.5px;color:var(--text-3);margin-left:auto}
   .nbtn{font-size:13px;font-weight:700;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2)}
   .nbtn.danger{color:var(--red);border-color:transparent;margin-left:auto}
+  .media .nbtn.danger{margin-left:0}
   .nbtn.danger:hover{background:var(--red-soft)}
   .note-chip{margin-left:auto;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid var(--line);color:var(--text-2)}
   .note-chip.has{color:var(--yellow);background:var(--yellow-soft);border-color:transparent}
@@ -416,7 +431,9 @@ const store = {
     }
     try {
       localStorage.setItem(KEY, s);
-    } catch (e) {}
+    } catch (e) {
+      window.dispatchEvent(new CustomEvent('prep-storage-full'));
+    }
   }
 };
 
@@ -582,40 +599,139 @@ const PATTERNS = window.PATTERNS || [];
 const patternName = id => (PATTERNS.find(p => p.id === id) || {}).name || '';
 
 /* the note for one problem or topic, in its own dialog: read it, edit it, delete it */
+/* a note can hold text plus pasted Excalidraw drawings and images */
+const hasNote = i => !!(i && (i.note || (i.media && i.media.length)));
+const isDarkTheme = () => {
+  const t = document.documentElement.dataset.theme;
+  return t ? t === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches;
+};
+let excalidrawLib = null;     // Excalidraw's own renderer, loaded the first time a drawing is shown
+function loadExcalidraw() {
+  if (!excalidrawLib) {
+    window.EXCALIDRAW_ASSET_PATH = new URL('vendor/excalidraw/', location.href).href;
+    excalidrawLib = import(new URL('vendor/excalidraw/index.js', location.href).href).catch(err => { excalidrawLib = null; throw err; });
+  }
+  return excalidrawLib;
+}
+/* Excalidraw's clipboard text (Ctrl+C on a selection) or a saved .excalidraw file */
+function parseExcalidraw(text) {
+  if (!text || text.length < 20 || text.trimStart()[0] !== '{' || text.indexOf('excalidraw') < 0) return null;
+  try {
+    const j = JSON.parse(text);
+    if (!j || (j.type !== 'excalidraw/clipboard' && j.type !== 'excalidraw') || !Array.isArray(j.elements)) return null;
+    const elements = j.elements.filter(x => x && !x.isDeleted);
+    return elements.length ? { kind: 'excalidraw', elements, files: j.files || {} } : null;
+  } catch (err) { return null; }
+}
+/* pasted or picked images are scaled down and compressed so they don't fill the browser's storage */
+function imageToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 1400 / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
+      const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      let q = 0.85, out = c.toDataURL('image/webp', q);
+      while (out.length > 350000 && q > 0.4) { q -= 0.15; out = c.toDataURL('image/webp', q); }
+      resolve(out);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('not an image')); };
+    img.src = url;
+  });
+}
+function DrawingView({ data }) {
+  const e = React.createElement, box = useRef(null);
+  const [state, setState] = useState('loading');
+  useEffect(() => {
+    let live = true;
+    const dark = isDarkTheme();
+    loadExcalidraw()
+      .then(lib => lib.exportToSvg({ elements: data.elements, files: data.files || {}, exportPadding: 16,
+        appState: { exportBackground: true, viewBackgroundColor: '#ffffff', exportWithDarkMode: dark } }))   // Excalidraw inverts the white for dark mode
+      .then(svg => {
+        if (!live || !box.current) return;
+        svg.style.maxWidth = '100%'; svg.style.height = 'auto'; svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Excalidraw drawing');
+        box.current.replaceChildren(svg); setState('ok');
+      })
+      .catch(() => { if (live) setState('error'); });
+    return () => { live = false; };
+  }, [data]);
+  return e("div", { className: "drawing" },
+    state === 'loading' && e("div", { className: "drawing-msg" }, "Drawing it…"),
+    state === 'error' && e("div", { className: "drawing-msg" }, "Couldn't load the drawing viewer. Check your connection and open the note again."),
+    e("div", { ref: box }));
+}
+function MediaList({ media, editing, onRemove }) {
+  const e = React.createElement;
+  const [copied, setCopied] = useState(-1);
+  const copyBack = (m, k) => {
+    const txt = JSON.stringify({ type: 'excalidraw/clipboard', elements: m.elements, files: m.files || {} });
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => { setCopied(k); setTimeout(() => setCopied(-1), 2500); }, () => {});
+  };
+  return e("div", { className: "media-list" }, media.map((m, k) => e("figure", { key: k, className: "media" },
+    m.kind === 'excalidraw' ? e(DrawingView, { data: m }) : e("img", { src: m.src, alt: "Pasted image", loading: "lazy" }),
+    e("figcaption", null,
+      e("span", null, m.kind === 'excalidraw' ? 'Excalidraw drawing' : 'Image'),
+      m.kind === 'excalidraw' && e("button", { className: "nbtn", onClick: () => copyBack(m, k), title: "Copies the drawing so you can paste it back into Excalidraw and edit it" }, copied === k ? 'Copied. Paste it in Excalidraw' : 'Copy for Excalidraw'),
+      editing && e("button", { className: "nbtn danger", onClick: () => onRemove(k) }, "Remove")))));
+}
+/* the note for one problem or topic, in its own dialog: read it, edit it, delete it */
 function NoteModal({ item, mod, onSave, onClose }) {
   const e = React.createElement;
-  const [mode, setMode] = useState(item.note ? 'read' : 'edit');
+  const [mode, setMode] = useState(hasNote(item) ? 'read' : 'edit');
   const [text, setText] = useState(item.note || '');
   const [pat, setPat] = useState(item.pattern || '');
+  const [media, setMedia] = useState(item.media || []);
+  const [msg, setMsg] = useState('');
   const [armed, setArmed] = useState(false);
   const isDsa = mod.track === 'dsa';
   const title = item.title.replace(/^★+\s*/, '');
-  const save = () => { onSave(text.trim(), pat); onClose(); };
-  const cancel = () => { if (item.note) { setText(item.note); setPat(item.pattern || ''); setMode('read'); } else onClose(); };
+  const canSave = !!text.trim() || media.length > 0 || hasNote(item);
+  const save = () => { if (!canSave) return; onSave(text.trim(), pat, media); onClose(); };
+  const cancel = () => { if (hasNote(item)) { setText(item.note || ''); setPat(item.pattern || ''); setMedia(item.media || []); setMsg(''); setMode('read'); } else onClose(); };
+  const add = m => { setMedia(ms => ms.concat([m])); setMsg(m.kind === 'excalidraw' ? 'Drawing added.' : 'Image added.'); };
+  const addFile = f => imageToDataUrl(f).then(src => add({ kind: 'image', src }), () => setMsg("That file isn't an image this browser can read."));
+  const onPaste = ev => {
+    const cd = ev.clipboardData; if (!cd) return;
+    const drawing = parseExcalidraw(cd.getData('text/plain'));
+    if (drawing) { ev.preventDefault(); add(drawing); return; }
+    const it = [...(cd.items || [])].find(x => x.kind === 'file' && x.type.startsWith('image/'));
+    if (it) { ev.preventDefault(); addFile(it.getAsFile()); }
+  };
   const onKey = ev => {
     if (ev.key === 'Escape') { ev.preventDefault(); mode === 'edit' ? cancel() : onClose(); }
     if (mode === 'edit' && ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) { ev.preventDefault(); save(); }
   };
   return e("div", { className: "scrim", onMouseDown: ev => { if (ev.target === ev.currentTarget) onClose(); } },
-    e("div", { className: "modal wide note-modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "note-title", onKeyDown: onKey },
+    e("div", { className: "modal wide note-modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "note-title", onKeyDown: onKey, onPaste: mode === 'edit' ? onPaste : undefined },
       e("div", { className: "note-mod" }, mod.section, " · ", mod.name),
       e("h3", { id: "note-title" }, title),
       mode === 'read' ? e(React.Fragment, null,
         item.pattern && patternName(item.pattern) && e("span", { className: "note-pat" }, patternName(item.pattern)),
-        e("div", { className: "note-body", tabIndex: 0 }, item.note),
+        e("div", { className: "note-scroll", tabIndex: 0 },
+          item.note && e("div", { className: "note-body" }, item.note),
+          item.media && item.media.length > 0 && e(MediaList, { media: item.media })),
         e("div", { className: "note-actions" },
           e("button", { className: "btn solid", autoFocus: true, onClick: () => setMode('edit') }, "Edit note"),
           e("button", { className: "btn ghost", onClick: onClose }, "Close"),
-          e("button", { className: "nbtn danger", onClick: () => { if (armed) { onSave('', ''); onClose(); } else setArmed(true); } }, armed ? 'Click again to delete' : 'Delete note')))
+          e("button", { className: "nbtn danger", onClick: () => { if (armed) { onSave('', '', []); onClose(); } else setArmed(true); } }, armed ? 'Click again to delete' : 'Delete note')))
       : e(React.Fragment, null,
-        isDsa && PATTERNS.length > 0 && e("label", { className: "note-field" }, "Pattern",
-          e("select", { value: pat, onChange: ev => setPat(ev.target.value) },
-            e("option", { value: "" }, "None picked"), PATTERNS.map(p => e("option", { key: p.id, value: p.id }, p.name)))),
-        e("label", { className: "note-field" }, isDsa ? "The giveaway and the trick, in your own words" : "What to remember",
-          e("textarea", { value: text, rows: 10, autoFocus: true, onChange: ev => setText(ev.target.value),
-            placeholder: isDsa ? "e.g. 'minimum speed such that…' → binary search on the answer.\nFeasibility check: sum(ceil(pile / k)) ≤ h. Edge case: k starts at 1." : "Key points, a definition, an example you want to remember" })),
+        e("div", { className: "note-scroll" },
+          isDsa && PATTERNS.length > 0 && e("label", { className: "note-field" }, "Pattern",
+            e("select", { value: pat, onChange: ev => setPat(ev.target.value) },
+              e("option", { value: "" }, "None picked"), PATTERNS.map(p => e("option", { key: p.id, value: p.id }, p.name)))),
+          e("label", { className: "note-field" }, isDsa ? "The giveaway and the trick, in your own words" : "What to remember",
+            e("textarea", { value: text, rows: media.length ? 5 : 9, autoFocus: true, onChange: ev => setText(ev.target.value),
+              placeholder: isDsa ? "e.g. 'minimum speed such that…' → binary search on the answer.\nFeasibility check: sum(ceil(pile / k)) ≤ h. Edge case: k starts at 1." : "Key points, a definition, an example you want to remember" })),
+          e("div", { className: "paste-hint" },
+            e("span", null, "Paste an Excalidraw selection (copy it in Excalidraw with Ctrl+C) or an image here with Ctrl+V."),
+            e("label", { className: "nbtn" }, "Add image", e("input", { type: "file", accept: "image/*", hidden: true, onChange: ev => { const f = ev.target.files && ev.target.files[0]; if (f) addFile(f); ev.target.value = ''; } }))),
+          msg && e("div", { className: "paste-msg", role: "status" }, msg),
+          media.length > 0 && e(MediaList, { media, editing: true, onRemove: k => setMedia(ms => ms.filter((_, n) => n !== k)) })),
         e("div", { className: "note-actions" },
-          e("button", { className: "btn solid", onClick: save, disabled: !text.trim() && !item.note }, "Save note"),
+          e("button", { className: "btn solid", onClick: save, disabled: !canSave }, "Save note"),
           e("button", { className: "btn ghost", onClick: cancel }, "Cancel"),
           e("span", { className: "note-hint" }, "Ctrl + Enter saves")))));
 }
@@ -1061,9 +1177,9 @@ function TopicRow({
       "aria-pressed": !!i.rev,
       onClick: () => toggleRev(m.id, i.id)
     }, /*#__PURE__*/React.createElement(Icon, { name: "revise" })), /*#__PURE__*/React.createElement("button", {
-      className: 'act note-btn' + (i.note ? ' on' : ''),
-      title: i.note ? 'Edit your note' : 'Write a note',
-      "aria-label": (i.note ? 'Edit note for ' : 'Write a note for ') + i.title,
+      className: 'act note-btn' + (hasNote(i) ? ' on' : ''),
+      title: hasNote(i) ? 'Open your note' : 'Write a note',
+      "aria-label": (hasNote(i) ? 'Open note for ' : 'Write a note for ') + i.title,
       "aria-haspopup": "dialog",
       onClick: () => openNote(m.id, i.id)
     }, /*#__PURE__*/React.createElement(Icon, { name: "note" })), /*#__PURE__*/React.createElement("button", {
@@ -1559,7 +1675,7 @@ function RevisionView({
               e("div", { className: "card-mod" }, i.mod.section, " · ", i.mod.name),
               lcTitle(i, i.mod, 'card-title', 'div'),
               e("div", { className: "card-sub" }, e("span", null, i.rev.n ? 'Revised ' + i.rev.n + '×, last ' + ago(i.rev.last) : 'Not revised yet, added ' + ago(i.rev.at)),
-                e("button", { className: 'note-chip' + (i.note ? ' has' : ''), "aria-haspopup": "dialog", onClick: () => openNote(i.mod.id, i.id) }, i.note ? '✎ Read note' : '✎ Add note')),
+                e("button", { className: 'note-chip' + (hasNote(i) ? ' has' : ''), "aria-haspopup": "dialog", onClick: () => openNote(i.mod.id, i.id) }, hasNote(i) ? '✎ Read note' : '✎ Add note')),
               e("div", { className: "card-foot" },
                 e("button", { className: 'pill ' + (today_ ? 'done' : 'progress'), disabled: today_, onClick: () => markRevised(i.mod.id, i.id) }, today_ ? '✓ Revised today' : 'Mark revised'),
                 e("button", { className: "linkish", onClick: () => toggleRev(i.mod.id, i.id) }, "Remove")));
@@ -1846,6 +1962,12 @@ function App() {
   const [showImport, setShowImport] = useState(false);
   const [showBackup, setShowBackup] = useState(false);
   const [noteAt, setNoteAt] = useState(null);
+  const [storageFull, setStorageFull] = useState(false);
+  useEffect(() => {
+    const onFull = () => setStorageFull(true);
+    window.addEventListener('prep-storage-full', onFull);
+    return () => window.removeEventListener('prep-storage-full', onFull);
+  }, []);
   const openNote = useCallback((modId, itemId) => setNoteAt({ modId, itemId }), []);
   useEffect(() => {
     (async () => {
@@ -1915,9 +2037,13 @@ function App() {
     ...m,
     items: m.items.filter(i => i.id !== itemId)
   })), [patch]);
-  const setNote = useCallback((modId, itemId, note, pattern) => patch(modId, m => ({
+  const setNote = useCallback((modId, itemId, note, pattern, media) => patch(modId, m => ({
     ...m,
-    items: m.items.map(i => i.id !== itemId ? i : { ...i, note: note || undefined, pattern: note && pattern ? pattern : undefined })
+    items: m.items.map(i => {
+      if (i.id !== itemId) return i;
+      const md = media && media.length ? media : undefined;
+      return { ...i, note: note || undefined, media: md, pattern: (note || md) && pattern ? pattern : undefined };
+    })
   })), [patch]);
   const toggleRev = useCallback((modId, itemId) => patch(modId, m => ({
     ...m,
@@ -2107,12 +2233,14 @@ function App() {
       changeDays(askId, n);
       setAskId(null);
     }
-  }), noteAt && (() => {
+  }), storageFull && /*#__PURE__*/React.createElement("div", { className: "storage-full", role: "alert" },
+    "Your browser's storage for this site is full, so the last change wasn't saved. Remove some pasted images from notes (Excalidraw drawings take far less space), or download a backup.",
+    /*#__PURE__*/React.createElement("button", { className: "nbtn", onClick: () => setStorageFull(false) }, "Dismiss")), noteAt && (() => {
     const m = modules.find(x => x.id === noteAt.modId);
     const it = m && m.items.find(x => x.id === noteAt.itemId);
     return it ? /*#__PURE__*/React.createElement(NoteModal, {
       key: it.id, item: it, mod: m,
-      onSave: (note, pat) => setNote(m.id, it.id, note, pat),
+      onSave: (note, pat, media) => setNote(m.id, it.id, note, pat, media),
       onClose: () => setNoteAt(null)
     }) : null;
   })(), showImport && /*#__PURE__*/React.createElement(ImportModal, {
