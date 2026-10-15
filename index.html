@@ -9,371 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
 <script>try { const t = localStorage.getItem('prep-notebook.theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
-<style>
-  /* Prep Notebook design (same tokens as learn/styles.css), night theme with a light theme */
-  :root{
-    --bg:#0E1020; --bg-2:#151933; --bg-3:#1D2246; --line:#2A3260; --line-2:#3A4380;
-    --text:#ECEFFA; --text-2:#AEB5D6; --text-3:#737DA8;
-    --blue:#5B95F7; --blue-soft:rgba(91,149,247,.14);
-    --yellow:#FFD43B; --yellow-soft:rgba(255,212,59,.13);
-    --green:#3DDC97; --green-soft:rgba(61,220,151,.13);
-    --pink:#FF6FAE; --pink-soft:rgba(255,111,174,.14);
-    --violet:#B48CFF; --violet-soft:rgba(180,140,255,.14);
-    --red:#FF6B6B; --red-soft:rgba(255,107,107,.12);
-    --shadow:0 10px 30px rgba(0,0,0,.35);
-    --display:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;
-    --sans:"DM Sans",system-ui,sans-serif;
-    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
-    --r:14px;
-    color-scheme:dark;
-  }
-  :root[data-theme="light"]{
-    --bg:#F5F6FB; --bg-2:#FFFFFF; --bg-3:#EEF0F8; --line:#DDE1EF; --line-2:#C6CCE3;
-    --text:#141833; --text-2:#4B5378; --text-3:#7A82A6;
-    --blue:#2E6AD8; --blue-soft:rgba(46,106,216,.10);
-    --yellow:#B88A00; --yellow-soft:rgba(255,196,0,.18);
-    --green:#12925E; --green-soft:rgba(18,146,94,.11);
-    --pink:#D63A82; --pink-soft:rgba(214,58,130,.10);
-    --violet:#7547D6; --violet-soft:rgba(117,71,214,.10);
-    --red:#D23B3B; --red-soft:rgba(210,59,59,.09);
-    --shadow:0 8px 24px rgba(20,24,51,.08);
-    color-scheme:light;
-  }
-  @media (prefers-color-scheme:light){
-    :root:not([data-theme]){
-      --bg:#F5F6FB; --bg-2:#FFFFFF; --bg-3:#EEF0F8; --line:#DDE1EF; --line-2:#C6CCE3;
-      --text:#141833; --text-2:#4B5378; --text-3:#7A82A6;
-      --blue:#2E6AD8; --blue-soft:rgba(46,106,216,.10);
-      --yellow:#B88A00; --yellow-soft:rgba(255,196,0,.18);
-      --green:#12925E; --green-soft:rgba(18,146,94,.11);
-      --pink:#D63A82; --pink-soft:rgba(214,58,130,.10);
-      --violet:#7547D6; --violet-soft:rgba(117,71,214,.10);
-      --red:#D23B3B; --red-soft:rgba(210,59,59,.09);
-      --shadow:0 8px 24px rgba(20,24,51,.08);
-      color-scheme:light;
-    }
-  }
-  /* the tracker's own names for things, mapped onto the shared palette */
-  :root{
-    --dsa:var(--blue); --dsa-soft:var(--blue-soft);
-    --prep:var(--violet); --prep-soft:var(--violet-soft);
-    --done:var(--green); --miss:var(--red);
-    --easy:var(--green); --med:var(--yellow); --hard:var(--red);
-    --plain:var(--text-3); --text-dim:var(--text-2); --text-faint:var(--text-3);
-    --ink:var(--bg); --surface:var(--bg-2); --surface-2:var(--bg-3); --surface-3:var(--bg-3); --line-soft:var(--line);
-  }
-
-  *{box-sizing:border-box}
-  html{scroll-padding-top:80px}
-  html,body{margin:0;padding:0;overflow-x:clip}
-  body{background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
-  .num{font-variant-numeric:tabular-nums}
-  h1,h2,h3,h4{font-family:var(--display);margin:0;font-weight:700;letter-spacing:-.01em}
-  a{color:inherit}
-  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
-  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
-  input,textarea,select{font:inherit;color:var(--text)}
-  code{font-family:var(--mono);font-size:.88em;background:var(--bg-3);padding:1px 5px;border-radius:5px}
-
-  /* top bar: same as the Learn site */
-  .top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:18px;
-       padding:12px clamp(16px,4vw,40px);background:color-mix(in srgb,var(--bg) 86%,transparent);
-       backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-  .logo{font:800 19px var(--display);text-decoration:none;letter-spacing:-.01em;display:flex;gap:8px;align-items:center;white-space:nowrap}
-  .top-nav{display:flex;gap:4px;margin-left:8px}
-  .top-nav a{text-decoration:none;color:var(--text-2);font-weight:500;font-size:15px;padding:6px 12px;border-radius:999px;display:inline-flex;gap:6px;align-items:center}
-  .top-nav a:hover{color:var(--text);background:var(--bg-3)}
-  .top-nav a.active{color:var(--text);background:var(--bg-3)}
-  .top-tools{margin-left:auto;display:flex;gap:6px}
-  .icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg-2);font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
-  .icon-btn:hover{border-color:var(--line-2)}
-
-  .page-top,.wrap{max-width:1180px;margin:0 auto;padding-left:clamp(16px,4vw,40px);padding-right:clamp(16px,4vw,40px)}
-  .page-top{padding-top:30px}
-  .wrap{padding-top:22px;padding-bottom:110px}
-  .page-title{font:800 clamp(30px,5vw,44px)/1.05 var(--display);letter-spacing:-.02em;margin:0 0 18px}
-
-  /* stats panel, in the style of the Learn progress panel */
-  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px}
-  .stats{display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center}
-  .big-num{font:800 46px/1 var(--display);letter-spacing:-.03em}
-  .big-num small{font:500 14.5px var(--sans);color:var(--text-3);display:block;margin-top:7px;letter-spacing:0}
-  .stats-mid{display:grid;gap:12px;min-width:0}
-  .bar-line{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center}
-  .bar-line .pct{font-weight:700;color:var(--blue)}
-  .bar{height:10px;background:var(--bg-3);border-radius:99px;overflow:hidden}
-  .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .45s}
-  .stats-meta{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--text-2);font-size:14px}
-  .stats-meta b{color:var(--text)}
-
-  /* view tabs, like the Patterns tabs */
-  .tabsrow{display:flex;align-items:flex-end;gap:12px;margin-top:22px;border-bottom:1px solid var(--line)}
-  .pt-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0}
-  .tab{padding:10px 15px;color:var(--text-2);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
-  .tab:hover{color:var(--text)}
-  .tab.on{color:var(--text);border-bottom-color:var(--yellow)}
-  .tab-n{font-size:11.5px;font-weight:700;padding:0 7px;line-height:18px;border-radius:99px;background:var(--pink);color:#fff}
-  .tabsrow .btn{margin-bottom:8px;flex:none}
-
-  /* buttons */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;background:var(--blue);color:#fff;font-weight:700;font-size:14.5px;padding:9px 16px;border-radius:10px}
-  .btn:hover{filter:brightness(1.08)}
-  .btn.ghost{background:var(--bg-2);color:var(--text);border-color:var(--line)}
-  .btn.ghost:hover{border-color:var(--line-2);filter:none}
-  .btn.solid{background:var(--blue);color:#fff}
-  .btn.small{padding:5px 11px;font-size:13px;border-radius:8px}
-  .mini{font-size:13px;color:var(--text);border:1px solid var(--line);background:var(--bg-2);padding:5px 11px;border-radius:8px;font-weight:600}
-  .mini:hover{border-color:var(--line-2)}
-  .linkish{color:var(--text-2);text-decoration:underline;text-underline-offset:3px}
-  .linkish:hover{color:var(--text)}
-
-  /* today */
-  .today{background:var(--bg-2);border:1px solid var(--line);border-left:3px solid var(--yellow);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
-  .today-label{font-size:13px;color:var(--text-3);margin-bottom:4px}
-  .today-topics{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-  .today-topic-btn{font:700 18px var(--display);color:var(--text);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-2)}
-  .today-topic-btn:hover{text-decoration-color:var(--yellow)}
-  .today-sep{color:var(--text-3)}
-  .today-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-  .chip{font-size:13px;font-weight:600;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:var(--bg-3);color:var(--text-2)}
-  .chip.dsa{border-color:color-mix(in srgb,var(--blue) 40%,var(--line));color:var(--blue);background:var(--blue-soft)}
-  .chip.prep{border-color:color-mix(in srgb,var(--violet) 40%,var(--line));color:var(--violet);background:var(--violet-soft)}
-  .chip:hover{border-color:var(--yellow)}
-
-  /* module toolbar */
-  .toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-  .fbtn{font-size:14px;font-weight:600;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--bg-2);color:var(--text-2)}
-  .fbtn:hover{color:var(--text)}
-  .fbtn.on{background:var(--bg-3);color:var(--text);border-color:var(--line-2)}
-  .search{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:14px;min-width:240px;margin-left:auto}
-  .search::placeholder{color:var(--text-3)}
-
-  /* section (level 1) */
-  .sec{margin-bottom:14px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg-2);scroll-margin-top:90px}
-  .sec.open{border-color:var(--line-2)}
-  .sec-head{display:flex;align-items:center;gap:14px;padding:16px 20px;width:100%;text-align:left}
-  .sec-head:hover{background:var(--bg-3)}
-  .sec-bar{width:12px;height:12px;border-radius:50%;flex:none}
-  .sec-bar.dsa{background:var(--blue);box-shadow:0 0 0 4px var(--blue-soft)}
-  .sec-bar.prep{background:var(--violet);box-shadow:0 0 0 4px var(--violet-soft)}
-  .sec-name{flex:1;font:700 18px/1.3 var(--display);letter-spacing:-.01em}
-  .sec-meta{display:flex;align-items:center;gap:14px;color:var(--text-3);font-size:13.5px;white-space:nowrap}
-  .sec-track{width:120px;height:8px;border-radius:99px;background:var(--bg-3);overflow:hidden}
-  .sec-body{border-top:1px solid var(--line);padding:10px 12px 12px}
-
-  /* topic (level 2) */
-  .mod{background:var(--bg);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden;scroll-margin-top:90px;transition:box-shadow .3s,border-color .3s}
-  .mod:hover,.mod.open{border-color:var(--line-2)}
-  .mod.flash{border-color:var(--yellow);box-shadow:0 0 0 3px var(--yellow-soft)}
-  .mod-head{display:flex;align-items:center;gap:12px;padding:12px 16px}
-  .ringlet{width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--line-2);display:grid;place-items:center;font-size:10px;color:#fff}
-  .ringlet.part{border-color:var(--blue)}
-  .ringlet.full{background:var(--green);border-color:var(--green)}
-  .mod-name{flex:1;font-size:15px;font-weight:600;text-align:left}
-  .mod-count{color:var(--text-3);font-weight:500;font-size:13px;margin-left:6px}
-  .mod-dates{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:13px;white-space:nowrap}
-  .step{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--text-2);font-size:14px;line-height:1}
-  .step:hover{background:var(--bg-3);color:var(--text)}
-  .caret{color:var(--text-3);transition:transform .2s;font-size:10px}
-  .caret.up{transform:rotate(180deg)}
-  .mod-body{border-top:1px solid var(--line);padding:6px 4px}
-
-  /* problem (level 3) */
-  .item{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 14px 8px 40px;scroll-margin-top:90px;border-radius:9px;transition:box-shadow .3s,background .3s}
-  .item:hover{background:var(--bg-3)}
-  .item.flash{box-shadow:0 0 0 2px var(--yellow) inset;background:var(--bg-3)}
-  .box{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
-  .box.done{background:var(--green);border-color:var(--green)}
-  .box.prog{border-color:var(--blue);background:conic-gradient(var(--blue) 50%,transparent 0)}
-  .item-title{flex:1;min-width:0;font-size:14.5px}
-  .item.is-done .item-title{color:var(--text-3);text-decoration:line-through}
-  .lc{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-3)}
-  .lc:hover{color:var(--blue);border-bottom-color:var(--blue)}
-  .lc-tag{font-size:11px;font-weight:700;margin-left:8px;padding:1px 8px;border-radius:99px;background:var(--bg-3);color:var(--text-3);white-space:nowrap;vertical-align:1px}
-  .lc-tag.prem{color:var(--yellow);background:var(--yellow-soft)}
-  .lc-tag.concept{color:var(--violet);background:var(--violet-soft)}
-  .item-due{font-size:12px;color:var(--text-3);flex:none}
-  .diff{font-size:12px;padding:1px 9px;border-radius:99px;flex:none;font-weight:700}
-  .diff.Easy{background:var(--green-soft);color:var(--green)}
-  .diff.Medium{background:var(--yellow-soft);color:var(--yellow)}
-  .diff.Hard{background:var(--red-soft);color:var(--red)}
-  .icon{font-size:15px;color:var(--text-3);flex:none;width:22px;height:22px;line-height:1;border-radius:6px;display:inline-grid;place-items:center}
-  .icon:hover{color:var(--red);background:var(--bg-2)}
-  .item-actions{display:inline-flex;gap:4px;flex:none}
-  .act{width:28px;height:28px;border-radius:8px;display:inline-grid;place-items:center;flex:none;
-       border:1px solid var(--line);background:var(--bg-2);color:var(--text-3);
-       transition:color .15s,border-color .15s,background .15s}
-  .act:hover{color:var(--text);border-color:var(--line-2);background:var(--bg-3)}
-  .act svg{display:block}
-  .rev-btn.on{color:var(--pink);background:var(--pink-soft);border-color:color-mix(in srgb,var(--pink) 45%,transparent)}
-  .note-btn.on{color:var(--yellow);background:var(--yellow-soft);border-color:color-mix(in srgb,var(--yellow) 45%,transparent)}
-  .link-btn.on{color:var(--blue);background:var(--blue-soft);border-color:color-mix(in srgb,var(--blue) 45%,transparent)}
-  .del-btn:hover{color:var(--red);background:var(--red-soft);border-color:color-mix(in srgb,var(--red) 45%,transparent)}
-  .note-pat{display:inline-block;font-size:12px;font-weight:700;padding:1px 10px;margin:2px 0 10px;border-radius:99px;color:var(--yellow);background:var(--yellow-soft)}
-  .note-modal{max-width:720px}
-  .note-mod{font-size:13px;color:var(--text-3);margin-bottom:2px}
-  .note-modal h3{font-size:24px;letter-spacing:-.02em;margin-bottom:12px}
-  .note-modal{max-height:calc(100vh - 40px);display:flex;flex-direction:column}
-  .note-scroll{overflow-y:auto;min-height:0;flex:1 1 auto;margin:0 -6px 16px;padding:0 6px}
-  .note-body{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15.5px;line-height:1.65;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
-  .media-list{display:grid;gap:12px}
-  .media{margin:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
-  .media img{display:block;max-width:100%;height:auto;margin:0 auto}
-  .media .drawing{padding:6px;text-align:center;min-height:60px}
-  .drawing-msg{font-size:13.5px;color:var(--text-3);padding:18px}
-  .media figcaption{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 10px;border-top:1px solid var(--line);font-size:12.5px;color:var(--text-3);background:var(--bg-2)}
-  .media figcaption span{margin-right:auto}
-  .paste-hint{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--text-3);margin:-4px 0 12px}
-  .paste-hint span{flex:1;min-width:200px}
-  .paste-hint .nbtn{cursor:pointer}
-  .paste-msg{font-size:13px;color:var(--green);margin:-6px 0 10px}
-  .storage-full{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:95;max-width:min(680px,calc(100vw - 32px));display:flex;gap:12px;align-items:center;background:var(--bg-2);border:1px solid var(--red);border-radius:12px;padding:12px 14px;font-size:14px;box-shadow:var(--shadow)}
-  .note-field{display:grid;gap:6px;font-size:13.5px;font-weight:600;color:var(--text-2);margin-bottom:14px}
-  .modal .note-field select,.modal .note-field textarea{margin-bottom:0;font-weight:400}
-  .modal .note-field textarea{font-family:var(--sans);font-size:15px;min-height:220px;line-height:1.6}
-  .note-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-  .note-actions .btn{min-width:110px}
-  .note-actions .btn:disabled{opacity:.5;cursor:default;filter:none}
-  .note-hint{font-size:12.5px;color:var(--text-3);margin-left:auto}
-  .nbtn{font-size:13px;font-weight:700;padding:7px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-2)}
-  .nbtn.danger{color:var(--red);border-color:transparent;margin-left:auto}
-  .media .nbtn.danger{margin-left:0}
-  .nbtn.danger:hover{background:var(--red-soft)}
-  .note-chip{margin-left:auto;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:99px;border:1px solid var(--line);color:var(--text-2)}
-  .note-chip.has{color:var(--yellow);background:var(--yellow-soft);border-color:transparent}
-  .note-chip:hover{border-color:var(--yellow)}
-  .addrow{display:flex;gap:8px;padding:8px 14px 10px 40px}
-  .addrow input{flex:1;background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:7px 11px;font-size:14px}
-  .addrow select{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:14px}
-  .addrow input::placeholder{color:var(--text-3)}
-
-  /* revision */
-  .rev-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:4px 0 16px;color:var(--text-2)}
-  .rev-head b{color:var(--text);font:800 26px var(--display)}
-  .rev-today{color:var(--green)}
-  .rev-hint{font-size:13.5px;color:var(--text-3)}
-  .revgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
-
-  /* progress */
-  .prog-top{display:grid;grid-template-columns:auto 1fr;gap:30px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:24px 26px;margin-bottom:18px;align-items:center}
-  .donut{position:relative;width:190px;height:190px;flex:none}
-  .donut svg{transform:rotate(-90deg)}
-  .donut-mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
-  .donut-mid .n{font:800 38px/1.05 var(--display)}
-  .donut-mid .of{font-size:13px;color:var(--text-3)}
-  .donut-mid .lab{font-size:12px;color:var(--text-3);margin-top:5px}
-  .bars{display:flex;flex-direction:column;gap:15px;min-width:0}
-  .bar-row{display:flex;flex-direction:column;gap:6px}
-  .bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
-  .bar-name{color:var(--text-2);display:flex;align-items:center;gap:8px}
-  .bar-track{height:8px;border-radius:99px;background:var(--bg-3);overflow:hidden}
-  .bar-fill{height:100%;border-radius:99px;transition:width .5s}
-  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
-  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
-  .stat{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
-  .stat .v{font:800 28px/1.1 var(--display);letter-spacing:-.02em}
-  .stat .k{font-size:13px;color:var(--text-3);margin-top:4px}
-  .topic-list{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
-  .topic-head{padding:14px 20px;border-bottom:1px solid var(--line);font:700 17px var(--display);display:flex;align-items:center;gap:11px}
-  .topic-row{display:flex;align-items:center;gap:14px;padding:10px 20px;border-bottom:1px solid var(--line)}
-  .topic-row:last-child{border-bottom:none}
-  .topic-row:hover{background:var(--bg-3)}
-  .topic-name{flex:1;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-2)}
-  .topic-bar{width:150px;height:8px;border-radius:99px;background:var(--bg-3);overflow:hidden;flex:none}
-  .topic-n{width:62px;text-align:right;font-size:13px;color:var(--text-3);flex:none}
-
-  /* kanban + revision columns */
-  .kan{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
-  .col{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
-  .col-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;font:700 16px var(--display);border-bottom:1px solid var(--line)}
-  .col-head .n{border-radius:99px;padding:0 9px;font:700 12px var(--sans);line-height:20px;background:var(--bg-3);color:var(--text-2)}
-  .col-sub{padding:9px 16px 10px;font-size:13px;color:var(--text-3);border-bottom:1px solid var(--line)}
-  .col.backlog .col-head{color:var(--red);box-shadow:inset 0 3px 0 var(--red)}
-  .col.progress .col-head{color:var(--blue);box-shadow:inset 0 3px 0 var(--blue)}
-  .col.done .col-head{color:var(--green);box-shadow:inset 0 3px 0 var(--green)}
-  .col.rdsa .col-head{color:var(--blue);box-shadow:inset 0 3px 0 var(--blue)}
-  .col.rprep .col-head{color:var(--violet);box-shadow:inset 0 3px 0 var(--violet)}
-  .col-body{padding:12px;max-height:68vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
-  .card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
-  .card:hover{border-color:var(--line-2)}
-  .card-mod{font-size:12px;color:var(--text-3)}
-  .card-title{font:700 15.5px/1.35 var(--display);margin:4px 0 8px}
-  .card-sub{font-size:13px;color:var(--text-2);padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;gap:8px}
-  .card-due{font-size:12.5px;color:var(--text-3)}
-  .pill{font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid transparent}
-  .pill.backlog{background:var(--red-soft);color:var(--red);border-color:color-mix(in srgb,var(--red) 35%,transparent)}
-  .pill.progress{background:var(--blue-soft);color:var(--blue);border-color:color-mix(in srgb,var(--blue) 35%,transparent)}
-  .pill.done{background:var(--green-soft);color:var(--green);border-color:color-mix(in srgb,var(--green) 35%,transparent)}
-  .pill:disabled{cursor:default;opacity:.9}
-  .empty{padding:44px 20px;text-align:center;color:var(--text-3);font-size:14px}
-  .more{text-align:center;color:var(--text-3);font-size:13px;padding:8px;width:100%}
-  .more:hover{color:var(--text)}
-
-  /* calendar */
-  .cal-bar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
-  .cal-bar h2{font-size:24px;letter-spacing:-.02em}
-  .legend{margin-left:auto;display:flex;gap:14px;font-size:13px;color:var(--text-2)}
-  .nav{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg-2);display:grid;place-items:center;color:var(--text-2)}
-  .nav:hover{border-color:var(--line-2);color:var(--text)}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg-2)}
-  .dow{padding:10px;font-size:12.5px;font-weight:600;color:var(--text-3);background:var(--bg-2);border-bottom:1px solid var(--line)}
-  .cell{min-height:108px;min-width:0;overflow:hidden;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2)}
-  .cell.blank{background:var(--bg)}
-  .cell.today-cell{background:var(--bg-3)}
-  .cell-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}
-  .daynum{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--text-2)}
-  .daynum.done{background:var(--green);color:#fff}
-  .daynum.miss{background:var(--red);color:#fff}
-  .daynum.now{border:2px solid var(--yellow);color:var(--text)}
-  .dayidx{font-size:11.5px;color:var(--text-3)}
-  .tag{display:block;width:100%;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:6px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .tag.dsa{background:var(--blue-soft);color:var(--blue)}
-  .tag.prep{background:var(--violet-soft);color:var(--violet)}
-  .cnt{font-size:11.5px;color:var(--green);margin-top:2px;font-weight:600}
-
-  /* dialogs */
-  .scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(3px);z-index:90;display:grid;place-items:center;padding:20px;overflow-y:auto}
-  .modal{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:26px;width:100%;max-width:420px;text-align:center}
-  .modal.wide{max-width:680px;text-align:left}
-  .modal h3{font-size:22px;margin-bottom:8px}
-  .modal p{color:var(--text-2);margin:0 0 16px;font-size:14.5px}
-  .modal input[type=number],.modal textarea,.modal select{width:100%;padding:11px 13px;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-size:15px;margin-bottom:14px}
-  .modal textarea{font-family:var(--mono);font-size:13px;min-height:200px;resize:vertical;line-height:1.65}
-  .modal input::placeholder,.modal textarea::placeholder{color:var(--text-3)}
-  .modal-btns{display:flex;gap:11px}
-  .modal-btns .btn{flex:1;padding:11px}
-  .fmt{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text-2);margin-bottom:14px;white-space:pre;overflow-x:auto;line-height:1.7}
-  .row2{display:flex;gap:11px;margin-bottom:14px;flex-wrap:wrap}
-  .row2 label{flex:1;min-width:180px;font-size:13.5px;color:var(--text-2)}
-  .row2 select{margin-bottom:0;margin-top:5px}
-
-  .footer-note{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--text-3);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap}
-
-  @media (max-width:900px){
-    .kan,.revgrid{grid-template-columns:1fr} .cell{min-height:80px}
-    .prog-top{grid-template-columns:1fr;justify-items:center;gap:22px} .bars{width:100%}
-    .sec-track{display:none}
-    .stats{grid-template-columns:1fr;gap:18px}
-  }
-  @media (max-width:620px){
-    .top{gap:8px} .top .logo{font-size:0} .logo span{font-size:22px}
-    .top-nav{margin-left:0} .top-nav a{padding:6px 9px;font-size:14px}
-    .tabsrow{flex-direction:column;align-items:stretch;gap:0} .tabsrow .btn{display:none}
-    .search{min-width:0;flex:1 1 100%;margin-left:0}
-    .item{padding-left:16px} .addrow{padding-left:16px}
-    .item-title{flex-basis:calc(100% - 32px)} .item .diff{margin-left:30px} .item-actions{margin-left:auto}
-    .mod-head{flex-wrap:wrap;row-gap:6px} .mod-name{flex:1 1 0;min-width:0} .caret{order:1} .mod-dates{order:2;flex-basis:100%;padding-left:30px}
-    .sec-head{padding:14px 16px} .sec-name{font-size:16.5px}
-    .note-hint{display:none} .note-actions .btn{flex:1}
-    .mod-dates .num{font-size:12px}
-  }
-  @media (max-width:560px){
-    .cell{min-height:60px;padding:5px} .tag,.cnt{display:none}
-    .topic-bar{width:80px} .item-due{display:none}
-  }
-  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style>
+<link rel="stylesheet" href="tracker.css">
 </head>
 <body>
 <div id="root"></div>
@@ -599,141 +235,12 @@ const PATTERNS = window.PATTERNS || [];
 const patternName = id => (PATTERNS.find(p => p.id === id) || {}).name || '';
 
 /* the note for one problem or topic, in its own dialog: read it, edit it, delete it */
-/* a note can hold text plus pasted Excalidraw drawings and images */
+/* a note can hold text plus pasted Excalidraw drawings and images (edited on note.html) */
 const hasNote = i => !!(i && (i.note || (i.media && i.media.length)));
-const isDarkTheme = () => {
-  const t = document.documentElement.dataset.theme;
-  return t ? t === 'dark' : !matchMedia('(prefers-color-scheme: light)').matches;
-};
-let excalidrawLib = null;     // Excalidraw's own renderer, loaded the first time a drawing is shown
-function loadExcalidraw() {
-  if (!excalidrawLib) {
-    window.EXCALIDRAW_ASSET_PATH = new URL('vendor/excalidraw/', location.href).href;
-    excalidrawLib = import(new URL('vendor/excalidraw/index.js', location.href).href).catch(err => { excalidrawLib = null; throw err; });
-  }
-  return excalidrawLib;
-}
-/* Excalidraw's clipboard text (Ctrl+C on a selection) or a saved .excalidraw file */
-function parseExcalidraw(text) {
-  if (!text || text.length < 20 || text.trimStart()[0] !== '{' || text.indexOf('excalidraw') < 0) return null;
-  try {
-    const j = JSON.parse(text);
-    if (!j || (j.type !== 'excalidraw/clipboard' && j.type !== 'excalidraw') || !Array.isArray(j.elements)) return null;
-    const elements = j.elements.filter(x => x && !x.isDeleted);
-    return elements.length ? { kind: 'excalidraw', elements, files: j.files || {} } : null;
-  } catch (err) { return null; }
-}
-/* pasted or picked images are scaled down and compressed so they don't fill the browser's storage */
-function imageToDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const url = URL.createObjectURL(file), img = new Image();
-    img.onload = () => {
-      const k = Math.min(1, 1400 / Math.max(img.width, img.height));
-      const c = document.createElement('canvas');
-      c.width = Math.max(1, Math.round(img.width * k)); c.height = Math.max(1, Math.round(img.height * k));
-      const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height); ctx.drawImage(img, 0, 0, c.width, c.height);
-      URL.revokeObjectURL(url);
-      let q = 0.85, out = c.toDataURL('image/webp', q);
-      while (out.length > 350000 && q > 0.4) { q -= 0.15; out = c.toDataURL('image/webp', q); }
-      resolve(out);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('not an image')); };
-    img.src = url;
-  });
-}
-function DrawingView({ data }) {
-  const e = React.createElement, box = useRef(null);
-  const [state, setState] = useState('loading');
-  useEffect(() => {
-    let live = true;
-    const dark = isDarkTheme();
-    loadExcalidraw()
-      .then(lib => lib.exportToSvg({ elements: data.elements, files: data.files || {}, exportPadding: 16,
-        appState: { exportBackground: true, viewBackgroundColor: '#ffffff', exportWithDarkMode: dark } }))   // Excalidraw inverts the white for dark mode
-      .then(svg => {
-        if (!live || !box.current) return;
-        svg.style.maxWidth = '100%'; svg.style.height = 'auto'; svg.setAttribute('role', 'img'); svg.setAttribute('aria-label', 'Excalidraw drawing');
-        box.current.replaceChildren(svg); setState('ok');
-      })
-      .catch(() => { if (live) setState('error'); });
-    return () => { live = false; };
-  }, [data]);
-  return e("div", { className: "drawing" },
-    state === 'loading' && e("div", { className: "drawing-msg" }, "Drawing it…"),
-    state === 'error' && e("div", { className: "drawing-msg" }, "Couldn't load the drawing viewer. Check your connection and open the note again."),
-    e("div", { ref: box }));
-}
-function MediaList({ media, editing, onRemove }) {
-  const e = React.createElement;
-  const [copied, setCopied] = useState(-1);
-  const copyBack = (m, k) => {
-    const txt = JSON.stringify({ type: 'excalidraw/clipboard', elements: m.elements, files: m.files || {} });
-    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject()).then(() => { setCopied(k); setTimeout(() => setCopied(-1), 2500); }, () => {});
-  };
-  return e("div", { className: "media-list" }, media.map((m, k) => e("figure", { key: k, className: "media" },
-    m.kind === 'excalidraw' ? e(DrawingView, { data: m }) : e("img", { src: m.src, alt: "Pasted image", loading: "lazy" }),
-    e("figcaption", null,
-      e("span", null, m.kind === 'excalidraw' ? 'Excalidraw drawing' : 'Image'),
-      m.kind === 'excalidraw' && e("button", { className: "nbtn", onClick: () => copyBack(m, k), title: "Copies the drawing so you can paste it back into Excalidraw and edit it" }, copied === k ? 'Copied. Paste it in Excalidraw' : 'Copy for Excalidraw'),
-      editing && e("button", { className: "nbtn danger", onClick: () => onRemove(k) }, "Remove")))));
-}
-/* the note for one problem or topic, in its own dialog: read it, edit it, delete it */
-function NoteModal({ item, mod, onSave, onClose }) {
-  const e = React.createElement;
-  const [mode, setMode] = useState(hasNote(item) ? 'read' : 'edit');
-  const [text, setText] = useState(item.note || '');
-  const [pat, setPat] = useState(item.pattern || '');
-  const [media, setMedia] = useState(item.media || []);
-  const [msg, setMsg] = useState('');
-  const [armed, setArmed] = useState(false);
-  const isDsa = mod.track === 'dsa';
-  const title = item.title.replace(/^★+\s*/, '');
-  const canSave = !!text.trim() || media.length > 0 || hasNote(item);
-  const save = () => { if (!canSave) return; onSave(text.trim(), pat, media); onClose(); };
-  const cancel = () => { if (hasNote(item)) { setText(item.note || ''); setPat(item.pattern || ''); setMedia(item.media || []); setMsg(''); setMode('read'); } else onClose(); };
-  const add = m => { setMedia(ms => ms.concat([m])); setMsg(m.kind === 'excalidraw' ? 'Drawing added.' : 'Image added.'); };
-  const addFile = f => imageToDataUrl(f).then(src => add({ kind: 'image', src }), () => setMsg("That file isn't an image this browser can read."));
-  const onPaste = ev => {
-    const cd = ev.clipboardData; if (!cd) return;
-    const drawing = parseExcalidraw(cd.getData('text/plain'));
-    if (drawing) { ev.preventDefault(); add(drawing); return; }
-    const it = [...(cd.items || [])].find(x => x.kind === 'file' && x.type.startsWith('image/'));
-    if (it) { ev.preventDefault(); addFile(it.getAsFile()); }
-  };
-  const onKey = ev => {
-    if (ev.key === 'Escape') { ev.preventDefault(); mode === 'edit' ? cancel() : onClose(); }
-    if (mode === 'edit' && ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) { ev.preventDefault(); save(); }
-  };
-  return e("div", { className: "scrim", onMouseDown: ev => { if (ev.target === ev.currentTarget) onClose(); } },
-    e("div", { className: "modal wide note-modal", role: "dialog", "aria-modal": "true", "aria-labelledby": "note-title", onKeyDown: onKey, onPaste: mode === 'edit' ? onPaste : undefined },
-      e("div", { className: "note-mod" }, mod.section, " · ", mod.name),
-      e("h3", { id: "note-title" }, title),
-      mode === 'read' ? e(React.Fragment, null,
-        item.pattern && patternName(item.pattern) && e("span", { className: "note-pat" }, patternName(item.pattern)),
-        e("div", { className: "note-scroll", tabIndex: 0 },
-          item.note && e("div", { className: "note-body" }, item.note),
-          item.media && item.media.length > 0 && e(MediaList, { media: item.media })),
-        e("div", { className: "note-actions" },
-          e("button", { className: "btn solid", autoFocus: true, onClick: () => setMode('edit') }, "Edit note"),
-          e("button", { className: "btn ghost", onClick: onClose }, "Close"),
-          e("button", { className: "nbtn danger", onClick: () => { if (armed) { onSave('', '', []); onClose(); } else setArmed(true); } }, armed ? 'Click again to delete' : 'Delete note')))
-      : e(React.Fragment, null,
-        e("div", { className: "note-scroll" },
-          isDsa && PATTERNS.length > 0 && e("label", { className: "note-field" }, "Pattern",
-            e("select", { value: pat, onChange: ev => setPat(ev.target.value) },
-              e("option", { value: "" }, "None picked"), PATTERNS.map(p => e("option", { key: p.id, value: p.id }, p.name)))),
-          e("label", { className: "note-field" }, isDsa ? "The giveaway and the trick, in your own words" : "What to remember",
-            e("textarea", { value: text, rows: media.length ? 5 : 9, autoFocus: true, onChange: ev => setText(ev.target.value),
-              placeholder: isDsa ? "e.g. 'minimum speed such that…' → binary search on the answer.\nFeasibility check: sum(ceil(pile / k)) ≤ h. Edge case: k starts at 1." : "Key points, a definition, an example you want to remember" })),
-          e("div", { className: "paste-hint" },
-            e("span", null, "Paste an Excalidraw selection (copy it in Excalidraw with Ctrl+C) or an image here with Ctrl+V."),
-            e("label", { className: "nbtn" }, "Add image", e("input", { type: "file", accept: "image/*", hidden: true, onChange: ev => { const f = ev.target.files && ev.target.files[0]; if (f) addFile(f); ev.target.value = ''; } }))),
-          msg && e("div", { className: "paste-msg", role: "status" }, msg),
-          media.length > 0 && e(MediaList, { media, editing: true, onRemove: k => setMedia(ms => ms.filter((_, n) => n !== k)) })),
-        e("div", { className: "note-actions" },
-          e("button", { className: "btn solid", onClick: save, disabled: !canSave }, "Save note"),
-          e("button", { className: "btn ghost", onClick: cancel }, "Cancel"),
-          e("span", { className: "note-hint" }, "Ctrl + Enter saves")))));
+/* notes open as their own page (note.html) in a new tab */
+function noteUrl(item, mod) {
+  const b = item.link ? '' : builtinLink(item.title, mod);
+  return 'note.html?id=' + encodeURIComponent(item.id) + (b ? '&href=' + encodeURIComponent(b) : '');
 }
 
 /* small line icons in one style (24×24 grid, 2px strokes) */
@@ -1085,7 +592,6 @@ function TopicRow({
   delItem,
   editLink,
   toggleRev,
-  openNote,
   changeDays,
   askDays,
   forceOpen,
@@ -1176,12 +682,13 @@ function TopicRow({
       "aria-label": (i.rev ? 'Remove from revision: ' : 'Add to revision: ') + i.title,
       "aria-pressed": !!i.rev,
       onClick: () => toggleRev(m.id, i.id)
-    }, /*#__PURE__*/React.createElement(Icon, { name: "revise" })), /*#__PURE__*/React.createElement("button", {
+    }, /*#__PURE__*/React.createElement(Icon, { name: "revise" })), /*#__PURE__*/React.createElement("a", {
       className: 'act note-btn' + (hasNote(i) ? ' on' : ''),
-      title: hasNote(i) ? 'Open your note' : 'Write a note',
-      "aria-label": (hasNote(i) ? 'Open note for ' : 'Write a note for ') + i.title,
-      "aria-haspopup": "dialog",
-      onClick: () => openNote(m.id, i.id)
+      href: noteUrl(i, m),
+      target: "_blank",
+      rel: "noopener",
+      title: (hasNote(i) ? 'Open your note' : 'Write a note') + ' (new tab)',
+      "aria-label": (hasNote(i) ? 'Open note for ' : 'Write a note for ') + i.title + ', opens in a new tab'
     }, /*#__PURE__*/React.createElement(Icon, { name: "note" })), /*#__PURE__*/React.createElement("button", {
       className: 'act link-btn' + (i.link ? ' on' : ''),
       title: i.link ? 'Change your link' : 'Add or change the link',
@@ -1332,7 +839,6 @@ function ModuleView(props) {
       delItem: props.delItem,
       editLink: props.editLink,
       toggleRev: props.toggleRev,
-      openNote: props.openNote,
       changeDays: props.changeDays,
       askDays: props.askDays
     }))));
@@ -1648,7 +1154,6 @@ function BoardView({
 /* ---------- revision ---------- */
 function RevisionView({
   modules,
-  openNote,
   toggleRev,
   markRevised
 }) {
@@ -1675,7 +1180,7 @@ function RevisionView({
               e("div", { className: "card-mod" }, i.mod.section, " · ", i.mod.name),
               lcTitle(i, i.mod, 'card-title', 'div'),
               e("div", { className: "card-sub" }, e("span", null, i.rev.n ? 'Revised ' + i.rev.n + '×, last ' + ago(i.rev.last) : 'Not revised yet, added ' + ago(i.rev.at)),
-                e("button", { className: 'note-chip' + (hasNote(i) ? ' has' : ''), "aria-haspopup": "dialog", onClick: () => openNote(i.mod.id, i.id) }, hasNote(i) ? '✎ Read note' : '✎ Add note')),
+                e("a", { className: 'note-chip' + (hasNote(i) ? ' has' : ''), href: noteUrl(i, i.mod), target: "_blank", rel: "noopener" }, hasNote(i) ? '✎ Read note' : '✎ Add note')),
               e("div", { className: "card-foot" },
                 e("button", { className: 'pill ' + (today_ ? 'done' : 'progress'), disabled: today_, onClick: () => markRevised(i.mod.id, i.id) }, today_ ? '✓ Revised today' : 'Mark revised'),
                 e("button", { className: "linkish", onClick: () => toggleRev(i.mod.id, i.id) }, "Remove")));
@@ -1961,14 +1466,20 @@ function App() {
   const [askId, setAskId] = useState(null);
   const [showImport, setShowImport] = useState(false);
   const [showBackup, setShowBackup] = useState(false);
-  const [noteAt, setNoteAt] = useState(null);
   const [storageFull, setStorageFull] = useState(false);
   useEffect(() => {
     const onFull = () => setStorageFull(true);
     window.addEventListener('prep-storage-full', onFull);
     return () => window.removeEventListener('prep-storage-full', onFull);
   }, []);
-  const openNote = useCallback((modId, itemId) => setNoteAt({ modId, itemId }), []);
+  useEffect(() => {          // a note saved on note.html (another tab) shows up here straight away
+    const onStore = ev => {
+      if (ev.key !== KEY || !ev.newValue) return;
+      try { const d = JSON.parse(ev.newValue); if (d && Array.isArray(d.modules)) setModules(d.modules); } catch (err) {}
+    };
+    window.addEventListener('storage', onStore);
+    return () => window.removeEventListener('storage', onStore);
+  }, []);
   useEffect(() => {
     (async () => {
       const s = await store.get();
@@ -2036,14 +1547,6 @@ function App() {
   const delItem = useCallback((modId, itemId) => patch(modId, m => ({
     ...m,
     items: m.items.filter(i => i.id !== itemId)
-  })), [patch]);
-  const setNote = useCallback((modId, itemId, note, pattern, media) => patch(modId, m => ({
-    ...m,
-    items: m.items.map(i => {
-      if (i.id !== itemId) return i;
-      const md = media && media.length ? media : undefined;
-      return { ...i, note: note || undefined, media: md, pattern: (note || md) && pattern ? pattern : undefined };
-    })
   })), [patch]);
   const toggleRev = useCallback((modId, itemId) => patch(modId, m => ({
     ...m,
@@ -2186,12 +1689,10 @@ function App() {
     delItem: delItem,
     editLink: editLink,
     toggleRev: toggleRev,
-    openNote: openNote,
     changeDays: changeDays,
     askDays: setAskId
   }), view === 'Revision' && /*#__PURE__*/React.createElement(RevisionView, {
     modules: modules,
-    openNote: openNote,
     toggleRev: toggleRev,
     markRevised: markRevised
   }), view === 'Kanban Flow' && /*#__PURE__*/React.createElement(BoardView, {
@@ -2235,15 +1736,7 @@ function App() {
     }
   }), storageFull && /*#__PURE__*/React.createElement("div", { className: "storage-full", role: "alert" },
     "Your browser's storage for this site is full, so the last change wasn't saved. Remove some pasted images from notes (Excalidraw drawings take far less space), or download a backup.",
-    /*#__PURE__*/React.createElement("button", { className: "nbtn", onClick: () => setStorageFull(false) }, "Dismiss")), noteAt && (() => {
-    const m = modules.find(x => x.id === noteAt.modId);
-    const it = m && m.items.find(x => x.id === noteAt.itemId);
-    return it ? /*#__PURE__*/React.createElement(NoteModal, {
-      key: it.id, item: it, mod: m,
-      onSave: (note, pat, media) => setNote(m.id, it.id, note, pat, media),
-      onClose: () => setNoteAt(null)
-    }) : null;
-  })(), showImport && /*#__PURE__*/React.createElement(ImportModal, {
+    /*#__PURE__*/React.createElement("button", { className: "nbtn", onClick: () => setStorageFull(false) }, "Dismiss")), showImport && /*#__PURE__*/React.createElement(ImportModal, {
     onCancel: () => setShowImport(false),
     onDone: doImport
   }), showBackup && /*#__PURE__*/React.createElement(BackupModal, {

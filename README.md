@@ -136,7 +136,7 @@ Every problem and topic row has small buttons next to the remove ×:
 - **↻ revision**: adds the item to the **Revision** tab (the count shows on the tab). DSA problems and
   interview-prep topics are listed separately, oldest-revised first, with "Mark revised" (counts
   how many times and when) and "Remove". Stored on the item as `rev`.
-- **✎ note**: opens a dialog to write, read, edit or delete a note (and, for DSA problems, pick the
+- **✎ note**: opens the note as its own page in a new tab (`note.html?id=<item id>`) to write, read, edit or delete it (and, for DSA problems, pick the
   pattern it used). The ✎ turns yellow when a note exists; Revision cards have a "Read note" button.
   Notes never expand the rows. Stored as `note` and `pattern`.
   Paste an Excalidraw selection (Ctrl+C in Excalidraw, Ctrl+V in the note) and it's stored as
