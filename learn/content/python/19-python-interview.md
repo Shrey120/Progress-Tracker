@@ -192,7 +192,7 @@ Three things build it:
 
 1. **Knowing the signals**: the words, input shapes and constraints that point to each pattern (this lesson).
 2. **Unlabeled, mixed practice**: guessing the pattern from a problem statement alone. The [pattern drill](#/patterns/drill) does exactly this.
-3. **Keeping your own insight**: writing one line per solved problem, in your own words, and re-reading it when you revise. That's [Notes](#/patterns/notes) on the Patterns page.
+3. **Keeping your own insight**: writing one line per solved problem, in your own words, and re-reading it when you revise. Press ✎ next to the problem in the [tracker](../) to write it.
 
 ## Read the constraints first
 
@@ -297,7 +297,7 @@ The routine that turns solved problems into recognition:
 4. Re-solve from a blank editor after a few days. If you can't, you remembered the code, not the idea.
 5. Once a week, do a **mixed** set with no section titles.
 
-The [Patterns page](#/patterns) helps with steps 3 and 5: Notes lists the problems you've solved in the tracker so you can write each one up, and the Drill mixes problems from every topic. For step 4, press ↻ next to a problem in the tracker to put it in your Revision list.
+The tracker handles steps 3 and 4: ✎ on a problem stores your one line, and ↻ puts it in the Revision tab with that note beside it. For step 5, the [Drill](#/patterns/drill) on the Patterns page mixes problems from every topic.
 
 === lesson: dsa-interview-round | How to run a DSA interview round
 In a live coding round, interviewers score more than whether you reach the answer. They score how you think, how you communicate, how clean your code is, and whether you test it. Candidates who solve the problem in silence often score lower than ones who reach a slightly worse solution while explaining every step.

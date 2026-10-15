@@ -3,317 +3,356 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Prep Tracker</title>
+<title>Tracker · Prep Notebook</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐍</text></svg>">
+<script>try { const t = localStorage.getItem('prep-notebook.theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 <style>
+  /* Prep Notebook design (same tokens as learn/styles.css), night theme with a light theme */
   :root{
-    --ink:#0E1218; --surface:#151B24; --surface-2:#1C2430; --surface-3:#232D3B;
-    --line:#2A3644; --line-soft:#212B37;
-    --text:#E7ECF3; --text-dim:#8E9AAC; --text-faint:#5F6B7C;
-    --dsa:#F0883E; --dsa-soft:#3B2716;
-    --prep:#3FB6A8; --prep-soft:#143029;
-    --done:#4BA574; --miss:#C9524E;
-    --easy:#5BBF7F; --med:#E0A040; --hard:#DD6560; --plain:#6B7C93;
-    --radius:10px;
+    --bg:#0E1020; --bg-2:#151933; --bg-3:#1D2246; --line:#2A3260; --line-2:#3A4380;
+    --text:#ECEFFA; --text-2:#AEB5D6; --text-3:#737DA8;
+    --blue:#5B95F7; --blue-soft:rgba(91,149,247,.14);
+    --yellow:#FFD43B; --yellow-soft:rgba(255,212,59,.13);
+    --green:#3DDC97; --green-soft:rgba(61,220,151,.13);
+    --pink:#FF6FAE; --pink-soft:rgba(255,111,174,.14);
+    --violet:#B48CFF; --violet-soft:rgba(180,140,255,.14);
+    --red:#FF6B6B; --red-soft:rgba(255,107,107,.12);
+    --shadow:0 10px 30px rgba(0,0,0,.35);
+    --display:"Bricolage Grotesque","DM Sans",system-ui,sans-serif;
+    --sans:"DM Sans",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+    --r:14px;
+    color-scheme:dark;
   }
+  :root[data-theme="light"]{
+    --bg:#F5F6FB; --bg-2:#FFFFFF; --bg-3:#EEF0F8; --line:#DDE1EF; --line-2:#C6CCE3;
+    --text:#141833; --text-2:#4B5378; --text-3:#7A82A6;
+    --blue:#2E6AD8; --blue-soft:rgba(46,106,216,.10);
+    --yellow:#B88A00; --yellow-soft:rgba(255,196,0,.18);
+    --green:#12925E; --green-soft:rgba(18,146,94,.11);
+    --pink:#D63A82; --pink-soft:rgba(214,58,130,.10);
+    --violet:#7547D6; --violet-soft:rgba(117,71,214,.10);
+    --red:#D23B3B; --red-soft:rgba(210,59,59,.09);
+    --shadow:0 8px 24px rgba(20,24,51,.08);
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:light){
+    :root:not([data-theme]){
+      --bg:#F5F6FB; --bg-2:#FFFFFF; --bg-3:#EEF0F8; --line:#DDE1EF; --line-2:#C6CCE3;
+      --text:#141833; --text-2:#4B5378; --text-3:#7A82A6;
+      --blue:#2E6AD8; --blue-soft:rgba(46,106,216,.10);
+      --yellow:#B88A00; --yellow-soft:rgba(255,196,0,.18);
+      --green:#12925E; --green-soft:rgba(18,146,94,.11);
+      --pink:#D63A82; --pink-soft:rgba(214,58,130,.10);
+      --violet:#7547D6; --violet-soft:rgba(117,71,214,.10);
+      --red:#D23B3B; --red-soft:rgba(210,59,59,.09);
+      --shadow:0 8px 24px rgba(20,24,51,.08);
+      color-scheme:light;
+    }
+  }
+  /* the tracker's own names for things, mapped onto the shared palette */
+  :root{
+    --dsa:var(--blue); --dsa-soft:var(--blue-soft);
+    --prep:var(--violet); --prep-soft:var(--violet-soft);
+    --done:var(--green); --miss:var(--red);
+    --easy:var(--green); --med:var(--yellow); --hard:var(--red);
+    --plain:var(--text-3); --text-dim:var(--text-2); --text-faint:var(--text-3);
+    --ink:var(--bg); --surface:var(--bg-2); --surface-2:var(--bg-3); --surface-3:var(--bg-3); --line-soft:var(--line);
+  }
+
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{background:var(--ink);color:var(--text);font-family:Inter,system-ui,sans-serif;
-       font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
-  .num{font-family:Sora,sans-serif;font-variant-numeric:tabular-nums}
-  h1,h2,h3,h4{font-family:Sora,sans-serif;margin:0;font-weight:600}
-  button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:none;cursor:pointer}
-  button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{
-    outline:2px solid var(--dsa);outline-offset:2px;border-radius:4px}
-  input,textarea,select{font-family:inherit}
-  code{font-family:ui-monospace,Menlo,monospace;font-size:.92em;color:var(--dsa)}
+  html{scroll-padding-top:80px}
+  html,body{margin:0;padding:0;overflow-x:clip}
+  body{background:var(--bg);color:var(--text);font:15px/1.55 var(--sans);-webkit-font-smoothing:antialiased;min-height:100vh}
+  .num{font-variant-numeric:tabular-nums}
+  h1,h2,h3,h4{font-family:var(--display);margin:0;font-weight:700;letter-spacing:-.01em}
+  a{color:inherit}
+  button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+  :focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+  input,textarea,select{font:inherit;color:var(--text)}
+  code{font-family:var(--mono);font-size:.88em;background:var(--bg-3);padding:1px 5px;border-radius:5px}
 
-  .top{position:sticky;top:0;z-index:40;background:rgba(14,18,24,.94);
-       backdrop-filter:blur(12px);border-bottom:1px solid var(--line-soft)}
-  .top-inner{max-width:1240px;margin:0 auto;padding:13px 20px 0;
-             display:flex;align-items:center;gap:18px;flex-wrap:wrap}
-  .daybox .big{font-size:22px;font-weight:700;line-height:1.1}
-  .daybox .sub{font-size:11.5px;color:var(--text-dim);margin-top:1px}
-  .rail{flex:1;min-width:170px;display:flex;align-items:center;gap:12px}
-  .rail-track{position:relative;flex:1;height:9px;border-radius:99px;
-              background:var(--surface-2);overflow:hidden}
-  .rail-fill{position:absolute;inset:0 auto 0 0;border-radius:99px;
-             background:linear-gradient(90deg,var(--dsa),#F5A55F);
-             transition:width .45s cubic-bezier(.2,.8,.2,1)}
-  .ring{width:44px;height:44px;border-radius:50%;flex:none;display:grid;place-items:center;
-        font-size:11.5px;font-weight:600;border:2px solid var(--dsa);color:var(--dsa);background:var(--ink)}
-  .goal{display:flex;align-items:center;gap:10px}
-  .goal-medal{width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;
-              border:2px solid #C9942F;background:#2A2113;font-size:18px}
-  .streak{display:flex;align-items:center;gap:7px;background:var(--surface-2);
-          border:1px solid var(--line);padding:6px 13px;border-radius:99px;font-size:12.5px;
-          color:var(--text-dim)}
+  /* top bar: same as the Learn site */
+  .top{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:18px;
+       padding:12px clamp(16px,4vw,40px);background:color-mix(in srgb,var(--bg) 86%,transparent);
+       backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .logo{font:800 19px var(--display);text-decoration:none;letter-spacing:-.01em;display:flex;gap:8px;align-items:center;white-space:nowrap}
+  .top-nav{display:flex;gap:4px;margin-left:8px}
+  .top-nav a{text-decoration:none;color:var(--text-2);font-weight:500;font-size:15px;padding:6px 12px;border-radius:999px;display:inline-flex;gap:6px;align-items:center}
+  .top-nav a:hover{color:var(--text);background:var(--bg-3)}
+  .top-nav a.active{color:var(--text);background:var(--bg-3)}
+  .top-tools{margin-left:auto;display:flex;gap:6px}
+  .icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--line);background:var(--bg-2);font-size:17px;line-height:1;display:inline-flex;align-items:center;justify-content:center}
+  .icon-btn:hover{border-color:var(--line-2)}
 
-  .tabs{max-width:1240px;margin:0 auto;padding:10px 20px 0;display:flex;gap:4px;align-items:center}
-  .tab{padding:11px 18px;font-size:13.5px;font-weight:500;color:var(--text-dim);
-       border-bottom:2px solid transparent;margin-bottom:-1px}
+  .page-top,.wrap{max-width:1180px;margin:0 auto;padding-left:clamp(16px,4vw,40px);padding-right:clamp(16px,4vw,40px)}
+  .page-top{padding-top:30px}
+  .wrap{padding-top:22px;padding-bottom:110px}
+  .page-title{font:800 clamp(30px,5vw,44px)/1.05 var(--display);letter-spacing:-.02em;margin:0 0 18px}
+
+  /* stats panel, in the style of the Learn progress panel */
+  .panel{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:22px 24px}
+  .stats{display:grid;grid-template-columns:200px 1fr;gap:28px;align-items:center}
+  .big-num{font:800 46px/1 var(--display);letter-spacing:-.03em}
+  .big-num small{font:500 14.5px var(--sans);color:var(--text-3);display:block;margin-top:7px;letter-spacing:0}
+  .stats-mid{display:grid;gap:12px;min-width:0}
+  .bar-line{display:grid;grid-template-columns:52px 1fr;gap:12px;align-items:center}
+  .bar-line .pct{font-weight:700;color:var(--blue)}
+  .bar{height:10px;background:var(--bg-3);border-radius:99px;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--blue),var(--yellow));transition:width .45s}
+  .stats-meta{display:flex;flex-wrap:wrap;gap:8px 22px;color:var(--text-2);font-size:14px}
+  .stats-meta b{color:var(--text)}
+
+  /* view tabs, like the Patterns tabs */
+  .tabsrow{display:flex;align-items:flex-end;gap:12px;margin-top:22px;border-bottom:1px solid var(--line)}
+  .pt-tabs{display:flex;gap:2px;overflow-x:auto;flex:1;min-width:0}
+  .tab{padding:10px 15px;color:var(--text-2);font-weight:600;border-bottom:2px solid transparent;margin-bottom:-1px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
   .tab:hover{color:var(--text)}
-  .tab.on{color:var(--dsa);border-bottom-color:var(--dsa)}
-  .tab-right{margin-left:auto;display:flex;gap:6px;padding-bottom:6px}
-  .mini{font-size:12px;color:var(--text-dim);border:1px solid var(--line);
-        padding:5px 11px;border-radius:7px}
-  .mini:hover{background:var(--surface-2);color:var(--text)}
+  .tab.on{color:var(--text);border-bottom-color:var(--yellow)}
+  .tab-n{font-size:11.5px;font-weight:700;padding:0 7px;line-height:18px;border-radius:99px;background:var(--pink);color:#fff}
+  .tabsrow .btn{margin-bottom:8px;flex:none}
 
-  .wrap{max-width:1240px;margin:0 auto;padding:22px 20px 80px}
+  /* buttons */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;background:var(--blue);color:#fff;font-weight:700;font-size:14.5px;padding:9px 16px;border-radius:10px}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:var(--bg-2);color:var(--text);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--line-2);filter:none}
+  .btn.solid{background:var(--blue);color:#fff}
+  .btn.small{padding:5px 11px;font-size:13px;border-radius:8px}
+  .mini{font-size:13px;color:var(--text);border:1px solid var(--line);background:var(--bg-2);padding:5px 11px;border-radius:8px;font-weight:600}
+  .mini:hover{border-color:var(--line-2)}
+  .linkish{color:var(--text-2);text-decoration:underline;text-underline-offset:3px}
+  .linkish:hover{color:var(--text)}
 
-  .today{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-         padding:14px 16px;margin-bottom:18px}
-  .today-label{font-size:11.5px;color:var(--text-faint);margin-bottom:3px}
+  /* today */
+  .today{background:var(--bg-2);border:1px solid var(--line);border-left:3px solid var(--yellow);border-radius:var(--r);padding:16px 20px;margin-bottom:20px}
+  .today-label{font-size:13px;color:var(--text-3);margin-bottom:4px}
   .today-topics{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
-  .today-topic-btn{font-family:Sora,sans-serif;font-weight:600;font-size:15px;color:var(--text);
-    text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--text-faint)}
-  .today-topic-btn:hover{text-decoration-color:var(--dsa);color:var(--dsa)}
-  .today-sep{color:var(--text-faint)}
-  .today-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-  .chip{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--line);
-        background:var(--surface-2);color:var(--text-dim)}
-  .chip.dsa{border-color:#5A3A1C;color:#E5A268;background:var(--dsa-soft)}
-  .chip.prep{border-color:#1F4C45;color:#63C9BC;background:var(--prep-soft)}
-  .chip:hover{border-color:var(--dsa);color:var(--text)}
+  .today-topic-btn{font:700 18px var(--display);color:var(--text);text-decoration:underline;text-underline-offset:4px;text-decoration-color:var(--line-2)}
+  .today-topic-btn:hover{text-decoration-color:var(--yellow)}
+  .today-sep{color:var(--text-3)}
+  .today-items{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .chip{font-size:13px;font-weight:600;padding:5px 12px;border-radius:99px;border:1px solid var(--line);background:var(--bg-3);color:var(--text-2)}
+  .chip.dsa{border-color:color-mix(in srgb,var(--blue) 40%,var(--line));color:var(--blue);background:var(--blue-soft)}
+  .chip.prep{border-color:color-mix(in srgb,var(--violet) 40%,var(--line));color:var(--violet);background:var(--violet-soft)}
+  .chip:hover{border-color:var(--yellow)}
 
-  .toolbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
-  .fbtn{font-size:12.5px;padding:5px 12px;border-radius:99px;border:1px solid var(--line);
-        color:var(--text-dim)}
-  .fbtn.on{background:var(--surface-3);color:var(--text);border-color:var(--text-faint)}
-  .search{background:var(--surface-2);border:1px solid var(--line);border-radius:7px;
-          padding:6px 11px;color:var(--text);font-size:13px;min-width:200px;margin-left:auto}
-  .search::placeholder{color:var(--text-faint)}
+  /* module toolbar */
+  .toolbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+  .fbtn{font-size:14px;font-weight:600;padding:6px 14px;border-radius:99px;border:1px solid var(--line);background:var(--bg-2);color:var(--text-2)}
+  .fbtn:hover{color:var(--text)}
+  .fbtn.on{background:var(--bg-3);color:var(--text);border-color:var(--line-2)}
+  .search{background:var(--bg-2);border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:14px;min-width:240px;margin-left:auto}
+  .search::placeholder{color:var(--text-3)}
 
   /* section (level 1) */
-  .sec{margin-bottom:14px;border:1px solid var(--line-soft);border-radius:var(--radius);
-       overflow:hidden;background:var(--surface);scroll-margin-top:150px}
-  .sec.open{border-color:var(--line)}
-  .sec-head{display:flex;align-items:center;gap:13px;padding:15px 17px;width:100%;text-align:left}
-  .sec-head:hover{background:var(--surface-2)}
-  .sec-bar{width:4px;align-self:stretch;border-radius:99px;flex:none;min-height:26px}
-  .sec-bar.dsa{background:var(--dsa)} .sec-bar.prep{background:var(--prep)}
-  .sec-name{flex:1;font-family:Sora,sans-serif;font-weight:600;font-size:15.5px}
-  .sec-meta{display:flex;align-items:center;gap:13px;color:var(--text-dim);font-size:12.5px;
-            white-space:nowrap}
-  .sec-track{width:110px;height:6px;border-radius:99px;background:var(--surface-3);overflow:hidden}
-  .sec-body{border-top:1px solid var(--line-soft);padding:8px 10px 10px}
+  .sec{margin-bottom:14px;border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg-2);scroll-margin-top:90px}
+  .sec.open{border-color:var(--line-2)}
+  .sec-head{display:flex;align-items:center;gap:14px;padding:16px 20px;width:100%;text-align:left}
+  .sec-head:hover{background:var(--bg-3)}
+  .sec-bar{width:12px;height:12px;border-radius:50%;flex:none}
+  .sec-bar.dsa{background:var(--blue);box-shadow:0 0 0 4px var(--blue-soft)}
+  .sec-bar.prep{background:var(--violet);box-shadow:0 0 0 4px var(--violet-soft)}
+  .sec-name{flex:1;font:700 18px/1.3 var(--display);letter-spacing:-.01em}
+  .sec-meta{display:flex;align-items:center;gap:14px;color:var(--text-3);font-size:13.5px;white-space:nowrap}
+  .sec-track{width:120px;height:8px;border-radius:99px;background:var(--bg-3);overflow:hidden}
+  .sec-body{border-top:1px solid var(--line);padding:10px 12px 12px}
 
   /* topic (level 2) */
-  .mod{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:8px;
-       margin-bottom:7px;overflow:hidden;scroll-margin-top:150px;
-       transition:box-shadow .3s ease,border-color .3s ease}
-  .mod:hover,.mod.open{border-color:var(--line)}
-  .mod.flash{border-color:var(--dsa);box-shadow:0 0 0 3px rgba(240,136,62,.3)}
-  .mod-head{display:flex;align-items:center;gap:11px;padding:11px 14px}
-  .ringlet{width:16px;height:16px;border-radius:50%;flex:none;border:2px solid var(--line);
-           display:grid;place-items:center;font-size:9px;color:var(--ink)}
-  .ringlet.part{border-color:var(--dsa)}
-  .ringlet.full{background:var(--done);border-color:var(--done)}
-  .mod-name{flex:1;font-size:13.5px;font-weight:500;text-align:left}
-  .mod-count{color:var(--text-faint);font-weight:400;font-size:12.5px;margin-left:6px}
-  .mod-dates{display:flex;align-items:center;gap:8px;color:var(--text-dim);
-             font-size:12px;white-space:nowrap}
-  .step{width:21px;height:21px;border-radius:50%;border:1px solid var(--line);
-        display:grid;place-items:center;color:var(--text-dim);font-size:13px;line-height:1}
-  .step:hover{background:var(--surface-3);color:var(--text)}
-  .caret{color:var(--text-faint);transition:transform .2s;font-size:10px}
+  .mod{background:var(--bg);border:1px solid var(--line);border-radius:12px;margin-bottom:8px;overflow:hidden;scroll-margin-top:90px;transition:box-shadow .3s,border-color .3s}
+  .mod:hover,.mod.open{border-color:var(--line-2)}
+  .mod.flash{border-color:var(--yellow);box-shadow:0 0 0 3px var(--yellow-soft)}
+  .mod-head{display:flex;align-items:center;gap:12px;padding:12px 16px}
+  .ringlet{width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--line-2);display:grid;place-items:center;font-size:10px;color:#fff}
+  .ringlet.part{border-color:var(--blue)}
+  .ringlet.full{background:var(--green);border-color:var(--green)}
+  .mod-name{flex:1;font-size:15px;font-weight:600;text-align:left}
+  .mod-count{color:var(--text-3);font-weight:500;font-size:13px;margin-left:6px}
+  .mod-dates{display:flex;align-items:center;gap:8px;color:var(--text-2);font-size:13px;white-space:nowrap}
+  .step{width:24px;height:24px;border-radius:50%;border:1px solid var(--line);display:grid;place-items:center;color:var(--text-2);font-size:14px;line-height:1}
+  .step:hover{background:var(--bg-3);color:var(--text)}
+  .caret{color:var(--text-3);transition:transform .2s;font-size:10px}
   .caret.up{transform:rotate(180deg)}
-  .mod-body{border-top:1px solid var(--line-soft);padding:4px 0}
+  .mod-body{border-top:1px solid var(--line);padding:6px 4px}
 
   /* problem (level 3) */
-  .item{display:flex;align-items:center;gap:11px;padding:7px 14px 7px 34px;
-        scroll-margin-top:150px;border-radius:6px;
-        transition:box-shadow .3s ease,background .3s ease}
-  .item:hover{background:var(--surface-3)}
-  .item.flash{box-shadow:0 0 0 2px var(--dsa) inset;background:var(--surface-3)}
-  .box{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line);flex:none;
-       display:grid;place-items:center;font-size:10px;color:var(--ink)}
-  .box.done{background:var(--done);border-color:var(--done)}
-  .box.prog{border-color:var(--dsa)}
-  .box.prog::after{content:'';width:6px;height:6px;border-radius:2px;background:var(--dsa)}
-  .item-title{flex:1;font-size:13px}
-  .item.is-done .item-title{color:var(--text-faint);text-decoration:line-through}
-  .lc{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-faint)}
-  .lc:hover{color:var(--dsa);border-bottom-color:var(--dsa)}
-  .lc-tag{font-family:inherit;font-size:10px;font-weight:500;margin-left:8px;padding:1px 6px;border-radius:4px;
-          background:var(--surface-3);color:var(--text-faint);white-space:nowrap;vertical-align:1px}
-  .lc-tag.prem{color:var(--med)}
-  .lc-tag.concept{color:var(--text-dim)}
-  .link-btn,.rev-btn{font-size:13px;opacity:.45;transition:opacity .15s}
-  .item:hover .rev-btn,.rev-btn:focus-visible,.rev-btn.on{opacity:1}
-  .rev-btn.on{color:var(--prep)}
-  .tab-n{margin-left:7px;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--prep-soft);color:var(--prep)}
-  .rev-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:4px 0 14px;color:var(--text-dim)}
-  .rev-head b{color:var(--text);font-size:18px}
-  .rev-today{color:var(--done)}
-  .rev-hint{font-size:12.5px;color:var(--text-faint)}
-  .revgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
-  .col.rdsa .col-head{background:var(--dsa-soft);color:var(--dsa)}
-  .col.rprep .col-head{background:var(--prep-soft);color:var(--prep)}
-  .rev-note{font-size:12.5px;color:var(--text-dim);border-left:2px solid var(--line);padding:2px 0 2px 9px;margin:0 0 8px}
-  .pill:disabled{cursor:default;opacity:.85}
-  @media (max-width:800px){.revgrid{grid-template-columns:1fr}}
-  .item:hover .link-btn,.link-btn:focus-visible,.link-btn.on{opacity:1}
-  .link-btn.on{color:var(--dsa)}
-  .item-due{font-size:10.5px;color:var(--text-faint);flex:none}
-  .diff{font-size:10.5px;padding:2px 8px;border-radius:4px;flex:none;font-weight:500}
-  .diff.Easy{background:#183025;color:var(--easy)}
-  .diff.Medium{background:#33280F;color:var(--med)}
-  .diff.Hard{background:#331A1A;color:var(--hard)}
-  .icon{font-size:15px;color:var(--text-faint);flex:none;width:20px;line-height:1}
-  .icon:hover{color:var(--miss)}
-  .addrow{display:flex;gap:8px;padding:8px 14px 11px 34px}
-  .addrow input{flex:1;background:var(--surface-3);border:1px solid var(--line);
-                border-radius:6px;padding:6px 10px;color:var(--text);font-size:13px}
-  .addrow select{background:var(--surface-3);border:1px solid var(--line);border-radius:6px;
-                 padding:6px 8px;color:var(--text);font-size:13px}
+  .item{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:8px 14px 8px 40px;scroll-margin-top:90px;border-radius:9px;transition:box-shadow .3s,background .3s}
+  .item:hover{background:var(--bg-3)}
+  .item.flash{box-shadow:0 0 0 2px var(--yellow) inset;background:var(--bg-3)}
+  .box{width:18px;height:18px;border-radius:50%;border:2px solid var(--line-2);flex:none;display:grid;place-items:center;font-size:11px;color:#fff}
+  .box.done{background:var(--green);border-color:var(--green)}
+  .box.prog{border-color:var(--blue);background:conic-gradient(var(--blue) 50%,transparent 0)}
+  .item-title{flex:1;min-width:0;font-size:14.5px}
+  .item.is-done .item-title{color:var(--text-3);text-decoration:line-through}
+  .lc{color:inherit;text-decoration:none;border-bottom:1px dotted var(--text-3)}
+  .lc:hover{color:var(--blue);border-bottom-color:var(--blue)}
+  .lc-tag{font-size:11px;font-weight:700;margin-left:8px;padding:1px 8px;border-radius:99px;background:var(--bg-3);color:var(--text-3);white-space:nowrap;vertical-align:1px}
+  .lc-tag.prem{color:var(--yellow);background:var(--yellow-soft)}
+  .lc-tag.concept{color:var(--violet);background:var(--violet-soft)}
+  .item-due{font-size:12px;color:var(--text-3);flex:none}
+  .diff{font-size:12px;padding:1px 9px;border-radius:99px;flex:none;font-weight:700}
+  .diff.Easy{background:var(--green-soft);color:var(--green)}
+  .diff.Medium{background:var(--yellow-soft);color:var(--yellow)}
+  .diff.Hard{background:var(--red-soft);color:var(--red)}
+  .icon{font-size:15px;color:var(--text-3);flex:none;width:22px;height:22px;line-height:1;border-radius:6px;display:inline-grid;place-items:center}
+  .icon:hover{color:var(--red);background:var(--bg-2)}
+  .note-btn,.link-btn,.rev-btn{font-size:14px;opacity:.5;transition:opacity .15s}
+  .item:hover .note-btn,.item:hover .link-btn,.item:hover .rev-btn,
+  .note-btn:focus-visible,.link-btn:focus-visible,.rev-btn:focus-visible,
+  .note-btn.on,.link-btn.on,.rev-btn.on{opacity:1}
+  .note-btn:hover,.link-btn:hover,.rev-btn:hover{color:var(--text)}
+  .note-btn.on{color:var(--yellow)}
+  .link-btn.on{filter:saturate(1.2)}
+  .rev-btn.on{color:var(--pink)}
+  .item-note{flex-basis:100%;margin-left:30px;font-size:13.5px;color:var(--text-2);border-left:2px solid var(--yellow);padding:1px 0 1px 10px}
+  .note-pat,.rev-note .note-pat{display:inline-block;font-size:11.5px;font-weight:700;padding:0 8px;margin-right:8px;border-radius:99px;color:var(--yellow);background:var(--yellow-soft)}
+  .note-edit{flex:1 1 100%;margin:4px 0 6px 30px;display:grid;gap:8px}
+  .note-edit>*{max-width:640px}
+  .note-edit select,.note-edit textarea{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:14px}
+  .note-edit select{justify-self:start;max-width:100%}
+  .note-edit textarea{resize:vertical}
+  .note-actions{display:flex;gap:8px;flex-wrap:wrap}
+  .nbtn{font-size:13px;font-weight:700;padding:5px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg-2)}
+  .nbtn:hover{border-color:var(--line-2)}
+  .nbtn.solid{background:var(--blue);border-color:var(--blue);color:#fff}
+  .nbtn.danger{color:var(--red);margin-left:auto}
+  .addrow{display:flex;gap:8px;padding:8px 14px 10px 40px}
+  .addrow input{flex:1;background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:7px 11px;font-size:14px}
+  .addrow select{background:var(--bg-2);border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:14px}
+  .addrow input::placeholder{color:var(--text-3)}
+
+  /* revision */
+  .rev-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:4px 0 16px;color:var(--text-2)}
+  .rev-head b{color:var(--text);font:800 26px var(--display)}
+  .rev-today{color:var(--green)}
+  .rev-hint{font-size:13.5px;color:var(--text-3)}
+  .revgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+  .rev-note{font-size:13.5px;color:var(--text-2);border-left:2px solid var(--yellow);padding:1px 0 1px 10px;margin:2px 0 10px}
 
   /* progress */
-  .prog-top{display:grid;grid-template-columns:auto 1fr;gap:28px;
-            background:var(--surface);border:1px solid var(--line);
-            border-radius:var(--radius);padding:24px 26px;margin-bottom:18px;align-items:center}
+  .prog-top{display:grid;grid-template-columns:auto 1fr;gap:30px;background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:24px 26px;margin-bottom:18px;align-items:center}
   .donut{position:relative;width:190px;height:190px;flex:none}
   .donut svg{transform:rotate(-90deg)}
   .donut-mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
-  .donut-mid .n{font-family:Sora,sans-serif;font-size:34px;font-weight:700;line-height:1.05}
-  .donut-mid .of{font-size:12.5px;color:var(--text-faint)}
-  .donut-mid .lab{font-size:11px;color:var(--text-faint);margin-top:5px}
+  .donut-mid .n{font:800 38px/1.05 var(--display)}
+  .donut-mid .of{font-size:13px;color:var(--text-3)}
+  .donut-mid .lab{font-size:12px;color:var(--text-3);margin-top:5px}
   .bars{display:flex;flex-direction:column;gap:15px;min-width:0}
   .bar-row{display:flex;flex-direction:column;gap:6px}
-  .bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px}
-  .bar-name{color:var(--text-dim);display:flex;align-items:center;gap:7px}
-  .bar-track{height:7px;border-radius:99px;background:var(--surface-3);overflow:hidden}
-  .bar-fill{height:100%;border-radius:99px;transition:width .5s cubic-bezier(.2,.8,.2,1)}
-  .dot{width:9px;height:9px;border-radius:50%;display:inline-block}
-
-  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-             gap:11px;margin-bottom:18px}
-  .stat{background:var(--surface);border:1px solid var(--line-soft);
-        border-radius:var(--radius);padding:15px 17px}
-  .stat .v{font-family:Sora,sans-serif;font-size:23px;font-weight:700;line-height:1.15}
-  .stat .k{font-size:12px;color:var(--text-faint);margin-top:3px}
-
-  .topic-list{background:var(--surface);border:1px solid var(--line-soft);
-              border-radius:var(--radius);overflow:hidden;margin-bottom:14px}
-  .topic-head{padding:13px 18px;border-bottom:1px solid var(--line-soft);
-              font-family:Sora,sans-serif;font-weight:600;font-size:14px;
-              display:flex;align-items:center;gap:11px}
-  .topic-row{display:flex;align-items:center;gap:14px;padding:10px 18px;
-             border-bottom:1px solid var(--line-soft)}
+  .bar-top{display:flex;justify-content:space-between;align-items:baseline;font-size:14px}
+  .bar-name{color:var(--text-2);display:flex;align-items:center;gap:8px}
+  .bar-track{height:8px;border-radius:99px;background:var(--bg-3);overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;transition:width .5s}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+  .stat{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+  .stat .v{font:800 28px/1.1 var(--display);letter-spacing:-.02em}
+  .stat .k{font-size:13px;color:var(--text-3);margin-top:4px}
+  .topic-list{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-bottom:14px}
+  .topic-head{padding:14px 20px;border-bottom:1px solid var(--line);font:700 17px var(--display);display:flex;align-items:center;gap:11px}
+  .topic-row{display:flex;align-items:center;gap:14px;padding:10px 20px;border-bottom:1px solid var(--line)}
   .topic-row:last-child{border-bottom:none}
-  .topic-row:hover{background:var(--surface-2)}
-  .topic-name{flex:1;font-size:13px;min-width:0;overflow:hidden;text-overflow:ellipsis;
-              white-space:nowrap;color:var(--text-dim)}
-  .topic-bar{width:150px;height:6px;border-radius:99px;background:var(--surface-3);
-             overflow:hidden;flex:none}
-  .topic-n{width:58px;text-align:right;font-size:12.5px;color:var(--text-dim);flex:none}
+  .topic-row:hover{background:var(--bg-3)}
+  .topic-name{flex:1;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-2)}
+  .topic-bar{width:150px;height:8px;border-radius:99px;background:var(--bg-3);overflow:hidden;flex:none}
+  .topic-n{width:62px;text-align:right;font-size:13px;color:var(--text-3);flex:none}
 
-  .kan{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
-  .col{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--radius)}
-  .col-head{display:flex;align-items:center;justify-content:space-between;padding:12px 15px;
-            font-family:Sora,sans-serif;font-weight:600;font-size:13.5px;border-radius:9px 9px 0 0}
-  .col-head .n{background:rgba(0,0,0,.28);border-radius:99px;padding:1px 9px;
-               font-size:12px;font-weight:500}
-  .col-sub{padding:10px 15px 11px;font-size:11.5px;color:var(--text-faint);
-           border-bottom:1px solid var(--line-soft)}
-  .col.backlog .col-head{background:#3A2A1C;color:#E0B183}
-  .col.progress .col-head{background:#1B3A5C;color:#95C6F0}
-  .col.done .col-head{background:#1D3F2E;color:#84D2A6}
-  .col-body{padding:11px;max-height:68vh;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
-  .card{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:9px;padding:12px 13px}
-  .card:hover{border-color:var(--line)}
-  .card-mod{font-size:11px;color:var(--text-faint)}
-  .card-title{font-family:Sora,sans-serif;font-weight:600;font-size:13.5px;margin:3px 0 6px}
-  .card-sub{font-size:12px;color:var(--text-dim);padding-bottom:9px;
-            border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:8px}
-  .card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:9px;gap:8px}
-  .card-due{font-size:11.5px;color:var(--text-faint)}
-  .pill{font-size:11.5px;font-weight:500;padding:3px 11px;border-radius:99px;border:1px solid transparent}
-  .pill.backlog{background:#3A2A1C;color:#E0B183;border-color:#523B26}
-  .pill.progress{background:#1B3A5C;color:#95C6F0;border-color:#2C5580}
-  .pill.done{background:#1D3F2E;color:#84D2A6;border-color:#2E6045}
-  .empty{padding:44px 20px;text-align:center;color:var(--text-faint);font-size:13px}
-  .more{text-align:center;color:var(--text-faint);font-size:12px;padding:8px;width:100%}
+  /* kanban + revision columns */
+  .kan{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+  .col{background:var(--bg-2);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+  .col-head{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;font:700 16px var(--display);border-bottom:1px solid var(--line)}
+  .col-head .n{border-radius:99px;padding:0 9px;font:700 12px var(--sans);line-height:20px;background:var(--bg-3);color:var(--text-2)}
+  .col-sub{padding:9px 16px 10px;font-size:13px;color:var(--text-3);border-bottom:1px solid var(--line)}
+  .col.backlog .col-head{color:var(--red);box-shadow:inset 0 3px 0 var(--red)}
+  .col.progress .col-head{color:var(--blue);box-shadow:inset 0 3px 0 var(--blue)}
+  .col.done .col-head{color:var(--green);box-shadow:inset 0 3px 0 var(--green)}
+  .col.rdsa .col-head{color:var(--blue);box-shadow:inset 0 3px 0 var(--blue)}
+  .col.rprep .col-head{color:var(--violet);box-shadow:inset 0 3px 0 var(--violet)}
+  .col-body{padding:12px;max-height:68vh;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .card:hover{border-color:var(--line-2)}
+  .card-mod{font-size:12px;color:var(--text-3)}
+  .card-title{font:700 15.5px/1.35 var(--display);margin:4px 0 8px}
+  .card-sub{font-size:13px;color:var(--text-2);padding-bottom:10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .card-foot{display:flex;align-items:center;justify-content:space-between;padding-top:10px;gap:8px}
+  .card-due{font-size:12.5px;color:var(--text-3)}
+  .pill{font-size:12.5px;font-weight:700;padding:4px 12px;border-radius:99px;border:1px solid transparent}
+  .pill.backlog{background:var(--red-soft);color:var(--red);border-color:color-mix(in srgb,var(--red) 35%,transparent)}
+  .pill.progress{background:var(--blue-soft);color:var(--blue);border-color:color-mix(in srgb,var(--blue) 35%,transparent)}
+  .pill.done{background:var(--green-soft);color:var(--green);border-color:color-mix(in srgb,var(--green) 35%,transparent)}
+  .pill:disabled{cursor:default;opacity:.9}
+  .empty{padding:44px 20px;text-align:center;color:var(--text-3);font-size:14px}
+  .more{text-align:center;color:var(--text-3);font-size:13px;padding:8px;width:100%}
   .more:hover{color:var(--text)}
 
+  /* calendar */
   .cal-bar{display:flex;align-items:center;gap:14px;margin-bottom:16px;flex-wrap:wrap}
-  .cal-bar h2{font-size:17px}
-  .legend{margin-left:auto;display:flex;gap:14px;font-size:12px;color:var(--text-dim)}
-  .nav{width:29px;height:29px;border-radius:7px;border:1px solid var(--line);
-       display:grid;place-items:center;color:var(--text-dim)}
-  .nav:hover{background:var(--surface-2);color:var(--text)}
-  .grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line-soft);
-        border-radius:var(--radius);overflow:hidden}
-  .dow{padding:9px 10px;font-size:11.5px;color:var(--text-faint);background:var(--surface);
-       border-bottom:1px solid var(--line-soft)}
-  .cell{min-height:104px;min-width:0;overflow:hidden;padding:8px;
-        border-right:1px solid var(--line-soft);
-        border-bottom:1px solid var(--line-soft);background:var(--surface)}
-  .cell.blank{background:var(--ink)}
-  .cell.today-cell{background:var(--surface-2)}
+  .cal-bar h2{font-size:24px;letter-spacing:-.02em}
+  .legend{margin-left:auto;display:flex;gap:14px;font-size:13px;color:var(--text-2)}
+  .nav{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--bg-2);display:grid;place-items:center;color:var(--text-2)}
+  .nav:hover{border-color:var(--line-2);color:var(--text)}
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--bg-2)}
+  .dow{padding:10px;font-size:12.5px;font-weight:600;color:var(--text-3);background:var(--bg-2);border-bottom:1px solid var(--line)}
+  .cell{min-height:108px;min-width:0;overflow:hidden;padding:8px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg-2)}
+  .cell.blank{background:var(--bg)}
+  .cell.today-cell{background:var(--bg-3)}
   .cell-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:7px}
-  .daynum{width:25px;height:25px;border-radius:50%;display:grid;place-items:center;
-          font-size:12px;font-weight:600;font-family:Sora,sans-serif;color:var(--text-dim)}
-  .daynum.done{background:var(--done);color:#0B1F14}
-  .daynum.miss{background:var(--miss);color:#22090A}
-  .daynum.now{border:1.5px solid var(--dsa);color:var(--dsa)}
-  .dayidx{font-size:10.5px;color:var(--text-faint)}
-  .tag{display:block;width:100%;max-width:100%;box-sizing:border-box;
-       font-size:10.5px;padding:2.5px 7px;border-radius:4px;margin-bottom:3px;
-       white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .tag.dsa{background:var(--dsa-soft);color:#E5A268}
-  .tag.prep{background:var(--prep-soft);color:#63C9BC}
-  .cnt{font-size:10.5px;color:var(--done);margin-top:2px}
+  .daynum{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--text-2)}
+  .daynum.done{background:var(--green);color:#fff}
+  .daynum.miss{background:var(--red);color:#fff}
+  .daynum.now{border:2px solid var(--yellow);color:var(--text)}
+  .dayidx{font-size:11.5px;color:var(--text-3)}
+  .tag{display:block;width:100%;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:6px;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tag.dsa{background:var(--blue-soft);color:var(--blue)}
+  .tag.prep{background:var(--violet-soft);color:var(--violet)}
+  .cnt{font-size:11.5px;color:var(--green);margin-top:2px;font-weight:600}
 
-  .scrim{position:fixed;inset:0;background:rgba(6,9,13,.74);z-index:90;
-         display:grid;place-items:center;padding:20px;overflow-y:auto}
-  .modal{background:var(--surface-2);border:1px solid var(--line);border-radius:14px;
-         padding:26px;width:100%;max-width:400px;text-align:center}
+  /* dialogs */
+  .scrim{position:fixed;inset:0;background:color-mix(in srgb,var(--bg) 70%,transparent);backdrop-filter:blur(3px);z-index:90;display:grid;place-items:center;padding:20px;overflow-y:auto}
+  .modal{background:var(--bg-2);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:26px;width:100%;max-width:420px;text-align:center}
   .modal.wide{max-width:680px;text-align:left}
-  .modal h3{font-size:19px;margin-bottom:7px}
-  .modal p{color:var(--text-dim);margin:0 0 16px;font-size:13.5px}
-  .modal input[type=number],.modal textarea,.modal select{
-    width:100%;padding:11px 13px;border-radius:8px;background:#141C27;
-    border:1px solid #33465C;color:var(--text);font-size:14px;margin-bottom:14px}
-  .modal textarea{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;
-                  min-height:200px;resize:vertical;line-height:1.65}
-  .modal input::placeholder,.modal textarea::placeholder{color:var(--text-faint)}
+  .modal h3{font-size:22px;margin-bottom:8px}
+  .modal p{color:var(--text-2);margin:0 0 16px;font-size:14.5px}
+  .modal input[type=number],.modal textarea,.modal select{width:100%;padding:11px 13px;border-radius:10px;background:var(--bg);border:1px solid var(--line);font-size:15px;margin-bottom:14px}
+  .modal textarea{font-family:var(--mono);font-size:13px;min-height:200px;resize:vertical;line-height:1.65}
+  .modal input::placeholder,.modal textarea::placeholder{color:var(--text-3)}
   .modal-btns{display:flex;gap:11px}
-  .btn{flex:1;padding:11px;border-radius:8px;font-weight:600;font-size:14px}
-  .btn.ghost{border:1px solid var(--line);color:var(--dsa)}
-  .btn.ghost:hover{background:var(--surface-3)}
-  .btn.solid{background:var(--dsa);color:#20140A}
-  .btn.solid:hover{background:#F5A55F}
-  .fmt{background:#101821;border:1px solid var(--line-soft);border-radius:8px;
-       padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;
-       color:var(--text-dim);margin-bottom:14px;white-space:pre;overflow-x:auto;line-height:1.7}
+  .modal-btns .btn{flex:1;padding:11px}
+  .fmt{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;color:var(--text-2);margin-bottom:14px;white-space:pre;overflow-x:auto;line-height:1.7}
   .row2{display:flex;gap:11px;margin-bottom:14px;flex-wrap:wrap}
-  .row2 label{flex:1;min-width:180px;font-size:12.5px;color:var(--text-dim)}
+  .row2 label{flex:1;min-width:180px;font-size:13.5px;color:var(--text-2)}
   .row2 select{margin-bottom:0;margin-top:5px}
 
-  .footer-note{margin-top:26px;padding-top:16px;border-top:1px solid var(--line-soft);
-               color:var(--text-faint);font-size:12px;display:flex;gap:16px;flex-wrap:wrap}
-  .linkish{color:var(--text-dim);text-decoration:underline;text-underline-offset:2px}
-  .linkish:hover{color:var(--text)}
+  .footer-note{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);color:var(--text-3);font-size:13px;display:flex;gap:8px 18px;flex-wrap:wrap}
 
   @media (max-width:900px){
-    .kan{grid-template-columns:1fr} .cell{min-height:78px}
+    .kan,.revgrid{grid-template-columns:1fr} .cell{min-height:80px}
     .prog-top{grid-template-columns:1fr;justify-items:center;gap:22px} .bars{width:100%}
     .sec-track{display:none}
+    .stats{grid-template-columns:1fr;gap:18px}
+  }
+  @media (max-width:620px){
+    .top{gap:8px} .top .logo{font-size:0} .logo span{font-size:22px}
+    .top-nav{margin-left:0} .top-nav a{padding:6px 9px;font-size:14px}
+    .tabsrow{flex-direction:column;align-items:stretch;gap:0} .tabsrow .btn{display:none}
+    .search{min-width:0;flex:1 1 100%;margin-left:0}
+    .item{padding-left:16px} .item-note,.note-edit{margin-left:0} .addrow{padding-left:16px}
+    .mod-dates .num{font-size:12px}
   }
   @media (max-width:560px){
     .cell{min-height:60px;padding:5px} .tag,.cnt{display:none}
-    .goal{display:none} .mod-dates .num{font-size:11px} .topic-bar{width:80px}
-    .item-due{display:none}
+    .topic-bar{width:80px} .item-due{display:none}
   }
-  @media (prefers-reduced-motion:reduce){ *{transition:none!important;animation:none!important} }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 <div id="root"></div>
 
+<script src="learn/patterns.js"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
@@ -509,6 +548,48 @@ const PREP=[
    NO_LC: 'n' = a problem not on LeetCode (GfG / Coding Ninjas / TUF), 'c' = a concept or theory lesson. */
 const LC={'3 Sum':'3sum','4 Sum':'4sum','Accounts merge':'accounts-merge','Add one to a number represented by LL':'plus-one-linked-list*','Add two numbers in Linked List':'add-two-numbers','Alien Dictionary':'alien-dictionary*','Assign Cookies':'assign-cookies','Asteroid Collision':'asteroid-collision','Balanced Paranthesis':'valid-parentheses','Best Time to Buy and Sell Stock with Cooldown':'best-time-to-buy-and-sell-stock-with-cooldown','Best time to buy and sell stock':'best-time-to-buy-and-sell-stock','Best time to buy and sell stock II':'best-time-to-buy-and-sell-stock-ii','Best time to buy and sell stock III':'best-time-to-buy-and-sell-stock-iii','Best time to buy and sell stock IV':'best-time-to-buy-and-sell-stock-iv','Best time to buy and sell stock with transaction fees':'best-time-to-buy-and-sell-stock-with-transaction-fee','Binary Subarrays With Sum':'binary-subarrays-with-sum','Bipartite Graph (DFS)':'is-graph-bipartite','Boundary Traversal':'boundary-of-binary-tree*','Bridges in graph':'critical-connections-in-a-network','Burst balloons':'burst-balloons','Candy':'candy','Capacity to Ship Packages Within D Days':'capacity-to-ship-packages-within-d-days','Celebrity Problem':'find-the-celebrity*','Cheapest flight within K stops':'cheapest-flights-within-k-stops','Check for balanced binary tree':'balanced-binary-tree','Check if LL is palindrome or not':'palindrome-linked-list','Check if String is Palindrome or Not':'valid-palindrome','Check if a Number is Power of 2 or Not':'power-of-two','Check if a tree is a BST or not':'validate-binary-search-tree','Check if the Number is Armstrong':'armstrong-number*','Check if two strings are anagram of each other':'valid-anagram','Check if two trees are identical or not':'same-tree','Climbing stairs':'climbing-stairs','Clone a LL with random and next pointer':'copy-list-with-random-pointer','Coin Change 2 (DP - 22)':'coin-change-ii','Combination Sum':'combination-sum','Combination Sum II':'combination-sum-ii','Combination Sum III':'combination-sum-iii','Construct a BST from a preorder traversal':'construct-binary-search-tree-from-preorder-traversal','Construct a BT from Preorder and Inorder':'construct-binary-tree-from-preorder-and-inorder-traversal','Construct the Binary Tree from Postorder and Inorder Traversal':'construct-binary-tree-from-inorder-and-postorder-traversal','Correct BST with two nodes swapped':'recover-binary-search-tree','Count Good Numbers':'count-good-numbers','Count Square Submatrices with All Ones | (DP-56)':'count-square-submatrices-with-all-ones','Count and say':'count-and-say','Count number of Nice subarrays':'count-number-of-nice-subarrays','Count subarrays with given sum':'subarray-sum-equals-k','Count the Number of Set Bits':'number-of-1-bits','Count total nodes in a complete BT':'count-complete-tree-nodes','Course Schedule I':'course-schedule','Course Schedule II':'course-schedule-ii','Delete a node in BST':'delete-node-in-a-bst','Delete the middle node in LL':'delete-the-middle-node-of-a-linked-list','Design Twitter':'design-twitter','Detect a loop in LL':'linked-list-cycle','Diameter of Binary Tree':'diameter-of-binary-tree','Distinct subsequences':'distinct-subsequences','Divide two numbers without multiplication and division':'divide-two-integers','Edit distance':'edit-distance','Expression Add Operators':'expression-add-operators','Fibonacci Number':'fibonacci-number','Find Median from Data Stream':'find-median-from-data-stream','Find Peak Element - II':'find-a-peak-element-ii','Find eventual safe states':'find-eventual-safe-states','Find minimum in Rotated Sorted Array':'find-minimum-in-rotated-sorted-array','Find missing number':'missing-number','Find peak element':'find-peak-element','Find row with maximum 1\'s':'row-with-maximum-ones','Find square root of a number':'sqrtx','Find the city with the smallest number of neighbors':'find-the-city-with-the-smallest-number-of-neighbors-at-a-threshold-distance','Find the intersection point of Y LL':'intersection-of-two-linked-lists','Find the number that appears once, and other numbers twice.':'single-number','Find the repeating and missing number':'set-mismatch','Find the smallest divisor':'find-the-smallest-divisor-given-a-threshold','Find the starting point in LL':'linked-list-cycle-ii','First and last occurrence':'find-first-and-last-position-of-element-in-sorted-array','Flatten Binary Tree to Linked List':'flatten-binary-tree-to-linked-list','Flood fill algorithm':'flood-fill','Fruit Into Baskets':'fruit-into-baskets','Generate Parentheses':'generate-parentheses','Grid Unique Paths : DP on Grids (DP8)':'unique-paths','Hand of Straights':'hand-of-straights','House robber':'house-robber','Implement Min Stack':'min-stack','Implement Queue using Stack':'implement-queue-using-stacks','Implement Stack using Queue':'implement-stack-using-queues','Inorder Successor/Predecessor in BST':'inorder-successor-in-bst*','Inorder Traversal of Binary Tree':'binary-tree-inorder-traversal','Insert Interval':'insert-interval','Insert a given node in BST':'insert-into-a-binary-search-tree','Isomorphic String':'isomorphic-strings','Iterative Inorder Traversal of Binary Tree':'binary-tree-inorder-traversal','Iterative Preorder Traversal of Binary Tree':'binary-tree-preorder-traversal','Jump Game - I':'jump-game','Jump Game II':'jump-game-ii','K-th Largest element in an array':'kth-largest-element-in-an-array','Kadane\'s Algorithm':'maximum-subarray','Koko eating bananas':'koko-eating-bananas','Kth Missing Positive Number':'kth-missing-positive-number','Kth Smallest and Largest element in BST':'kth-smallest-element-in-a-bst','Kth largest element in a stream of running integers':'kth-largest-element-in-a-stream','LCA in BST':'lowest-common-ancestor-of-a-binary-search-tree','LCA in BT':'lowest-common-ancestor-of-a-binary-tree','LFU Cache':'lfu-cache','LRU Cache':'lru-cache','Largest BST in Binary Tree':'largest-bst-subtree*','Largest Divisible Subset':'largest-divisible-subset','Largest Odd Number in a String':'largest-odd-number-in-string','Largest rectangle in a histogram':'largest-rectangle-in-histogram','Left Rotate Array by K Places':'rotate-array','Lemonade Change':'lemonade-change','Letter Combinations of a Phone Number':'letter-combinations-of-a-phone-number','Level Order Traversal':'binary-tree-level-order-traversal','Longest Common Prefix':'longest-common-prefix','Longest Consecutive Sequence in an Array':'longest-consecutive-sequence','Longest Increasing Subsequence':'longest-increasing-subsequence','Longest Increasing Subsequence | (DP-43)':'longest-increasing-subsequence','Longest Palindromic Substring':'longest-palindromic-substring','Longest Repeating Character Replacement':'longest-repeating-character-replacement','Longest String Chain':'longest-string-chain','Longest Substring With At Most K Distinct Characters':'longest-substring-with-at-most-k-distinct-characters*','Longest Substring Without Repeating Characters':'longest-substring-without-repeating-characters','Longest Word with All Prefixes':'longest-word-with-all-prefixes*','Longest common subsequence':'longest-common-subsequence','Longest happy prefix':'longest-happy-prefix','Longest palindromic subsequence':'longest-palindromic-subsequence','Longest subarray with sum K':'maximum-size-subarray-sum-equals-k*','Majority Element-I':'majority-element','Majority Element-II':'majority-element-ii','Making a large island':'making-a-large-island','Max Consecutive Ones III':'max-consecutive-ones-iii','Maximum Consecutive Ones':'max-consecutive-ones','Maximum Depth in BT':'maximum-depth-of-binary-tree','Maximum Nesting Depth of the Parentheses':'maximum-nesting-depth-of-the-parentheses','Maximum Points You Can Obtain from Cards':'maximum-points-you-can-obtain-from-cards','Maximum Product Subarray in an Array':'maximum-product-subarray','Maximum Rectangle Area with all 1\'s | (DP-55)':'maximal-rectangle','Maximum Rectangles':'maximal-rectangle','Maximum Width of BT':'maximum-width-of-binary-tree','Maximum XOR of two numbers in an array':'maximum-xor-of-two-numbers-in-an-array','Maximum Xor with an element from an array':'maximum-xor-with-an-element-from-array','Maximum path sum':'binary-tree-maximum-path-sum','Maximum sum of non adjacent elements':'house-robber','Median of 2 sorted arrays':'median-of-two-sorted-arrays','Merge 2 BST\'s':'all-elements-in-two-binary-search-trees','Merge Intervals':'merge-intervals','Merge K sorted Lists':'merge-k-sorted-lists','Merge Overlapping Subintervals':'merge-intervals','Merge two sorted arrays without extra space':'merge-sorted-array','Middle of a LinkedList [TortoiseHare Method]':'middle-of-the-linked-list','Minimize Max Distance to Gas Station':'minimize-max-distance-to-gas-station*','Minimum Bit Flips to Convert Number':'minimum-bit-flips-to-convert-number','Minimum Coins (DP - 20)':'coin-change','Minimum Cost to Connect Sticks':'minimum-cost-to-connect-sticks*','Minimum Falling Path Sum':'minimum-falling-path-sum','Minimum Window Subsequence':'minimum-window-subsequence*','Minimum Window Substring':'minimum-window-substring','Minimum cost to cut the stick':'minimum-cost-to-cut-a-stick','Minimum days to make M bouquets':'minimum-number-of-days-to-make-m-bouquets','Minimum insertions or deletions to convert string A to B':'delete-operation-for-two-strings','Minimum insertions to make string palindrome | DP-29':'minimum-insertion-steps-to-make-a-string-palindrome','Minimum time taken to burn the BT from a given Node':'amount-of-time-for-binary-tree-to-be-infected','Morris Inorder Traversal of a Binary Tree':'binary-tree-inorder-traversal','Morris Preorder Traversal of a Binary Tree':'binary-tree-preorder-traversal','Most stones removed with same row or column':'most-stones-removed-with-same-row-or-column','Move Zeros to End':'move-zeroes','N Queen':'n-queens','Network Delay Time':'network-delay-time','Next Greater Element':'next-greater-element-i','Next Greater Element - 2':'next-greater-element-ii','Next Permutation':'next-permutation','Ninja and his Friends':'cherry-pickup-ii','Non-overlapping Intervals':'non-overlapping-intervals','Number of Longest Increasing Subsequences':'number-of-longest-increasing-subsequence','Number of Substrings Containing All Three Characters':'number-of-substrings-containing-all-three-characters','Number of distinct substrings in a string':'number-of-distinct-substrings-in-a-string*','Number of enclaves':'number-of-enclaves','Number of islands':'number-of-islands','Number of islands II':'number-of-islands-ii*','Number of operations to make network connected':'number-of-operations-to-make-network-connected','Number of provinces':'number-of-provinces','Number of ways to arrive at destination':'number-of-ways-to-arrive-at-destination','Palindrome Number':'palindrome-number','Palindrome partitioning':'palindrome-partitioning','Palindrome partitioning II':'palindrome-partitioning-ii','Partition Array for Maximum Sum':'partition-array-for-maximum-sum','Partition a set into two subsets with minimum absolute sum difference':'partition-array-into-two-arrays-to-minimize-sum-difference','Partition equal subset sum':'partition-equal-subset-sum','Pascal\'s Triangle I':'pascals-triangle','Path with minimum effort':'path-with-minimum-effort','Post-order Traversal of Binary Tree using 1 stack':'binary-tree-postorder-traversal','Post-order Traversal of Binary Tree using 2 stack':'binary-tree-postorder-traversal','Postorder Traversal':'binary-tree-postorder-traversal','Pow(x, n)':'powx-n','Pow(x,n)':'powx-n','Power Set':'subsets','Power Set Bit Manipulation':'subsets','Preorder Traversal':'binary-tree-preorder-traversal','Print all nodes at a distance of K in BT':'all-nodes-distance-k-in-binary-tree','Print root to leaf path in BT':'binary-tree-paths','Print the matrix in spiral manner':'spiral-matrix','Rearrange array elements by sign':'rearrange-array-elements-by-sign','Recursive Implementation of atoi()':'string-to-integer-atoi','Remove K Digits':'remove-k-digits','Remove Nth node from the back of the LL':'remove-nth-node-from-end-of-list','Remove Outermost Parentheses':'remove-outermost-parentheses','Remove duplicates from Sorted array':'remove-duplicates-from-sorted-array','Replace Elements by Their Rank':'rank-transform-of-an-array','Reverse LL in group of given size K':'reverse-nodes-in-k-group','Reverse Pairs':'reverse-pairs','Reverse a LL':'reverse-linked-list','Reverse a LinkedList [Iterative]':'reverse-linked-list','Reverse a number':'reverse-integer','Reverse every word in a string':'reverse-words-in-a-string','Reverse words in a given string / Palindrome Check':'reverse-words-in-a-string','Right/Left View of Binary Tree':'binary-tree-right-side-view','Roman to Integer':'roman-to-integer','Rotate String':'rotate-string','Rotate a LL':'rotate-list','Rotate matrix by 90 degrees':'rotate-image','Rotten Oranges':'rotting-oranges','Search X in sorted array':'binary-search','Search in 2D matrix - II':'search-a-2d-matrix-ii','Search in a 2D matrix':'search-a-2d-matrix','Search in a Binary Search Tree':'search-in-a-binary-search-tree','Search in rotated sorted array-I':'search-in-rotated-sorted-array','Search in rotated sorted array-II':'search-in-rotated-sorted-array-ii','Search insert position':'search-insert-position','Segregate odd and even nodes in Linked List':'odd-even-linked-list','Serialize and De-serialize BT':'serialize-and-deserialize-binary-tree','Set Matrix Zeroes':'set-matrix-zeroes','Shortest Distance in a Binary Maze':'shortest-path-in-binary-matrix','Shortest Palindrome':'shortest-palindrome','Shortest common supersequence':'shortest-common-supersequence','Single Number - I':'single-number','Single Number - III':'single-number-iii','Single element in a Sorted Array':'single-element-in-a-sorted-array','Sliding Window Maximum':'sliding-window-maximum','Sort Characters by Frequency':'sort-characters-by-frequency','Sort LL':'sort-list','Sort an array of 0\'s 1\'s and 2\'s':'sort-colors','Split array - largest sum':'split-array-largest-sum','Stock Buy and Sell':'best-time-to-buy-and-sell-stock','Stock span problem':'online-stock-span','String to Integer (atoi)':'string-to-integer-atoi','Subarrays with K Different Integers':'subarrays-with-k-different-integers','Subsets I':'subsets','Subsets II':'subsets-ii','Sudoku Solver':'sudoku-solver','Sum of Beauty of All Substrings':'sum-of-beauty-of-all-substrings','Sum of Subarray Minimums':'sum-of-subarray-minimums','Sum of Subarray Ranges':'sum-of-subarray-ranges','Surrounded Regions':'surrounded-regions','Swim in Rising Water':'swim-in-rising-water','Symmetric Binary Tree':'symmetric-tree','Target sum':'target-sum','Task Scheduler':'task-scheduler','Top K Frequent Elements':'top-k-frequent-elements','Trapping Rainwater':'trapping-rain-water','Triangle':'triangle','Trie Implementation and Advanced Operations':'implement-trie-ii-prefix-tree*','Trie Implementation and Operations':'implement-trie-prefix-tree','Two Sum':'two-sum','Two Sum In BST | Check if there exists a pair with Sum K':'two-sum-iv-input-is-a-bst','Unique paths II':'unique-paths-ii','Valid Paranthesis Checker':'valid-parenthesis-string','Vertical Order Traversal':'vertical-order-traversal-of-a-binary-tree','Wildcard matching':'wildcard-matching','Word Break':'word-break','Word Search':'word-search','Word ladder I':'word-ladder','Word ladder II':'word-ladder-ii','Zig Zag or Spiral Traversal':'binary-tree-zigzag-level-order-traversal'};
 const NO_LC={'Aggressive Cows':'n','Articulation point in graph':'n','Basic Hashing':'c','Bellman Ford Algorithm':'c','Binary Tree Representation in Java':'c','Bit PreRequisites for TRIE Problems':'c','Book Allocation Problem':'n','Bottom view of BT':'n','Bubble Sort':'c','Check for Prime Number':'n','Check if a Number is Odd or Not':'n','Check if an array represents a min heap':'n','Check if the Array is Sorted II':'n','Check if the i-th bit is Set or Not':'n','Check if there exists a subsequence with sum K':'n','Children Sum Property in Binary Tree':'n','Connected Components':'c','Connected Components Problem in Matrix':'n','Convert Min Heap to Max Heap':'n','Count Inversions':'n','Count Number of Substrings':'n','Count Occurrences in a Sorted Array':'n','Count Palindromic Subsequences':'n','Count all Digits of a Number':'n','Count all subsequences with sum K':'n','Count partitions with given difference':'n','Count primes in range L to R':'n','Count subarrays with given xor K':'n','Count subsets with sum K':'n','Counting Frequencies of Array Elements':'n','Cpp Basics':'c','Cycle Detection in Directed Graph (DFS)':'n','Cycle Detection in Undirected Graph (bfs)':'n','DFS':'c','Delete all occurrences of a key in DLL':'n','Delete head of Doubly Linked List':'n','Deletion of the head of LL':'n','Detect a cycle in a directed graph':'n','Detect a cycle in an undirected graph':'n','Different Ways to Evaluate a Boolean Expression':'n','Disjoint Set':'c','Distance of nearest cell having one':'n','Divisors of a Number':'n','Djisktra\'s Algorithm':'c','Easy and Medium':'c','Factorial of a given number':'n','Find Min/Max in BST':'n','Find Nth root of a number':'n','Find Pairs with Given Sum in Doubly Linked List':'n','Find out how many times the array is rotated':'n','Find the MST weight':'n','Find the length of the Linked List':'n','Flattening of LL':'n','Floor and Ceil in Sorted Array':'n','Floor and Ceil in a BST':'n','Floor in a Binary Search Tree':'n','Floyd warshall algorithm':'c','For loops':'c','Fractional Knapsack':'n','Frog Jump':'n','Frog jump with K distances':'n','Functions (Pass by Reference and Value)':'c','GCD of Two Numbers':'n','Generate Binary Strings Without Consecutive 1s':'n','Graph Representation | C++':'c','Graph Representation | Java':'c','Hashing In Strings | Theory':'c','Heaps (Theory Video)':'c','Highest Occurring Element in an Array':'n','If ElseIf':'c','Implement Min Heap':'c','Implement Queue using Arrays':'c','Implement Stack using Arrays':'c','Implement queue using Linkedlist':'c','Implement stack using Linkedlist':'c','Infix to Postfix Conversion':'n','Infix to Prefix Conversion':'n','Input Output':'c','Insert node before head in Doubly Linked List':'n','Insertion Sorting':'c','Insertion at the head of Linked List':'n','Introduction to BST':'c','Introduction to Bits and Tricks':'c','Introduction to DP':'c','Introduction to Doubly LL':'c','Introduction to Graph':'c','Introduction to Singly LinkedList':'c','Introduction to Trees':'c','Java Collections':'c','Job sequencing Problem':'n','KMP Algorithm or LPS array':'c','Kosaraju\'s algorithm':'c','Kth element of 2 sorted arrays':'n','Kth smallest element in an array [use priority queue]':'n','Largest Element':'n','Largest Subarray with Sum 0':'n','Leaders in an Array':'n','Learn All Patterns of Subsequences (Theory)':'c','Left Rotate Array by One':'n','Length of loop in LL':'n','Linear Search':'n','Longest Bitonic Subsequence':'n','Longest common substring':'n','Longest subarray with given sum K(positives)':'n','Lower Bound':'n','M Coloring Problem':'n','MST theory':'c','Matrix Chain Multiplication | Bottom-Up | (DP-49)':'n','Matrix Median':'n','Matrix chain multiplication':'n','Maximum Sum Combination':'n','Merge Sorting':'c','Minimum multiplications to reach end':'n','Minimum number of bracket reversals to make an expression balanced':'n','Minimum number of platforms required for a railway':'n','N meetings in one room':'n','Next Smaller Element':'n','Ninja\'s training':'n','Number of Greater Elements to the Right':'n','Painter\'s Partition':'n','Pattern 1':'n','Pattern 10':'n','Pattern 11':'n','Pattern 12':'n','Pattern 13':'n','Pattern 14':'n','Pattern 15':'n','Pattern 16':'n','Pattern 17':'n','Pattern 18':'n','Pattern 19':'n','Pattern 2':'n','Pattern 20':'n','Pattern 21':'n','Pattern 22':'n','Pattern 3':'n','Pattern 4':'n','Pattern 5':'n','Pattern 6':'n','Pattern 7':'n','Pattern 8':'n','Pattern 9':'n','Postfix to Infix Conversion':'n','Postfix to Prefix Conversion':'n','Pre, Post, Inorder in one traversal':'n','Prefix to Infix Conversion':'n','Prefix to Postfix Conversion':'n','Preorder, Inorder, and Postorder Traversal in one Traversal':'n','Prim\'s Algorithm':'c','Prime factorisation of a Number':'n','Print 1 to N using Recursion':'n','Print Longest Common Subsequence | (DP - 26)':'n','Print Longest Increasing Subsequence':'n','Print N to 1 using Recursion':'n','Print Prime Factors of a Number':'n','Print all Divisors':'n','Print name N times using recursion':'n','Print subarray with maximum subarray sum (extended version of above problem)':'n','Program for Least Recently Used (LRU) Page Replacement Algorithm':'n','Quick Sorting':'c','Rabin Karp Algorithm':'c','Rat in a Maze':'n','Recursive Bubble Sort':'c','Recursive Insertion Sort':'c','Remove duplicates from sorted DLL':'n','Requirements needed to construct a unique BT':'c','Reverse a Doubly Linked List':'n','Reverse a Stack':'n','Reverse an array':'n','Rod Cutting Problem | (DP - 24)':'n','STL':'c','Search in Linked List':'n','Second Largest Element':'n','Selection Sort':'c','Set/Unset the rightmost unset bit':'n','Shortest Job First':'n','Shortest path in DAG':'n','Shortest path in undirected graph with unit weights':'n','Sort K sorted array':'n','Sort a Linked List of 0\'s 1\'s and 2\'s':'n','Sort a stack using recursion':'n','Subset sum equal to target (DP- 14)':'n','Sum of First N Numbers':'n','Swap Two Numbers':'n','Switch Case':'c','Theory with examples':'c','Top View of BT':'n','Topo Sort':'c','Topological sort or Kahn\'s algorithm':'c','Traversal Techniques':'c','Unbounded knapsack':'n','Understand recursion by print something N times':'c','Union of two sorted arrays':'n','Upper Bound':'n','What are arrays, strings?':'c','While loops':'c','Why priority Queue is used in Djisktra\'s Algorithm':'c','XOR of numbers in a given range':'n','Z function':'c'};
+
+/* notes written earlier on the Learn site's Patterns page move onto their tracker items */
+function adoptLearnNotes(mods) {
+  let nb;
+  try { nb = JSON.parse(localStorage.getItem('prep-notebook.v2')); } catch (e) { return mods; }
+  const j = nb && nb.journal;
+  if (!j || !Object.keys(j).length) return mods;
+  let moved = 0;
+  const out = mods.map(m => ({ ...m, items: m.items.map(i => {
+    const n = j['t:' + i.id];
+    if (!n || !n.note) return i;
+    delete j['t:' + i.id]; moved++;
+    return i.note ? i : { ...i, note: n.note, pattern: n.pattern && n.pattern !== 'other' ? n.pattern : undefined };
+  }) }));
+  if (moved) try { localStorage.setItem('prep-notebook.v2', JSON.stringify(nb)); } catch (e) {}
+  return out;
+}
+const PATTERNS = window.PATTERNS || [];
+const patternName = id => (PATTERNS.find(p => p.id === id) || {}).name || '';
+
+/* a small editor under a problem: which pattern, and one line on the trick */
+function NoteEditor({ item, track, onSave, onCancel }) {
+  const [text, setText] = useState(item.note || '');
+  const [pat, setPat] = useState(item.pattern || '');
+  const e = React.createElement;
+  const save = () => onSave(text.trim(), pat);
+  return e("div", { className: "note-edit" },
+    track === 'dsa' && PATTERNS.length > 0 && e("select", { value: pat, onChange: ev => setPat(ev.target.value), "aria-label": "Pattern" },
+      e("option", { value: "" }, "Pattern (optional)"), PATTERNS.map(p => e("option", { key: p.id, value: p.id }, p.name))),
+    e("textarea", { value: text, rows: 2, autoFocus: true, "aria-label": "Note",
+      placeholder: track === 'dsa' ? 'What gave the pattern away, and the trick that made it work' : 'What to remember about this topic',
+      onChange: ev => setText(ev.target.value), onKeyDown: ev => { if (ev.key === 'Enter' && (ev.metaKey || ev.ctrlKey)) save(); if (ev.key === 'Escape') onCancel(); } }),
+    e("div", { className: "note-actions" },
+      e("button", { className: "nbtn solid", onClick: save }, "Save note"),
+      e("button", { className: "nbtn", onClick: onCancel }, "Cancel"),
+      item.note && e("button", { className: "nbtn danger", onClick: () => onSave('', '') }, "Delete note")));
+}
+function NoteLine({ item }) {
+  if (!item.note) return null;
+  const e = React.createElement;
+  return e("div", { className: "item-note" }, item.pattern && patternName(item.pattern) && e("span", { className: "note-pat" }, patternName(item.pattern)), item.note);
+}
 
 /* built-in LeetCode link for an A2Z problem, if there is one */
 function builtinLink(title, track) {
@@ -728,7 +809,13 @@ function parseImport(text, track) {
   }));
 }
 
-/* ---------- header ---------- */
+/* ---------- header: the Learn site's top bar, then the plan at a glance ---------- */
+function toggleTheme() {
+  const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+  const next = cur === 'light' ? 'dark' : 'light';
+  document.documentElement.dataset.theme = next;
+  try { localStorage.setItem('prep-notebook.theme', next); } catch (e) {}
+}
 function Header({
   view,
   setView,
@@ -737,80 +824,35 @@ function Header({
   onImport,
   onBackup
 }) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "top"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "top-inner"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "daybox"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "big num"
-  }, "Day ", stats.dayNum), /*#__PURE__*/React.createElement("div", {
-    className: "sub num"
-  }, "Solved ", stats.done, "/", stats.total)), /*#__PURE__*/React.createElement("div", {
-    className: "rail"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "ring num"
-  }, stats.pct, "%"), /*#__PURE__*/React.createElement("div", {
-    className: "rail-track"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "rail-fill",
-    style: {
-      width: stats.pct + '%'
-    }
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "goal"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "goal-medal"
-  }, "🏆"), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "num",
-    style: {
-      fontWeight: 700,
-      fontSize: 16,
-      fontFamily: 'Sora'
-    }
-  }, "Day ", stats.totalDays), /*#__PURE__*/React.createElement("div", {
-    className: "num",
-    style: {
-      fontSize: 11.5,
-      color: 'var(--text-dim)'
-    }
-  }, fLong(stats.endDate)))), /*#__PURE__*/React.createElement("div", {
-    className: "streak"
-  }, /*#__PURE__*/React.createElement("span", null, "Streak"), /*#__PURE__*/React.createElement("span", {
-    className: "num",
-    style: {
-      color: 'var(--text)',
-      fontWeight: 600
-    }
-  }, stats.streak, "d"))), /*#__PURE__*/React.createElement("div", {
-    className: "tabs"
-  }, ['Module', 'Revision', 'Kanban Flow', 'Calendar', 'Progress'].map(t => /*#__PURE__*/React.createElement("button", {
-    key: t,
-    className: 'tab' + (view === t ? ' on' : ''),
-    onClick: () => setView(t)
-  }, t, t === 'Revision' && revCount > 0 && /*#__PURE__*/React.createElement("span", {
-    className: "tab-n num"
-  }, revCount))), /*#__PURE__*/React.createElement("span", {
-    className: "tab-right"
-  }, /*#__PURE__*/React.createElement("button", {
-    className: "mini",
-    onClick: onImport
-  }, "Import problems"), /*#__PURE__*/React.createElement("button", {
-    className: "mini",
-    onClick: onBackup
-  }, "Backup"), /*#__PURE__*/React.createElement("a", {
-    className: "mini",
-    href: "learn/",
-    style: { textDecoration: "none", display: "inline-flex", alignItems: "center" }
-  }, "Learn"))));
+  const e = React.createElement;
+  return e(React.Fragment, null,
+    e("header", { className: "top" },
+      e("a", { href: "learn/#/", className: "logo" }, e("span", { "aria-hidden": "true" }, "🐍"), " Prep Notebook"),
+      e("nav", { className: "top-nav", "aria-label": "Main" },
+        e("a", { href: "learn/#/" }, "Learn"),
+        e("a", { href: "learn/#/patterns" }, "Patterns"),
+        e("a", { href: "./", className: "active", "aria-current": "page" }, "Tracker")),
+      e("div", { className: "top-tools" },
+        e("button", { className: "icon-btn", onClick: toggleTheme, "aria-label": "Switch light or dark theme", title: "Light or dark" }, "◐"),
+        e("button", { className: "icon-btn", onClick: onBackup, "aria-label": "Back up your progress", title: "Backup" }, "⤓"))),
+    e("div", { className: "page-top" },
+      e("section", { className: "panel stats", "aria-label": "Your plan" },
+        e("div", { className: "big-num num" }, "Day ", stats.dayNum, e("small", null, "Solved ", stats.done, " of ", stats.total)),
+        e("div", { className: "stats-mid" },
+          e("div", { className: "bar-line" },
+            e("span", { className: "pct num" }, stats.pct, "%"),
+            e("div", { className: "bar", role: "progressbar", "aria-valuenow": stats.pct, "aria-valuemin": 0, "aria-valuemax": 100 }, e("i", { style: { width: stats.pct + '%' } }))),
+          e("div", { className: "stats-meta" },
+            e("span", null, "Finish on day ", e("b", { className: "num" }, stats.totalDays), ", ", fLong(stats.endDate)),
+            e("span", null, "Streak ", e("b", { className: "num" }, stats.streak, stats.streak === 1 ? " day" : " days"))))),
+      e("div", { className: "tabsrow" },
+        e("nav", { className: "pt-tabs", "aria-label": "Tracker views" },
+          ['Module', 'Revision', 'Kanban Flow', 'Calendar', 'Progress'].map(t => e("button", {
+            key: t, className: 'tab' + (view === t ? ' on' : ''), "aria-current": view === t ? 'page' : undefined, onClick: () => setView(t)
+          }, t, t === 'Revision' && revCount > 0 && e("span", { className: "tab-n num" }, revCount)))),
+        e("button", { className: "btn ghost small", onClick: onImport }, "Import problems"))));
 }
 
-/* ---------- today ----------
-   Shows exactly what's due today, per problem — not "everything in an
-   active topic." Click a topic name or a chip to jump to it below; nothing
-   here changes status automatically, that still happens via the checkbox
-   in the exploded row. */
 function Today({
   modules,
   onJump
@@ -878,6 +920,7 @@ function TopicRow({
   delItem,
   editLink,
   toggleRev,
+  setNote,
   changeDays,
   askDays,
   forceOpen,
@@ -885,6 +928,7 @@ function TopicRow({
   jump
 }) {
   const [open, setOpen] = useState(false);
+  const [noteFor, setNoteFor] = useState(null);
   const [draft, setDraft] = useState({
     t: '',
     d: null
@@ -967,15 +1011,26 @@ function TopicRow({
       "aria-pressed": !!i.rev,
       onClick: () => toggleRev(m.id, i.id)
     }, "\u21BB"), /*#__PURE__*/React.createElement("button", {
+      className: 'icon note-btn' + (i.note ? ' on' : ''),
+      title: i.note ? 'Edit your note' : 'Write a note',
+      "aria-label": (i.note ? 'Edit note for ' : 'Write a note for ') + i.title,
+      "aria-expanded": noteFor === i.id,
+      onClick: () => setNoteFor(noteFor === i.id ? null : i.id)
+    }, "\u270E"), /*#__PURE__*/React.createElement("button", {
       className: 'icon link-btn' + (i.link ? ' on' : ''),
       title: i.link ? 'Change your link' : 'Add or change the link',
       "aria-label": 'Edit link for ' + i.title,
       onClick: () => editLink(m.id, i.id)
-    }, "✎"), /*#__PURE__*/React.createElement("button", {
+    }, "\uD83D\uDD17"), /*#__PURE__*/React.createElement("button", {
       className: "icon",
       title: "Remove this problem",
       onClick: () => delItem(m.id, i.id)
-    }, "×"));
+    }, "×"), noteFor === i.id ? /*#__PURE__*/React.createElement(NoteEditor, {
+      item: i,
+      track: m.track,
+      onSave: (note, pat) => { setNote(m.id, i.id, note, pat); setNoteFor(null); },
+      onCancel: () => setNoteFor(null)
+    }) : /*#__PURE__*/React.createElement(NoteLine, { item: i }));
   }), /*#__PURE__*/React.createElement("div", {
     className: "addrow"
   }, /*#__PURE__*/React.createElement("input", {
@@ -1115,6 +1170,7 @@ function ModuleView(props) {
       delItem: props.delItem,
       editLink: props.editLink,
       toggleRev: props.toggleRev,
+      setNote: props.setNote,
       changeDays: props.changeDays,
       askDays: props.askDays
     }))));
@@ -1436,8 +1492,6 @@ function RevisionView({
   const e = React.createElement, t = today();
   const daysAgo = d => Math.round((new Date(t + 'T00:00') - new Date(d + 'T00:00')) / 864e5);
   const ago = d => { const n = daysAgo(d); return n <= 0 ? 'today' : n === 1 ? 'yesterday' : n + ' days ago'; };
-  let notes = {};
-  try { const nb = JSON.parse(localStorage.getItem('prep-notebook.v2')); notes = nb && nb.journal || {}; } catch (x) {}
   const all = [];
   modules.forEach(m => m.items.forEach(i => { if (i.rev) all.push({ ...i, mod: m }); }));
   all.sort((a, b) => (a.rev.last || a.rev.at).localeCompare(b.rev.last || b.rev.at));
@@ -1453,12 +1507,11 @@ function RevisionView({
         e("div", { className: "col-body" },
           list.length === 0 && e("div", { className: "empty" }, k === 'dsa' ? 'No problems marked yet.' : 'No topics marked yet.'),
           list.map(i => {
-            const note = k === 'dsa' && notes['t:' + i.id];
             const today_ = i.rev.last === t;
             return e("div", { key: i.id, className: "card" },
               e("div", { className: "card-mod" }, i.mod.section, " · ", i.mod.name),
               lcTitle(i, i.mod.track, 'card-title', 'div'),
-              note && note.note && e("div", { className: "rev-note" }, note.note),
+              i.note && e("div", { className: "rev-note" }, i.pattern && patternName(i.pattern) && e("span", { className: "note-pat" }, patternName(i.pattern)), i.note),
               e("div", { className: "card-sub" }, e("span", null, i.rev.n ? 'Revised ' + i.rev.n + '×, last ' + ago(i.rev.last) : 'Not revised yet, added ' + ago(i.rev.at))),
               e("div", { className: "card-foot" },
                 e("button", { className: 'pill ' + (today_ ? 'done' : 'progress'), disabled: today_, onClick: () => markRevised(i.mod.id, i.id) }, today_ ? '✓ Revised today' : 'Mark revised'),
@@ -1752,7 +1805,7 @@ function App() {
         const b = s.budget || BUDGET_DEFAULT;
         setBudget(b);
         setStart(s.startDate);
-        setModules((s.planVersion || 0) < PLAN_VERSION ? reflow(migratePlan(s.modules, b), s.startDate) : s.modules);
+        setModules(adoptLearnNotes((s.planVersion || 0) < PLAN_VERSION ? reflow(migratePlan(s.modules, b), s.startDate) : s.modules));
       } else {
         const d = today();
         setStart(d);
@@ -1812,6 +1865,10 @@ function App() {
   const delItem = useCallback((modId, itemId) => patch(modId, m => ({
     ...m,
     items: m.items.filter(i => i.id !== itemId)
+  })), [patch]);
+  const setNote = useCallback((modId, itemId, note, pattern) => patch(modId, m => ({
+    ...m,
+    items: m.items.map(i => i.id !== itemId ? i : { ...i, note: note || undefined, pattern: note && pattern ? pattern : undefined })
   })), [patch]);
   const toggleRev = useCallback((modId, itemId) => patch(modId, m => ({
     ...m,
@@ -1954,6 +2011,7 @@ function App() {
     delItem: delItem,
     editLink: editLink,
     toggleRev: toggleRev,
+    setNote: setNote,
     changeDays: changeDays,
     askDays: setAskId
   }), view === 'Revision' && /*#__PURE__*/React.createElement(RevisionView, {

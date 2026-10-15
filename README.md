@@ -122,18 +122,26 @@ checked against LeetCode's full problem list. 16 of them need LeetCode Premium a
 rest carry a tag: **Not on LeetCode** (142 problems that live on GfG, Coding Ninjas or TUF) or
 **Concept** (57 theory and algorithm lessons). Problems you add yourself show no tag.
 
-## Your own links and revision
+## Notes, links and revision
 
-Every problem and topic row has two small buttons next to the remove ×:
+Every problem and topic row has small buttons next to the remove ×:
 
-- **✎ link**: paste any URL (LeetCode, GfG, a video) and the title opens it. Your link wins over
-  the built-in LeetCode one; clear it to go back. Stored on the item as `link`.
-- **↻ revision**: adds the item to the **Revision** tab (the count shows on the tab). There, DSA
-  problems and interview-prep topics are listed separately, oldest-revised first, with
-  "Mark revised" (counts how many times and when) and "Remove". If you wrote a note for the problem
-  on the Learn site's Patterns → Notes page, it shows on the card. Stored on the item as `rev`.
+- **↻ revision**: adds the item to the **Revision** tab (the count shows on the tab). DSA problems and
+  interview-prep topics are listed separately, oldest-revised first, with "Mark revised" (counts
+  how many times and when) and "Remove". Stored on the item as `rev`.
+- **✎ note**: one line in your own words (and, for DSA problems, which pattern it used). It shows
+  under the row and on the problem's Revision card. Stored as `note` and `pattern`. Notes written
+  earlier on the Learn site's Patterns page are moved onto their problems automatically.
+- **🔗 link**: paste any URL (LeetCode, GfG, a video) and the title opens it. Your link wins over
+  the built-in LeetCode one; clear it to go back. Stored as `link`.
 
-Both survive plan upgrades, backups and reloads.
+All of these survive plan upgrades, backups and reloads.
+
+## Design
+
+The tracker uses the Learn site's design: same colours, fonts, top bar (Learn · Patterns · Tracker)
+and light/dark theme, which is shared between the two pages (`prep-notebook.theme`). The pattern
+list for notes comes from `learn/patterns.js`.
 
 ## Learn
 

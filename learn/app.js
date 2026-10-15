@@ -490,31 +490,26 @@
     return box;
   }
 
-  // ---------------- patterns: guide, drill, notes ----------------
+  // ---------------- patterns: guide and drill (notes live on the tracker's problems) ----------------
   const PATTERNS = window.PATTERNS || [], DRILLS = window.DRILLS || [];
   const patById = Object.fromEntries(PATTERNS.map((p) => [p.id, p]));
   const drillById = Object.fromEntries(DRILLS.map((d) => [d.id, d]));
   const DRILL_DAYS = [0, 1, 3, 7, 21];
-  const TRACKER_URL = 'https://shrey120.github.io/Progress-Tracker/';
   const inlineCode = (s) => esc(s).replace(/`([^`]+)`/g, '<code>$1</code>');
   const lcLink = (title) => `https://leetcode.com/problemset/?search=${encodeURIComponent(title)}`;
   const shuffle = (a) => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  function trackerSolved() {          // the tracker lives on the same origin, so its saved plan is readable here
+  function trackerPatternCounts() {    // the tracker lives on the same origin, so its saved notes are readable here
+    const c = {};
     try {
       const t = JSON.parse(localStorage.getItem('prep-tracker-v3'));
-      if (!t || !Array.isArray(t.modules)) return null;
-      return t.modules.filter((m) => m.track === 'dsa' && m.section !== 'Python for DSA')
-        .flatMap((m) => (m.items || []).filter((i) => i.status === 'done')
-          .map((i) => ({ key: 't:' + i.id, title: String(i.title).replace(/^★+\s*/, ''), topic: `${m.section} · ${m.name}`, diff: i.difficulty || '', doneAt: i.doneAt || '', link: i.link || '' })))
-        .sort((a, b) => String(b.doneAt).localeCompare(String(a.doneAt)));
-    } catch (e) { return null; }
+      (t && t.modules || []).forEach((m) => (m.items || []).forEach((i) => { if (i.pattern) c[i.pattern] = (c[i.pattern] || 0) + 1; }));
+    } catch (e) {}
+    return c;
   }
-  const patOptions = (sel) => `<option value="">Pick the pattern…</option>${PATTERNS.map((p) => `<option value="${p.id}" ${p.id === sel ? 'selected' : ''}>${esc(p.name)}</option>`).join('')}<option value="other" ${sel === 'other' ? 'selected' : ''}>Something else</option>`;
   const patName = (id) => (patById[id] ? patById[id].name : 'Other');
-  const patTag = (id) => `<span class="tag" style="--c:${colorVar(patById[id] ? patById[id].color : 'blue')}">${esc(patName(id))}</span>`;
 
   function patternsHead(tab) {
-    const tabs = [['', 'Guide'], ['drill', 'Drill'], ['notes', 'Notes']];
+    const tabs = [['', 'Guide'], ['drill', 'Drill']];
     return `<div class="page-h"><h1>Patterns</h1><p>Knowing an algorithm isn't the same as seeing that a new problem needs it. This page trains the seeing.</p></div>
       <nav class="pt-tabs" aria-label="Patterns sections">${tabs.map(([id, label]) => `<a href="#/patterns${id ? '/' + id : ''}"${tab === id ? ' aria-current="page"' : ''}>${label}</a>`).join('')}</nav>`;
   }
@@ -524,28 +519,26 @@
     $('[data-nav=patterns]').classList.add('active');
     const tab = parts[1] || '';
     if (tab === 'drill') renderDrill();
-    else if (tab === 'notes' || tab === 'journal') renderJournal(parts[2] || '');
     else renderPatternGuide();
   }
 
   function renderPatternGuide() {
-    const solved = trackerSolved() || [];
-    const waiting = solved.filter((s) => !state.journal[s.key]).length;
+    const counts = trackerPatternCounts();
     let h = patternsHead('');
     h += `<div class="section-h" style="--c:var(--green)"><h2>How to use it</h2><p>Three habits, at three moments.</p></div>
     <div class="pt-steps">
       <a class="pt-step" href="#/patterns"><b>When you're stuck on a problem</b><span>Look through the cheat sheet below. Find the signal that matches what the problem says, then open that pattern's template lesson.</span></a>
-      <a class="pt-step" href="#/patterns/notes"><b>After every problem you solve</b><span>Open Notes and write one line: which pattern, what gave it away, the trick.${waiting ? ` <b>${waiting} solved problem${waiting > 1 ? 's' : ''} from your tracker ${waiting > 1 ? 'are' : 'is'} waiting.</b>` : ''}</span></a>
+      <a class="pt-step" href="../"><b>After every problem you solve</b><span>In the tracker, press ✎ next to the problem and write one line: which pattern, what gave it away, the trick.</span></a>
       <a class="pt-step" href="#/patterns/drill"><b>Once a week, 15 minutes</b><span>Do a Drill round: 10 short problems from every topic mixed together. You only name the pattern; no coding.</span></a>
     </div>
-    <p class="muted pt-hint">New to this? The lesson <a href="#/python/python-interview/spotting-the-pattern/0">Spotting the pattern</a> explains the method. To revise a problem later, press ↻ next to it in the tracker; your note shows up in the tracker's Revision tab.</p>`;
+    <p class="muted pt-hint">New to this? The lesson <a href="#/python/python-interview/spotting-the-pattern/0">Spotting the pattern</a> explains the method. To revise a problem later, press ↻ next to it in the tracker; it shows up in the Revision tab with your note.</p>`;
     h += `<div class="section-h" style="--c:var(--yellow)"><h2>Cheat sheet</h2><p>Reach for each pattern when you see these signals.</p></div><div class="cards">`;
     PATTERNS.forEach((p) => {
-      const mine = Object.values(state.journal).filter((j) => j.pattern === p.id).length;
+      const mine = counts[p.id] || 0;
       const s = state.drillStats[p.id];
       h += `<div class="card pt-card" style="--c:${colorVar(p.color)}"><h3>${esc(p.name)}</h3><ul>${p.when.map((w) => `<li>${esc(w)}</li>`).join('')}</ul>
         <div class="meta"><span>${esc(p.cost)}</span>${s && s.t ? `<span>Drill: ${s.r}/${s.t}</span>` : ''}</div>
-        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<a href="#/patterns/notes/${p.id}">${mine} in your notes</a>` : ''}</div></div>`;
+        <div class="pt-links"><a href="#/${p.lesson}/0">Template lesson</a>${mine ? `<span class="muted">${mine} of your notes</span>` : ''}</div></div>`;
     });
     h += '</div>';
     view.innerHTML = h; window.scrollTo(0, 0);
@@ -608,75 +601,6 @@
       if (b.dataset.act === 'next') { drill.i++; drill.pick = null; renderDrill(); window.scrollTo(0, 0); }
       if (b.dataset.act === 'again') { newDrill(); renderDrill(); }
     };
-  }
-
-  // ---- notes: one line per solved problem ----
-  let openEntry = null; let delArmed = null;
-  function entryForm(key, j, isNew) {
-    return `<form class="pt-form" data-key="${esc(key)}">
-      ${isNew ? `<label>Problem<input name="title" required placeholder="e.g. Koko Eating Bananas" value=""></label>` : ''}
-      <label>Pattern<select name="pattern" required>${patOptions(j.pattern)}</select></label>
-      <label>The giveaway and the trick, in your own words<textarea name="note" rows="2" required placeholder="e.g. 'minimum speed such that…' → binary search on the speed; feasibility = sum(ceil(p / k)) ≤ h">${esc(j.note || '')}</textarea></label>
-      <div class="pt-form-actions"><button class="btn small" type="submit">Save</button><button class="btn small ghost" type="button" data-act="cancel">Cancel</button></div></form>`;
-  }
-  function renderJournal(filter) {
-    const solved = trackerSolved();
-    const pending = (solved || []).filter((s) => !state.journal[s.key]);
-    const entries = Object.entries(state.journal).sort((a, b) => b[1].added - a[1].added);
-    const used = [...new Set(entries.map(([, j]) => j.pattern))];
-    let h = patternsHead('notes');
-    if (solved === null) h += `<div class="panel pt-note">No tracker progress found in this browser yet. Problems you mark done in the <a href="${TRACKER_URL}" target="_blank" rel="noopener">tracker</a> show up here automatically. You can also add any problem by hand.</div>`;
-    if (pending.length) {
-      h += `<div class="section-h" style="--c:var(--yellow)"><h2>Waiting for a write-up</h2><p>${pending.length} solved in the tracker</p></div><div class="rev-list">`;
-      pending.slice(0, 40).forEach((s) => {
-        h += `<div class="pt-row"><div><a href="${esc(s.link || lcLink(s.title))}" target="_blank" rel="noopener">${esc(s.title)}</a><small>${esc(s.topic)}${s.diff ? ' · ' + esc(s.diff) : ''}</small></div>
-          ${openEntry === s.key ? entryForm(s.key, {}, false) : `<button class="btn small" data-act="write" data-key="${esc(s.key)}">Write it up</button>`}</div>`;
-      });
-      if (pending.length > 40) h += `<p class="muted">Showing the 40 most recent.</p>`;
-      h += '</div>';
-    }
-    h += `<div class="section-h" style="--c:var(--blue)"><h2>Your notes</h2><p>${entries.length} problem${entries.length === 1 ? '' : 's'}</p></div>`;
-    h += openEntry === 'new' ? `<div class="panel">${entryForm('new', {}, true)}</div>` : `<button class="btn small ghost" data-act="new">+ Add a problem by hand</button>`;
-    if (used.length > 1) h += `<div class="chips pt-filter">${[['', 'All'], ...used.map((id) => [id, patName(id)])].map(([id, n]) => `<a class="chip ${filter === id ? 'right' : ''}" href="#/patterns/notes${id ? '/' + id : ''}">${esc(n)}</a>`).join('')}</div>`;
-    const shown = entries.filter(([, j]) => !filter || j.pattern === filter);
-    if (!entries.length) h += `<div class="empty"><div class="big">✎</div><p>Nothing written up yet. After your next problem, add one line: which pattern, what gave it away, and the trick that made it work.</p></div>`;
-    h += '<div class="rev-list">';
-    shown.forEach(([k, j]) => {
-      h += `<div class="pt-entry">${openEntry === k ? `<b>${esc(j.title)}</b>${entryForm(k, j, false)}` : `
-        <div class="pt-entry-h"><a href="${esc(j.link || lcLink(j.title))}" target="_blank" rel="noopener">${esc(j.title)}</a>${patTag(j.pattern)}</div>
-        <p>${esc(j.note)}</p>
-        <div class="pt-entry-f"><small>${esc(j.topic || 'Added by hand')}</small>
-          <span><button class="btn small ghost" data-act="edit" data-key="${esc(k)}">Edit</button> <button class="btn small ghost" data-act="del" data-key="${esc(k)}">${delArmed === k ? 'Really delete?' : 'Delete'}</button></span></div>`}</div>`;
-    });
-    h += '</div>';
-    view.innerHTML = h;
-    const pendingByKey = Object.fromEntries((solved || []).map((s) => [s.key, s]));
-    view.onclick = (e) => {
-      const b = e.target.closest('button'); if (!b) return;
-      const act = b.dataset.act, key = b.dataset.key;
-      if (act === 'write' || act === 'edit') { openEntry = key; delArmed = null; renderJournal(filter); const f = $(`form[data-key="${CSS.escape(key)}"] select`); if (f) f.focus(); }
-      if (act === 'new') { openEntry = 'new'; renderJournal(filter); $('form[data-key=new] input').focus(); }
-      if (act === 'cancel') { openEntry = null; renderJournal(filter); }
-      if (act === 'del') {
-        if (delArmed === key) { delete state.journal[key]; delArmed = null; save(); } else delArmed = key;
-        renderJournal(filter);
-      }
-    };
-    view.onsubmit = (e) => {
-      e.preventDefault();
-      const f = e.target; const key = f.dataset.key; const data = new FormData(f);
-      const pattern = data.get('pattern'), note = String(data.get('note') || '').trim();
-      if (!pattern || !note) return;
-      if (key === 'new') {
-        const title = String(data.get('title') || '').trim(); if (!title) return;
-        state.journal['m:' + Date.now().toString(36)] = { title, topic: '', pattern, note, added: Date.now(), last: null, n: 0 };
-      } else {
-        const old = state.journal[key]; const src = pendingByKey[key] || {};
-        state.journal[key] = old ? { ...old, pattern, note } : { title: src.title, topic: src.topic, link: src.link || '', pattern, note, added: Date.now(), last: null, n: 0 };
-      }
-      openEntry = null; save(); renderJournal(filter);
-    };
-    window.scrollTo(0, 0);
   }
 
   // ---------------- search ----------------
