@@ -46,3 +46,9 @@ Stored in this browser's localStorage (read lessons, solved exercises, your code
 
 The folder is self-contained. Copy it to a new repo and import that repo in Vercel as a static
 site (framework preset "Other", no build command, output directory = root).
+
+## Sync
+
+Progress is saved in the browser (`prep-notebook.v2`). Signing in from the chip in the top bar
+also keeps it in your account, through `../sync.js` shared with the tracker; see the tracker's
+README for how it works.

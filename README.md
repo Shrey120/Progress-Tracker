@@ -1,7 +1,7 @@
 # Prep Tracker
 
 A study tracker for two parallel tracks — DSA and non-DSA interview prep — organised as
-sections → topics → problems. One HTML file, no build step, no backend.
+sections → topics → problems. Static pages, no build step; an optional sign-in keeps a copy in the cloud.
 
 ## Run it
 
@@ -102,11 +102,28 @@ estimates), it carries a version number; on first load after an update, the save
 in place: matching topics keep their items, statuses, dates and extra days, items gain estimates,
 new built-in items and topics are added, and topics you imported yourself are kept.
 
+## Sync across browsers and laptops
+
+Progress always lives in the browser first. Sign in from the chip in the top bar (tracker, note
+pages and the Learn site) and `sync.js` also keeps a copy in your Supabase account:
+
+- It uses the **fitness-hub** Supabase project (same email and password as the fitness site).
+  Tables `public.prep_sync` (one row per saved copy: `tracker`, `learn`) and
+  `public.prep_sync_history`, both locked to the signed-in user by row-level security.
+- Changes upload a few seconds after you make them. The cloud is checked on load, when you return
+  to the tab, and every minute.
+- A new, empty browser never overwrites the cloud: after signing in it downloads your copy.
+- If the same copy changed in two places, it asks which to keep; the other goes to history.
+- The database also snapshots the previous version at most once a day (last 30 kept), so a bad
+  overwrite can be undone from the Supabase table editor.
+- Signing out keeps everything in that browser.
+- `.github/workflows/keep-supabase-awake.yml` pings the project twice a week so a quiet free
+  project is never paused.
+
 ## Backing up
 
-Progress is per-browser and does not sync between devices. **Backup** gives you the whole
-state as JSON to copy or download, plus a box to paste one back. Do this before clearing
-browser data.
+**Backup** gives you the whole state as JSON to copy or download, plus a box to paste one back.
+Keep one now and then as well as the cloud copy.
 
 ## Notes
 

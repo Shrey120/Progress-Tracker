@@ -1,0 +1,16 @@
+# Free Supabase projects pause after a week with no activity. This pings the
+# sync database twice a week so your notes stay reachable.
+name: Keep Supabase awake
+on:
+  schedule:
+    - cron: "17 3 * * 1,4"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping prep_keep_alive
+        run: |
+          curl -fsS -X POST "https://dcdnwpcvvgyklcqdndmt.supabase.co/rest/v1/rpc/prep_keep_alive" \
+            -H "apikey: sb_publishable_8J1XnsN-m6V4msuimMCyiw_arfBPiaJ" \
+            -H "Content-Type: application/json" -d '{}'

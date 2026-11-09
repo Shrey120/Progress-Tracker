@@ -15,6 +15,7 @@
 <div id="root"></div>
 
 <script src="learn/patterns.js"></script>
+<script src="sync.js" defer></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
@@ -505,6 +506,7 @@ function Header({
         e("a", { href: "learn/#/patterns" }, "Patterns"),
         e("a", { href: "./", className: "active", "aria-current": "page" }, "Tracker")),
       e("div", { className: "top-tools" },
+        e("span", { id: "sync-slot" }),
         e("button", { className: "icon-btn", onClick: toggleTheme, "aria-label": "Switch light or dark theme", title: "Light or dark" }, "◐"),
         e("button", { className: "icon-btn", onClick: onBackup, "aria-label": "Back up your progress", title: "Backup" }, "⤓"))),
     e("div", { className: "page-top" },
